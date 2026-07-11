@@ -53,8 +53,14 @@ P1 — Setup ✅ complete · P2 — Public pages (Home done, others pending)
 - Build clean, `/services` prerendered static, verified 200.
 - CTA fix: the global FloatingWhatsApp bubble was overlapping/colliding with the sticky "Ask on WhatsApp" bar (two WhatsApp CTAs in the same corner). `FloatingWhatsApp` is now path-aware (`HIDE_ON` list) and hidden on `/services`, so the sticky bar is the single clean WhatsApp CTA there; bubble still shows on all other pages. Verified with Playwright screenshots (mobile + desktop). (`playwright-core` added as a dev-only dependency for visual checks.)
 
+### P2 — Service Detail `/services/[slug]` (SSG, 10 pages) ✅
+- Faithful to Service Root Canal.dc.html: breadcrumb hero (image right) → symptom checklist → 4-step timeline (PAINLESS pills) → transparent pricing card (range, includes, installment, payment badges) → before/after gallery → FAQ accordion → doctor strip + final CTA (teal).
+- Data: `lib/service-details.ts` — `ServiceDetail` type + fully-authored `root-canal` + coherent generated fallback for the other 9 (derived from preview). `getServiceDetail(slug)` / `getAllServiceSlugs()`.
+- Route: `generateStaticParams` (all 10 prerendered), `dynamicParams=false`, `generateMetadata` per service, `notFound()` guard. FAQ `schema.org/FAQPage` JSON-LD injected (AEO).
+- New reusable primitives: `Breadcrumb`, `Accordion` (native `<details name>` — SEO-safe, exclusive-open, no JS), `PaymentBadges`, `CheckIcon`.
+- Verified: typecheck + build clean (0 warnings), 10 SSG pages, Playwright desktop + mobile screenshots match design, no overflow. (Hero/avatar images occasionally 500 in DEV due to transient Unsplash upstream timeout — not a code issue; fine in prod.)
+
 ## Next Up (P2 remaining pages — designs in claude.ai/design project, read one at a time)
-- [ ] `/services/[slug]` (Service Root Canal.dc.html) — symptom checklist, steps timeline, pricing, FAQ accordion
 - [ ] `/problems` (Problems We Solve.dc.html) — problem/solution cards, myth vs fact, emergency strip
 - [ ] `/doctor` (Doctor Profile.dc.html) — portrait, stat counters, timeline, schedule
 - [ ] `/contact` — map, details, Zod message form
