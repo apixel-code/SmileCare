@@ -40,3 +40,28 @@ export interface MythFact {
   myth: string;
   fact: string;
 }
+
+export interface DoctorStat {
+  value: number;
+  decimals?: number;
+  suffix?: string;
+  label: string;
+}
+
+export interface EducationEntry {
+  year: string;
+  title: string;
+  place: string;
+}
+
+export interface TeamMember {
+  name: string;
+  role: string;
+  photo: string;
+}
+
+export interface ScheduleRow {
+  day: string;
+  time: string;
+  tone: "primary" | "muted" | "cta";
+}

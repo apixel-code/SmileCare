@@ -66,9 +66,14 @@ P1 — Setup ✅ complete · P2 — Public pages (Home done, others pending)
 - Components: ProblemsHero, ProblemSolutionCard, MythVsFact, EmergencyStrip (reusable). Split cards stack problem-over-solution on mobile.
 - Verified: typecheck + build clean, Playwright desktop + mobile match design, no overflow.
 
+### P2 — Doctor `/doctor` (SSG) ✅
+- Faithful to Doctor Profile.dc.html: portrait hero + floating BMDC badge (Reg D-12345) → teal **animated stat counters** (10+/7,500+/4.9★/5,000+) → education timeline (2012–2022) → team grid (4) → chamber schedule card + booking CTA.
+- New reusable primitives: `CountUp` (client, IntersectionObserver + rAF ease-out, reduced-motion aware), `WhatsAppButton` (white outline WhatsApp CTA — DRY'd across Problems hero + Doctor hero + Schedule; removed 3 inline copies).
+- Data in demo-data: `DOCTOR_STATS`, `DOCTOR_EDUCATION`, `TEAM`, `DOCTOR_SCHEDULE`; `DOCTOR.bmdcReg`/`title` added to constants.
+- Verified: typecheck + build clean, Playwright desktop + mobile match design (stats count-up confirmed), no overflow.
+
 ## Next Up (P2 remaining pages — designs in claude.ai/design project, read one at a time)
-- [ ] `/doctor` (Doctor Profile.dc.html) — portrait, stat counters, timeline, schedule
-- [ ] `/contact` — map, details, Zod message form
+- [ ] `/contact` — map, details, Zod message form (LAST public page → P2 complete)
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper
 - [ ] Then P3 Booking (`Booking Flow.dc.html`), P4 Auth, P5 Portal (`Patient Portal.dc.html`), P6 Admin (`Clinic Admin.dc.html`)
 

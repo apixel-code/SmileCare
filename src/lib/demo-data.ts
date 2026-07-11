@@ -5,6 +5,10 @@ import type {
   Review,
   ProblemSolution,
   MythFact,
+  DoctorStat,
+  EducationEntry,
+  TeamMember,
+  ScheduleRow,
 } from "@/types";
 
 /**
@@ -212,6 +216,72 @@ export const PROBLEMS: ProblemSolution[] = [
     feeFrom: 30000,
     slug: "braces-orthodontics",
   },
+];
+
+// ── Doctor Profile page ─────────────────────────────────────────────
+export const DOCTOR_PORTRAIT = HERO_IMAGE;
+
+export const DOCTOR_STATS: DoctorStat[] = [
+  { value: 10, suffix: "+", label: "Years of Experience" },
+  { value: 7500, suffix: "+", label: "Successful Treatments" },
+  { value: 4.9, decimals: 1, suffix: " ★", label: "Patient Rating" },
+  { value: 5000, suffix: "+", label: "Happy Patients" },
+];
+
+export const DOCTOR_EDUCATION: EducationEntry[] = [
+  {
+    year: "2012",
+    title: "BDS — Bachelor of Dental Surgery",
+    place: "Dhaka Dental College, University of Dhaka",
+  },
+  {
+    year: "2014",
+    title: "Internship & Residency",
+    place: "Dhaka Dental College Hospital",
+  },
+  {
+    year: "2019",
+    title: "FCPS — Conservative Dentistry & Endodontics",
+    place: "Bangladesh College of Physicians and Surgeons (BCPS)",
+  },
+  {
+    year: "2022",
+    title: "Advanced Training in Rotary Endodontics",
+    place: "Continuing Dental Education Program, BSMMU, Dhaka",
+  },
+];
+
+export const TEAM: TeamMember[] = [
+  {
+    name: "Dr. Farhana Rahman",
+    role: "Associate Dentist",
+    photo:
+      "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=500&q=80",
+  },
+  {
+    name: "Dr. Tanvir Ahmed",
+    role: "Dental Surgeon",
+    photo:
+      "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=500&q=80",
+  },
+  {
+    name: "Sharmin Sultana",
+    role: "Chair-side Assistant",
+    photo:
+      "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&q=80",
+  },
+  {
+    name: "Rafiq Islam",
+    role: "Receptionist",
+    photo:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80",
+  },
+];
+
+export const DOCTOR_SCHEDULE: ScheduleRow[] = [
+  { day: "Saturday – Thursday", time: "5:00 PM – 9:00 PM", tone: "primary" },
+  { day: "Friday", time: "Closed", tone: "muted" },
+  { day: "Emergency", time: "24/7 Hotline", tone: "cta" },
 ];
 
 export const MYTHS: MythFact[] = [

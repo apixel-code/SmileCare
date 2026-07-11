@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { WhatsAppIcon } from "@/components/ui/icons";
-import { WHATSAPP_URL } from "@/lib/constants";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { BOOK_HREF } from "@/lib/navigation";
 import { PROBLEMS_HERO_IMAGE } from "@/lib/demo-data";
 
@@ -33,12 +32,7 @@ export function ProblemsHero() {
             <Button href={BOOK_HREF} variant="cta" size="lg">
               Book Appointment
             </Button>
-            <a
-              href={WHATSAPP_URL}
-              className="inline-flex h-14 items-center gap-2.5 rounded-xl border-[1.5px] border-whatsapp bg-white px-7 font-heading text-[16px] font-semibold text-ink transition-colors hover:bg-[#F0FBF4]"
-            >
-              <WhatsAppIcon color="#25D366" /> Describe Your Problem
-            </a>
+            <WhatsAppButton label="Describe Your Problem" />
           </div>
         </div>
         <div className="relative h-[300px] w-full overflow-hidden rounded-2xl shadow-[0_20px_50px_rgba(14,124,123,0.18)] md:h-[360px]">

@@ -60,6 +60,8 @@ export const DOCTOR = {
   eyebrow: "BMDC Registered • 10+ Years of Experience",
   yearsExperience: "10+",
   patientsServed: "5,000+",
+  bmdcReg: "D-12345",
+  title: "Chief Consultant",
 } as const;
 
 export const WHATSAPP_URL = `https://wa.me/${CLINIC.whatsappNumber}`;
