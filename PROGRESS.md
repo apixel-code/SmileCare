@@ -60,8 +60,13 @@ P1 — Setup ✅ complete · P2 — Public pages (Home done, others pending)
 - New reusable primitives: `Breadcrumb`, `Accordion` (native `<details name>` — SEO-safe, exclusive-open, no JS), `PaymentBadges`, `CheckIcon`.
 - Verified: typecheck + build clean (0 warnings), 10 SSG pages, Playwright desktop + mobile screenshots match design, no overflow. (Hero/avatar images occasionally 500 in DEV due to transient Unsplash upstream timeout — not a code issue; fine in prod.)
 
+### P2 — Problems `/problems` (SSG) ✅
+- Faithful to Problems We Solve.dc.html: 2-col reassuring hero (Book + WhatsApp "Describe Your Problem") → "In Your Words — And Our Answer" 6 split cards (gray problem / teal solution, From ৳X + Book Now) → Myth vs Fact (4 rows, ✕ MYTH / ✓ FACT) → coral EmergencyStrip (click-to-call).
+- Data: `PROBLEMS` + `MYTHS` in demo-data (typed `ProblemSolution`/`MythFact`, each problem carries a related service `slug`).
+- Components: ProblemsHero, ProblemSolutionCard, MythVsFact, EmergencyStrip (reusable). Split cards stack problem-over-solution on mobile.
+- Verified: typecheck + build clean, Playwright desktop + mobile match design, no overflow.
+
 ## Next Up (P2 remaining pages — designs in claude.ai/design project, read one at a time)
-- [ ] `/problems` (Problems We Solve.dc.html) — problem/solution cards, myth vs fact, emergency strip
 - [ ] `/doctor` (Doctor Profile.dc.html) — portrait, stat counters, timeline, schedule
 - [ ] `/contact` — map, details, Zod message form
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper

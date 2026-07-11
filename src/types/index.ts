@@ -27,3 +27,16 @@ export interface Review {
   text: string;
   avatar: string;
 }
+
+export interface ProblemSolution {
+  pain: string; // patient's own words
+  treatment: string;
+  reassure: string;
+  feeFrom: number;
+  slug: string; // related service
+}
+
+export interface MythFact {
+  myth: string;
+  fact: string;
+}

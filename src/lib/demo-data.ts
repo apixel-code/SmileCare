@@ -1,4 +1,11 @@
-import type { ServicePreview, TrustItem, WhyCard, Review } from "@/types";
+import type {
+  ServicePreview,
+  TrustItem,
+  WhyCard,
+  Review,
+  ProblemSolution,
+  MythFact,
+} from "@/types";
 
 /**
  * Demo/fixture content for the marketing pages.
@@ -158,3 +165,70 @@ export const HERO_IMAGE =
   "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=1800&q=80";
 export const DOCTOR_IMAGE =
   "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=1000&q=80";
+export const PROBLEMS_HERO_IMAGE =
+  "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=1200&q=80";
+
+// ── Problems We Solve page ──────────────────────────────────────────
+export const PROBLEMS: ProblemSolution[] = [
+  {
+    pain: "Severe toothache — I can't sleep at night",
+    treatment: "Root Canal Treatment",
+    reassure: "Ends the pain permanently and saves your tooth.",
+    feeFrom: 4000,
+    slug: "root-canal",
+  },
+  {
+    pain: "Bad breath — I feel embarrassed talking to people",
+    treatment: "Scaling & Gum Care",
+    reassure: "One short visit removes the cause, not just the smell.",
+    feeFrom: 1000,
+    slug: "scaling-polishing",
+  },
+  {
+    pain: "My teeth have turned yellow",
+    treatment: "Teeth Whitening",
+    reassure: "A visibly brighter smile in a single safe session.",
+    feeFrom: 6000,
+    slug: "teeth-whitening",
+  },
+  {
+    pain: "My child cries at the mention of a dentist",
+    treatment: "Kids' Dentistry",
+    reassure: "Gentle, play-first visits — most kids leave smiling.",
+    feeFrom: 500,
+    slug: "kids-dentistry",
+  },
+  {
+    pain: "My gums bleed when I brush",
+    treatment: "Gum Treatment",
+    reassure: "Early treatment stops bleeding and protects your teeth.",
+    feeFrom: 1500,
+    slug: "gum-treatment",
+  },
+  {
+    pain: "I'm too self-conscious to smile because of crooked teeth",
+    treatment: "Braces & Orthodontics",
+    reassure: "Comfortable modern braces — at any age.",
+    feeFrom: 30000,
+    slug: "braces-orthodontics",
+  },
+];
+
+export const MYTHS: MythFact[] = [
+  {
+    myth: "Removing a tooth damages your eyes.",
+    fact: "This is scientifically false. Tooth extraction has no connection to eyesight.",
+  },
+  {
+    myth: "Scaling makes teeth loose.",
+    fact: "Scaling removes harmful tartar — it actually protects teeth from becoming loose.",
+  },
+  {
+    myth: "Root canal is extremely painful.",
+    fact: "With modern anesthesia, most patients feel no pain at all.",
+  },
+  {
+    myth: "Baby teeth don't need treatment — they'll fall out anyway.",
+    fact: "Untreated baby teeth cause infection and damage the permanent teeth underneath.",
+  },
+];
