@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
+import { Reveal } from "@/components/ui/Reveal";
 import { PhoneIcon } from "@/components/ui/icons";
 import { CLINIC, TEL_URL } from "@/lib/constants";
 
@@ -7,10 +8,15 @@ import { CLINIC, TEL_URL } from "@/lib/constants";
 export function LocationSection() {
   return (
     <Container className="py-20 md:py-24">
-      <h2 className="mb-11 text-[30px] font-extrabold text-ink md:text-[34px]">
-        Find Us Easily
-      </h2>
-      <div className="grid items-stretch gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+      <Reveal variant="up">
+        <h2 className="mb-11 text-[30px] font-extrabold text-ink md:text-[34px]">
+          Find Us Easily
+        </h2>
+      </Reveal>
+      <Reveal
+        variant="up"
+        className="grid items-stretch gap-8 lg:grid-cols-[1.1fr_0.9fr]"
+      >
         {/* Map placeholder */}
         <div className="relative flex min-h-[360px] items-center justify-center rounded-2xl border border-dashed border-[#9EC9D6] bg-[repeating-linear-gradient(45deg,#E8F4F8,#E8F4F8_14px,#F4FAFC_14px,#F4FAFC_28px)]">
           <div className="rounded-lg bg-white px-4 py-2.5 font-mono text-[13px] text-ink-muted">
@@ -70,7 +76,7 @@ export function LocationSection() {
             </div>
           </Card>
         </div>
-      </div>
+      </Reveal>
     </Container>
   );
 }

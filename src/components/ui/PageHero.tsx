@@ -15,17 +15,26 @@ export function PageHero({
 }) {
   return (
     <section className="bg-gradient-to-b from-primary-light to-white">
-      <Container className="py-16 text-center md:py-[72px]">
-        <div className="mb-[18px] inline-flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-primary">
+      <Container className="py-16 text-center md:py-[72px] [&>*]:animate-fade-up motion-reduce:[&>*]:animate-none">
+        <div
+          className="mb-[18px] inline-flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-primary"
+          style={{ animationDelay: "0.05s" }}
+        >
           <span className="inline-block h-[2px] w-6 bg-primary" />
           {eyebrow}
           <span className="inline-block h-[2px] w-6 bg-primary" />
         </div>
-        <h1 className="mb-4 text-[32px] font-extrabold text-ink md:text-[44px]">
+        <h1
+          className="mb-4 text-[32px] font-extrabold text-ink md:text-[44px]"
+          style={{ animationDelay: "0.15s" }}
+        >
           {title}
         </h1>
         {subtitle && (
-          <p className="mx-auto max-w-[560px] text-[18px] leading-[1.7] text-ink-muted">
+          <p
+            className="mx-auto max-w-[560px] text-[18px] leading-[1.7] text-ink-muted"
+            style={{ animationDelay: "0.25s" }}
+          >
             {subtitle}
           </p>
         )}

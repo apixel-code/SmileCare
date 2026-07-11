@@ -28,6 +28,16 @@ P1 — Setup ✅ complete · P2 — Public pages (Home done, others pending)
 - Demo content in `src/lib/demo-data.ts` (typed, TEMPORARY — swap for DB reads later).
 - `yarn build` clean (0 warnings), `/` prerendered static, dev server verified 200 + all sections render.
 
+### Frontend polish pass (nav + motion) ✅
+- **Nav** now: Home, Services, About Doctor, Problems We Solve, Blog, Contact (in `lib/navigation.ts`, drives Navbar + Footer + mobile drawer). Navbar spacing tightened for 6 items; WhatsApp icon btn moved to `xl:`. `/blog` placeholder page added (PageHero + reusable `EmptyState`, "coming soon") so the link never 404s.
+- **DRY animation system:**
+  - Motion tokens in `tailwind.config.ts`: keyframes `fade-up/fade-in/scale-in/float` + `animate-*` utilities + `ease-smooth` timing + `shadow-soft-lg`.
+  - `components/ui/Reveal.tsx` — ONE scroll-reveal primitive (IntersectionObserver, variants up/down/left/right/fade/scale, `delay` for stagger, `once`). Respects `prefers-reduced-motion`.
+  - `lib/motion.ts` — shared interaction presets: `CARD_HOVER`, `PRESSABLE`, `NUDGE` (change hover/press feel in one place).
+- **Hover/shadow everywhere (via shared components):** `Card` (hoverable) + `Button` now pull from `CARD_HOVER`/`PRESSABLE` → lift + soft shadow + press, so every card/button inherits it. `ServiceGridCard` unified to `CARD_HOVER` + image zoom-on-hover.
+- **Rhythmic reveals applied:** Hero (staggered on-load intro), TrustStrip, WhyUs, ServicesPreview, DoctorSpotlight (image scale + floating badge), Testimonials, LocationSection, Services grid (per-row stagger), PageHero intro. Grid cards use `h-full` so staggered `Reveal` wrappers keep equal heights.
+- Typecheck + build clean (0 warnings); `/`, `/services`, `/blog` all static + 200.
+
 ## Decisions Log
 - Stack locked: Next.js 15 App Router, TS strict, MongoDB/Mongoose, Tailwind, Yarn, Cloudinary, Zod.
 - **Tailwind v3 over v4**: design-system.md mandates tokens in `tailwind.config.ts`; create-next-app now ships v4 (CSS `@theme`) — downgraded to v3 to match the spec + "no custom CSS files" rule.
@@ -41,7 +51,7 @@ P1 — Setup ✅ complete · P2 — Public pages (Home done, others pending)
 - Services data consolidated into ONE `SERVICES` source (10 entries: slug, glyph, name, benefit desc, feeFrom, image). Home shows `.slice(0,6)` as glyph cards; Services page shows all 10 as image cards. Descriptions unified to the benefit-first Services copy.
 - Env: real `MONGODB_URI` mirrored into `.env.local` (git-ignored) where Next actually loads it.
 - Build clean, `/services` prerendered static, verified 200.
-- NOTE for review: the sticky WhatsApp bar coexists with the global FloatingWhatsApp bubble (both are spec'd — design-system.md wants the bubble on all pages, pages-spec wants the sticky bar here). Flag if you want the bubble hidden on this page.
+- CTA fix: the global FloatingWhatsApp bubble was overlapping/colliding with the sticky "Ask on WhatsApp" bar (two WhatsApp CTAs in the same corner). `FloatingWhatsApp` is now path-aware (`HIDE_ON` list) and hidden on `/services`, so the sticky bar is the single clean WhatsApp CTA there; bubble still shows on all other pages. Verified with Playwright screenshots (mobile + desktop). (`playwright-core` added as a dev-only dependency for visual checks.)
 
 ## Next Up (P2 remaining pages — designs in claude.ai/design project, read one at a time)
 - [ ] `/services/[slug]` (Service Root Canal.dc.html) — symptom checklist, steps timeline, pricing, FAQ accordion

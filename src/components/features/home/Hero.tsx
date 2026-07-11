@@ -23,25 +23,40 @@ export function Hero() {
         aria-hidden
       />
       <Container className="relative flex h-full min-h-[620px] items-center py-20 lg:min-h-0">
-        <div className="max-w-[620px]">
-          <div className="mb-5 inline-flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#7FD1CF]">
+        <div className="max-w-[620px] [&>*]:animate-fade-up motion-reduce:[&>*]:animate-none">
+          <div
+            className="mb-5 inline-flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#7FD1CF]"
+            style={{ animationDelay: "0.05s" }}
+          >
             <span className="inline-block h-[2px] w-7 bg-[#7FD1CF]" />
             {DOCTOR.eyebrow}
           </div>
-          <h1 className="mb-1.5 text-[40px] font-extrabold leading-[1.1] text-white md:text-[56px]">
+          <h1
+            className="mb-1.5 text-[40px] font-extrabold leading-[1.1] text-white md:text-[56px]"
+            style={{ animationDelay: "0.15s" }}
+          >
             {DOCTOR.name}
           </h1>
-          <div className="mb-6 font-heading text-[17px] font-semibold text-[#E4B96A]">
+          <div
+            className="mb-6 font-heading text-[17px] font-semibold text-[#E4B96A]"
+            style={{ animationDelay: "0.25s" }}
+          >
             {DOCTOR.degrees}
           </div>
-          <p className="mb-3.5 font-heading text-[24px] font-bold leading-[1.35] text-white md:text-[30px]">
+          <p
+            className="mb-3.5 font-heading text-[24px] font-bold leading-[1.35] text-white md:text-[30px]"
+            style={{ animationDelay: "0.35s" }}
+          >
             Pain-Free, Modern Dental Care You Can Trust
           </p>
-          <p className="mb-8 max-w-[480px] text-[17px] leading-[1.7] text-white/80">
+          <p
+            className="mb-8 max-w-[480px] text-[17px] leading-[1.7] text-white/80"
+            style={{ animationDelay: "0.45s" }}
+          >
             Advanced treatment with a gentle touch — right here in your
             neighborhood.
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4" style={{ animationDelay: "0.55s" }}>
             <Button href={BOOK_HREF} variant="cta" size="lg">
               Book Your Appointment
             </Button>

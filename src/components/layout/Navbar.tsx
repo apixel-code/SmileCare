@@ -19,11 +19,11 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-primary-light bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-[76px] max-w-container items-center justify-between gap-6 px-5 md:px-8">
+      <div className="mx-auto flex h-[76px] max-w-container items-center justify-between gap-4 px-5 md:px-8">
         <Logo />
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-6 lg:flex xl:gap-7">
           {PRIMARY_NAV.map((link) => (
             <Link
               key={link.href}
@@ -45,7 +45,7 @@ export function Navbar() {
           <a
             href={WHATSAPP_URL}
             aria-label="Chat on WhatsApp"
-            className="hidden h-12 w-12 items-center justify-center rounded-xl border-[1.5px] border-whatsapp bg-white transition-colors hover:bg-[#F0FBF4] sm:flex"
+            className="hidden h-12 w-12 items-center justify-center rounded-xl border-[1.5px] border-whatsapp bg-white transition-colors hover:bg-[#F0FBF4] xl:flex"
           >
             <WhatsAppIcon color="#25D366" />
           </a>

@@ -6,9 +6,11 @@ export interface NavLink {
 }
 
 export const PRIMARY_NAV: NavLink[] = [
+  { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
   { label: "About Doctor", href: "/doctor" },
   { label: "Problems We Solve", href: "/problems" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 

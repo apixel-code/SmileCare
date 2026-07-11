@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { CLINIC } from "@/lib/constants";
 import { BOOK_HREF } from "@/lib/navigation";
 import { REVIEWS } from "@/lib/demo-data";
@@ -10,20 +11,23 @@ export function Testimonials() {
   return (
     <section className="bg-primary-light">
       <Container className="py-20">
-        <h2 className="mb-3 text-center text-[30px] font-extrabold text-ink md:text-[34px]">
-          What Our Patients Say
-        </h2>
-        <p className="mb-12 flex items-center justify-center gap-2 text-center text-[16px] text-ink-muted">
-          <span className="font-heading text-[20px] font-extrabold text-ink">
-            {CLINIC.rating.score}
-          </span>
-          <span className="tracking-[2px] text-[#F5A623]">★★★★★</span>
-          <span>from {CLINIC.rating.source}</span>
-        </p>
+        <Reveal variant="up">
+          <h2 className="mb-3 text-center text-[30px] font-extrabold text-ink md:text-[34px]">
+            What Our Patients Say
+          </h2>
+          <p className="mb-12 flex items-center justify-center gap-2 text-center text-[16px] text-ink-muted">
+            <span className="font-heading text-[20px] font-extrabold text-ink">
+              {CLINIC.rating.score}
+            </span>
+            <span className="tracking-[2px] text-[#F5A623]">★★★★★</span>
+            <span>from {CLINIC.rating.source}</span>
+          </p>
+        </Reveal>
 
         <div className="grid gap-5 md:grid-cols-3">
-          {REVIEWS.map((rev) => (
-            <Card key={rev.name} className="flex flex-col gap-3.5 p-6">
+          {REVIEWS.map((rev, i) => (
+            <Reveal key={rev.name} variant="up" delay={i * 100} className="h-full">
+              <Card hoverable className="flex h-full flex-col gap-3.5 p-6">
               <div className="flex items-center justify-between">
                 <span className="tracking-[3px] text-[16px] text-[#F5A623]">
                   ★★★★★
@@ -49,11 +53,15 @@ export function Testimonials() {
                   <div className="text-[13px] text-ink-muted">{rev.area}</div>
                 </div>
               </div>
-            </Card>
+              </Card>
+            </Reveal>
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col items-center gap-[18px] rounded-2xl bg-primary px-8 py-12 text-center">
+        <Reveal
+          variant="scale"
+          className="mt-14 flex flex-col items-center gap-[18px] rounded-2xl bg-primary px-8 py-12 text-center"
+        >
           <div className="font-heading text-[26px] font-extrabold leading-[1.4] text-white md:text-[28px]">
             Ready for a healthier smile?
           </div>
@@ -63,7 +71,7 @@ export function Testimonials() {
           <Button href={BOOK_HREF} variant="cta" size="lg" className="mt-1.5">
             Book Appointment
           </Button>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

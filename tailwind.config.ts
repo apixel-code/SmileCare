@@ -51,10 +51,39 @@ const config: Config = {
       boxShadow: {
         soft: "0 4px 16px rgba(26,43,60,0.06)",
         "soft-md": "0 12px 30px rgba(14,124,123,0.14)",
+        "soft-lg": "0 18px 40px rgba(14,124,123,0.18)",
         lift: "0 16px 40px rgba(26,43,60,0.14)",
       },
       maxWidth: {
         container: "1240px",
+      },
+      transitionTimingFunction: {
+        // gentle "ease-out-expo" used everywhere for a calm, premium feel
+        smooth: "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      keyframes: {
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.96)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+      },
+      animation: {
+        "fade-up": "fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both",
+        "fade-in": "fade-in 0.6s ease-out both",
+        "scale-in": "scale-in 0.5s cubic-bezier(0.16,1,0.3,1) both",
+        float: "float 4s ease-in-out infinite",
       },
     },
   },

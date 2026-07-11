@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { PRESSABLE } from "@/lib/motion";
 
 export type ButtonVariant = "cta" | "primary" | "outline" | "ghost" | "whatsapp";
 export type ButtonSize = "sm" | "md" | "lg";
@@ -40,7 +41,8 @@ export type ButtonProps = AsButton | AsLink;
 
 function classes(variant: ButtonVariant, size: ButtonSize, className?: string) {
   return cn(
-    "inline-flex items-center justify-center gap-2 rounded-xl font-heading font-bold transition-colors whitespace-nowrap",
+    "inline-flex items-center justify-center gap-2 rounded-xl font-heading font-bold whitespace-nowrap",
+    PRESSABLE,
     VARIANTS[variant],
     SIZES[size],
     className,

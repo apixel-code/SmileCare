@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { ClockIcon } from "@/components/ui/icons";
 import { DOCTOR, CLINIC } from "@/lib/constants";
 import { DOCTOR_IMAGE } from "@/lib/demo-data";
@@ -11,21 +12,21 @@ export function DoctorSpotlight() {
   return (
     <Container className="py-20 md:py-24">
       <div className="grid items-center gap-14 lg:grid-cols-[0.85fr_1.15fr]">
-        <div className="relative">
-          <div className="relative h-[440px] w-full overflow-hidden rounded-2xl shadow-lift">
+        <Reveal variant="scale" className="relative">
+          <div className="group relative h-[440px] w-full overflow-hidden rounded-2xl shadow-lift">
             <Image
               src={DOCTOR_IMAGE}
               alt={`Portrait of ${DOCTOR.name}`}
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"
-              className="object-cover"
+              className="object-cover transition-transform duration-[900ms] ease-smooth group-hover:scale-105"
             />
           </div>
-          <div className="pointer-events-none absolute left-5 top-5 rounded-xl bg-white/95 px-4 py-2.5 font-heading text-[13px] font-bold text-primary shadow-lift">
+          <div className="pointer-events-none absolute left-5 top-5 animate-float rounded-xl bg-white/95 px-4 py-2.5 font-heading text-[13px] font-bold text-primary shadow-lift motion-reduce:animate-none">
             BMDC Registered
           </div>
-        </div>
-        <div>
+        </Reveal>
+        <Reveal variant="right" delay={120}>
           <div className="mb-3.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-primary">
             Meet Your Doctor
           </div>
@@ -53,7 +54,7 @@ export function DoctorSpotlight() {
           <Button href="/doctor" variant="primary">
             View Full Profile
           </Button>
-        </div>
+        </Reveal>
       </div>
     </Container>
   );

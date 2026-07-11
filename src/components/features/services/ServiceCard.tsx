@@ -7,7 +7,7 @@ import { formatTaka } from "@/lib/constants";
 export function ServiceCard({ service }: { service: ServicePreview }) {
   const href = `/services/${service.slug}`;
   return (
-    <Card hoverable className="flex flex-col gap-3 p-6">
+    <Card hoverable className="flex h-full flex-col gap-3 p-6">
       <div className="flex items-center gap-3.5">
         <span className="flex h-12 w-12 flex-none items-center justify-center rounded-xl bg-primary-light font-heading text-[16px] font-extrabold text-primary">
           {service.glyph}

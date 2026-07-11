@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
+import { Reveal } from "@/components/ui/Reveal";
 import { ServiceGridCard } from "@/components/features/services/ServiceGridCard";
 import { ServicesWhatsAppBar } from "@/components/features/services/ServicesWhatsAppBar";
 import { SERVICES } from "@/lib/demo-data";
@@ -22,8 +23,15 @@ export default function ServicesPage() {
 
       <Container className="px-5 pb-24 pt-6 md:px-8">
         <div className="grid gap-[22px] sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((svc) => (
-            <ServiceGridCard key={svc.slug} service={svc} />
+          {SERVICES.map((svc, i) => (
+            <Reveal
+              key={svc.slug}
+              variant="up"
+              delay={(i % 3) * 90}
+              className="h-full"
+            >
+              <ServiceGridCard service={svc} />
+            </Reveal>
           ))}
         </div>
       </Container>
