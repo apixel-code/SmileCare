@@ -53,3 +53,60 @@ export const prescriptionSchema = z.object({
 
 export type WalkinFormInput = z.infer<typeof walkinSchema>;
 export type PrescriptionFormInput = z.infer<typeof prescriptionSchema>;
+
+// ── P7: payments / settings / staff ────────────────────────────────
+import { PAYMENT_METHOD, STAFF_ROLE } from "@/lib/constants";
+
+export const collectSchema = z.object({
+  paymentId: z.string().min(8),
+  amount: z.number().positive("Enter an amount"),
+  method: z.enum(PAYMENT_METHOD),
+});
+
+export const billSchema = z.object({
+  patientId: z.string().min(8),
+  label: z.string().trim().min(2, "What is this bill for?"),
+  totalAmount: z.number().positive("Enter the total"),
+  paidAmount: z.number().min(0),
+  method: z.enum(PAYMENT_METHOD),
+});
+
+export const remindSchema = z.object({ paymentId: z.string().min(8) });
+
+export const settingsSchema = z.object({
+  clinicName: z.string().trim().min(2),
+  address: z.string().trim().min(4),
+  phones: z.array(z.string().trim().min(6)).min(1),
+  email: z.string().trim().email().or(z.literal("")).optional(),
+  schedule: z
+    .array(
+      z.object({
+        day: z.number().int().min(0).max(6),
+        open: z.string().regex(/^\d{2}:\d{2}$/),
+        close: z.string().regex(/^\d{2}:\d{2}$/),
+        isOff: z.boolean(),
+      }),
+    )
+    .length(7),
+  slotDurationMin: z.number().int().min(5).max(120),
+  maxSerialsPerDay: z.number().int().min(1).max(200),
+  onlineBookingEnabled: z.boolean(),
+  smsTemplates: z.object({
+    confirmation: z.string().trim().min(4),
+    reminder: z.string().trim().min(4),
+  }),
+});
+
+export const staffCreateSchema = z.object({
+  name: z.string().trim().min(2),
+  phone: phoneSchema,
+  password: z.string().min(6, "At least 6 characters"),
+  role: z.enum(STAFF_ROLE),
+});
+
+export const staffToggleSchema = z.object({
+  staffId: z.string().min(8),
+  isActive: z.boolean(),
+});
+
+export type SettingsFormInput = z.infer<typeof settingsSchema>;

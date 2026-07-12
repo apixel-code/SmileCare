@@ -196,6 +196,98 @@ export async function savePrescription(input: {
   }
 }
 
+export async function collectPaymentApi(input: {
+  paymentId: string;
+  amount: number;
+  method: string;
+}): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/admin/payments/collect", input);
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not record." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function createBillApi(input: {
+  patientId: string;
+  label: string;
+  totalAmount: number;
+  paidAmount: number;
+  method: string;
+}): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/admin/payments/bill", input);
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not create." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function sendReminderApi(paymentId: string): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/admin/payments/remind", { paymentId });
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not send." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function saveSettingsApi(input: unknown): Promise<SimpleResult> {
+  try {
+    const res = await fetch("/api/admin/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+    const json = await res.json();
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not save." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function createStaffApi(input: {
+  name: string;
+  phone: string;
+  password: string;
+  role: string;
+}): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/admin/staff", input);
+    if (json?.ok) return { ok: true };
+    return {
+      ok: false,
+      error: json?.error?.message ?? "Could not add.",
+      fieldErrors: json?.error?.details,
+    };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function toggleStaffApi(
+  staffId: string,
+  isActive: boolean,
+): Promise<SimpleResult> {
+  try {
+    const res = await fetch("/api/admin/staff", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ staffId, isActive }),
+    });
+    const json = await res.json();
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not update." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
 // ── Booking ─────────────────────────────────────────────────────────
 export type BookingResult =
   | { ok: true; ticket: BookingTicket }

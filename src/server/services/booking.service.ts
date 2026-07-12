@@ -14,6 +14,8 @@ import {
 } from "@/lib/booking";
 import { CLINIC } from "@/lib/constants";
 import { normalizePhone, type BookingInput } from "@/lib/validators/booking";
+import { getSettings } from "@/server/repositories/settings.repository";
+import { sendSms } from "./sms.service";
 
 export interface BookingTicket {
   serialNo: number;
@@ -40,6 +42,13 @@ export type BookingResult =
 export async function createBooking(
   input: BookingInput,
 ): Promise<BookingResult> {
+  const settings = await getSettings();
+  if (!settings.onlineBookingEnabled) {
+    return {
+      ok: false,
+      error: "Online booking is temporarily off. Please call us to book.",
+    };
+  }
   if (!isBookableDate(input.date)) {
     return { ok: false, error: "That date isn't available. Please pick another." };
   }
@@ -65,6 +74,13 @@ export async function createBooking(
   });
 
   const serialNo = await nextSeq(`${DEFAULT_DOCTOR.key}:${input.date}`);
+  if (serialNo > settings.maxSerialsPerDay) {
+    return {
+      ok: false,
+      code: "DAY_FULL",
+      error: "This day is fully booked. Please pick another date.",
+    };
+  }
   const serviceName = serviceNameFromSlug(input.serviceSlug);
 
   await createAppointment({
@@ -81,7 +97,12 @@ export async function createBooking(
     bookedByPhone: phone,
   });
 
-  // TODO(P3): send confirmation SMS via gateway.
+  // Confirmation SMS from the editable template (stubbed gateway in dev).
+  const sms = settings.smsTemplates.confirmation
+    .replace("{patient_name}", patient.name)
+    .replace("{serial_no}", `#${serialNo}`)
+    .replace("{time}", `${ticketDateLabel(input.date)} ${input.timeSlot}`);
+  await sendSms(phone, sms);
 
   return {
     ok: true,
