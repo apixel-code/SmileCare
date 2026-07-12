@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## Current Phase
-P1 ✅ · P2 ✅ · P3 Booking ✅ · **P4 — Auth ✅ COMPLETE** · Next: P5 Patient Portal
+P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · **P5 — Patient Portal ✅ COMPLETE** · Next: P6 Admin PMS
 
 ## Done
 ### P1 Setup
@@ -111,9 +111,17 @@ P1 ✅ · P2 ✅ · P3 Booking ✅ · **P4 — Auth ✅ COMPLETE** · Next: P5 P
 - **Seed:** `node scripts/seed-staff.mjs <phone> <password> [role] [name]` (client must create the real admin; test admin removed after verification).
 - **Verified E2E (curl + Playwright UI):** guard redirects, OTP request→SMS log→wrong-code countdown→verify→cookie→/portal 200; patient↛/admin, staff↛/portal (role isolation both ways); staff wrong-password generic error; logout clears. Test data cleaned.
 
+### P5 — Patient Portal ✅ (real data, OTP-gated)
+- Faithful to Patient Portal.dc.html: teal top bar (Dhaka-time greeting + **family switcher** dropdown w/ logout) → overlapping **NextAppointmentCard** (date tile, serial in coral, CONFIRMED pill, **Reschedule**=cancel+/book, **Cancel** w/ confirm) → QuickActions 2×2 → Treatment History (StatusPill) → Payment History (method badges, DUE row highlighted + Pay Now→tel:).
+- **Real data end-to-end:** members = Patients by session phone (`?m=` selects); appointments (upcoming/history) per member; payments + prescriptions read from new models.
+- New models per data-models.md: `Prescription` (medicines dose "1+0+1"/durationDays/afterMeal, advice, index patient+createdAt) + `Payment` (total/paid/due, method, status, transactions). Repos read-only for portal; admin writes land in P6/P7.
+- Pages: `/portal` (dashboard), `/portal/history`, `/portal/prescriptions`, `/portal/prescriptions/[id]` — **clinic-letterhead sheet** (teal letterhead, BMDC bar, patient/Dx bar, medicine table, advice, signature) + Print/PDF (`window.print`, print CSS). Ownership guarded (rx must belong to session phone's member).
+- `POST /api/portal/cancel` — session-checked, only own+future+waiting appointments (repo-level filter). New reusable `StatusPill` (all appointment+payment states, admin reuses in P6).
+- **Verified E2E (Playwright):** booked self+family via API → OTP login → dashboard showed real serial #1 card ✓ → family switcher → Arif's view ✓ → prescription letterhead rendered from DB ✓ → Cancel → empty state ✓. All test data cleaned.
+
 ## Next Up
-- [ ] **P5 Patient Portal** (`Patient Portal.dc.html`) — dashboard (next appointment, quick actions, timeline, payments, family switcher), prescriptions. Auth is live; portal reads real Appointments by session phone.
-- [ ] P6 Admin PMS (`Clinic Admin.dc.html` — queue reads real appointments), P7 Payments/Settings/Reports, P8 SEO/perf/deploy.
+- [ ] **P6 Admin PMS** (`Clinic Admin.dc.html`) — AdminShell (teal sidebar), Today's Queue (real appointments: stat chips + advancing actions Call In→Complete), patients + dental chart, calendar, walk-in modal. Doctor writes prescriptions (portal already reads them).
+- [ ] P7 Payments/Settings/Reports, P8 SEO/perf/deploy.
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper
 - [ ] Then P3 Booking (`Booking Flow.dc.html`), P4 Auth, P5 Portal (`Patient Portal.dc.html`), P6 Admin (`Clinic Admin.dc.html`)
 

@@ -35,6 +35,59 @@ export async function createAppointment(
   return { id: String(doc._id), serialNo: doc.serialNo };
 }
 
+export type AppointmentDoc = IAppointment & { _id: unknown };
+
+/** Upcoming (waiting) appointments for a patient, soonest first. */
+export async function findUpcomingByPatient(
+  patientId: string,
+  fromDate: string,
+): Promise<AppointmentDoc[]> {
+  await connectDB();
+  return Appointment.find({
+    patient: patientId,
+    date: { $gte: fromDate },
+    status: "waiting",
+  })
+    .sort({ date: 1, timeSlot: 1 })
+    .limit(5)
+    .lean();
+}
+
+/** Past/settled appointments (history), newest first, paginated. */
+export async function findHistoryByPatient(
+  patientId: string,
+  fromDate: string,
+  limit = 20,
+): Promise<AppointmentDoc[]> {
+  await connectDB();
+  return Appointment.find({
+    patient: patientId,
+    $or: [{ date: { $lt: fromDate } }, { status: { $in: ["completed", "no_show"] } }],
+  })
+    .sort({ date: -1 })
+    .limit(limit)
+    .lean();
+}
+
+/** Cancel a future appointment owned by this phone. Returns success. */
+export async function cancelOwnAppointment(
+  appointmentId: string,
+  bookedByPhone: string,
+  fromDate: string,
+): Promise<boolean> {
+  await connectDB();
+  const res = await Appointment.updateOne(
+    {
+      _id: appointmentId,
+      bookedByPhone,
+      status: "waiting",
+      date: { $gte: fromDate },
+    },
+    { $set: { status: "cancelled" } },
+  );
+  return res.modifiedCount === 1;
+}
+
 /** Count of active (non-cancelled) appointments per time slot for a doctor+day. */
 export async function slotCounts(
   doctorKey: string,

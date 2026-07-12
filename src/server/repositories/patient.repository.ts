@@ -8,6 +8,19 @@ export interface UpsertPatientInput {
   isFamily: boolean;
 }
 
+/** All family members registered under one phone (oldest first). */
+export async function findPatientsByPhone(
+  phone: string,
+): Promise<Array<{ id: string; name: string; age?: number }>> {
+  await connectDB();
+  const docs = await Patient.find({ phone }).sort({ createdAt: 1 }).lean();
+  return docs.map((d) => ({
+    id: String(d._id),
+    name: d.name,
+    age: d.age ?? undefined,
+  }));
+}
+
 /**
  * OTP login: reuse the first record under this phone (the family head);
  * only create a placeholder when the phone has never been seen.

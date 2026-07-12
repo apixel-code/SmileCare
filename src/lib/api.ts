@@ -121,6 +121,19 @@ export async function logout(): Promise<void> {
   }
 }
 
+// ── Portal ──────────────────────────────────────────────────────────
+export async function cancelAppointment(
+  appointmentId: string,
+): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/portal/cancel", { appointmentId });
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not cancel." };
+  } catch {
+    return { ok: false, error: "Network error. Please try again." };
+  }
+}
+
 // ── Booking ─────────────────────────────────────────────────────────
 export type BookingResult =
   | { ok: true; ticket: BookingTicket }

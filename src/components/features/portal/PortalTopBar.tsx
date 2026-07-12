@@ -1,0 +1,104 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/api";
+import { cn } from "@/lib/utils";
+import type { FamilyMember } from "@/types/portal";
+
+/** Teal portal header — greeting + family switcher (one phone = whole family). */
+export function PortalTopBar({
+  greeting,
+  members,
+  selectedId,
+}: {
+  greeting: string;
+  members: FamilyMember[];
+  selectedId: string;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const selected = members.find((m) => m.id === selectedId) ?? members[0];
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  return (
+    <div className="bg-primary px-5 pb-16 pt-5 md:px-8">
+      <div className="mx-auto flex max-w-2xl items-center justify-between gap-3">
+        <div>
+          <div className="text-[13px] text-white/75">{greeting}</div>
+          <div className="font-heading text-[22px] font-extrabold text-white">
+            Hello, {selected?.name}
+          </div>
+        </div>
+
+        <div className="relative flex items-center gap-2" ref={ref}>
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="flex min-h-[48px] items-center gap-2.5 rounded-xl border-[1.5px] border-white/40 bg-white/10 px-3.5 font-heading text-[14px] font-bold text-white transition-colors hover:bg-white/20"
+          >
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[13px] font-extrabold text-primary">
+              {selected?.name?.charAt(0) ?? "?"}
+            </span>
+            <span className="max-w-[90px] truncate">{selected?.name}</span>
+            <span className="text-[11px]">▼</span>
+          </button>
+
+          {open && (
+            <div className="absolute right-0 top-[54px] z-20 flex min-w-[220px] animate-fade-up-fast flex-col gap-0.5 rounded-xl bg-white p-2 shadow-[0_16px_40px_rgba(26,43,60,0.25)] motion-reduce:animate-none">
+              {members.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    router.push(`/portal?m=${m.id}`);
+                  }}
+                  className={cn(
+                    "flex min-h-[48px] items-center gap-3 rounded-[9px] px-3.5 text-left transition-colors",
+                    m.id === selected?.id ? "bg-primary-light" : "hover:bg-primary-light/50",
+                  )}
+                >
+                  <span className="flex h-[30px] w-[30px] flex-none items-center justify-center rounded-full bg-primary-light font-heading text-[13px] font-extrabold text-primary">
+                    {m.name.charAt(0)}
+                  </span>
+                  <span>
+                    <span className="block text-[14px] font-semibold text-ink">
+                      {m.name}
+                    </span>
+                    {m.age !== undefined && (
+                      <span className="block text-[12px] text-ink-muted">
+                        Age {m.age}
+                      </span>
+                    )}
+                  </span>
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={async () => {
+                  await logout();
+                  router.push("/portal/login");
+                  router.refresh();
+                }}
+                className="mt-1 flex min-h-[44px] items-center justify-center rounded-[9px] border-t border-primary-light text-[13.5px] font-semibold text-ink-muted transition-colors hover:bg-primary-light/50 hover:text-danger"
+              >
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
