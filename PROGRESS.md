@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## Current Phase
-P1 — Setup ✅ complete · P2 — Public pages (Home done, others pending)
+P1 — Setup ✅ · **P2 — Public pages ✅ COMPLETE** (Home, Services, Service Detail, Problems, Doctor, Blog, Contact) · Next: P3 Booking flow
 
 ## Done
 ### P1 Setup
@@ -72,8 +72,19 @@ P1 — Setup ✅ complete · P2 — Public pages (Home done, others pending)
 - Data in demo-data: `DOCTOR_STATS`, `DOCTOR_EDUCATION`, `TEAM`, `DOCTOR_SCHEDULE`; `DOCTOR.bmdcReg`/`title` added to constants.
 - Verified: typecheck + build clean, Playwright desktop + mobile match design (stats count-up confirmed), no overflow.
 
-## Next Up (P2 remaining pages — designs in claude.ai/design project, read one at a time)
-- [ ] `/contact` — map, details, Zod message form (LAST public page → P2 complete)
+### P2 — Contact `/contact` (SSG page + first API route) ✅
+- No design export existed → built from pages-spec in the established visual language: PageHero → 2-col (ContactInfo cards: address / call / WhatsApp / hours + ContactForm) → full-width MapPlaceholder.
+- **First form + first backend slice (demonstrates the full stack):**
+  - Shared Zod `contactSchema` (`lib/validators/contact.ts`) used by BOTH the client form AND `POST /api/contact` — one validation, never twice.
+  - Route is thin (`app/api/contact/route.ts`): parse → validate → `contact.service.ts` (business logic stub: TODO SMS/email + persist) → `apiResponse`/`apiError`. Layering respected (route → service).
+  - Typed client helper `lib/api.ts#submitContact` (no raw fetch in components).
+- New reusable primitives: `Input`, `Textarea` (shared `fieldBase`), `Field` (label+error), `MapPlaceholder` (also refactored into Home LocationSection — removed the inline copy).
+- Verified end-to-end: API valid→201, invalid→422 with per-field errors; UI form submit drives the success card (Playwright); desktop+mobile clean, no overflow.
+
+## Next Up
+- [ ] **P3 Booking flow** (`Booking Flow.dc.html`) — 4-step wizard (Service → Date/time → Details → Confirmation), Stepper, serial generation (atomic Counter), slot capacity server-side. Needs DB models + repositories + services.
+- [ ] Then P4 Auth (OTP + staff roles), P5 Patient Portal (`Patient Portal.dc.html`), P6 Admin PMS (`Clinic Admin.dc.html`), P7 Payments/Settings/Reports, P8 SEO/perf/deploy.
+- Note: P3+ need MongoDB models — `.env.local` MONGODB_URI is set; wire `connectDB` + models/repositories per data-models.md.
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper
 - [ ] Then P3 Booking (`Booking Flow.dc.html`), P4 Auth, P5 Portal (`Patient Portal.dc.html`), P6 Admin (`Clinic Admin.dc.html`)
 

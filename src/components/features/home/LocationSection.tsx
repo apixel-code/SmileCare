@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
+import { MapPlaceholder } from "@/components/ui/MapPlaceholder";
 import { PhoneIcon } from "@/components/ui/icons";
 import { CLINIC, TEL_URL } from "@/lib/constants";
 
@@ -17,18 +18,7 @@ export function LocationSection() {
         variant="up"
         className="grid items-stretch gap-8 lg:grid-cols-[1.1fr_0.9fr]"
       >
-        {/* Map placeholder */}
-        <div className="relative flex min-h-[360px] items-center justify-center rounded-2xl border border-dashed border-[#9EC9D6] bg-[repeating-linear-gradient(45deg,#E8F4F8,#E8F4F8_14px,#F4FAFC_14px,#F4FAFC_28px)]">
-          <div className="rounded-lg bg-white px-4 py-2.5 font-mono text-[13px] text-ink-muted">
-            [ Google Map embed — clinic location ]
-          </div>
-          <a
-            href="#"
-            className="absolute bottom-5 left-5 flex h-12 items-center gap-2 rounded-xl bg-primary px-6 font-heading text-sm font-bold text-white shadow-[0_6px_18px_rgba(14,124,123,0.35)] transition-colors hover:bg-primary-dark"
-          >
-            Get Directions →
-          </a>
-        </div>
+        <MapPlaceholder />
 
         {/* Contact cards */}
         <div className="flex flex-col gap-4">
