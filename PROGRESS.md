@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## Current Phase
-P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · P5 ✅ · P6 ✅ · **P7 — Payments/Settings/Reports ✅ COMPLETE** · Next: P8 SEO/perf/deploy
+P1–P7 ✅ · **P8 — SEO ✅ COMPLETE** · Remaining: deploy (needs client's Vercel account + NEXT_PUBLIC_SITE_URL)
 
 ## Done
 ### P1 Setup
@@ -44,6 +44,10 @@ P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · P5 ✅ · P6 ✅ · **P7 — Payments/Se
 - Booking wizard steps now animate (`key={step}` + `fade-up-fast` 0.45s); slot grid + scarcity banner fade in after fetch.
 - Hero images (Home/Service detail/Problems) get a slow 1.6s `hero-zoom` settle; accordion fade tightened to 0.4s; `scroll-behavior: smooth` (reduced-motion aware).
 - Everything still respects `prefers-reduced-motion`.
+
+## Branch Strategy (IMPORTANT)
+- `main` = original design · `redesign/frontend-wow-pass` = new design. Both carry ALL functionality.
+- Workflow: functional work happens on **main**, then `git merge main` into the redesign branch. Design-only work stays on the redesign branch. (P7 was cherry-picked once as a rescue; don't repeat.)
 
 ## Decisions Log
 - Stack locked: Next.js 15 App Router, TS strict, MongoDB/Mongoose, Tailwind, Yarn, Cloudinary, Zod.
@@ -138,7 +142,12 @@ P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · P5 ✅ · P6 ✅ · **P7 — Payments/Se
 - **Verified E2E (Playwright as admin):** bill ৳5,500/paid ৳3,000 (bKash, partial) → payments screen due ৳2,500 → collect cash → Paid + receipt modal ✓ reports render ✓ settings save toast ✓ online-booking OFF blocks /api/book ✓ (restored) staff added ✓. Test data cleaned (settings doc kept — it's the live config now).
 
 ## Next Up
-- [ ] **P8 — SEO + performance + deploy**: metadata polish, schema.org LocalBusiness/Dentist JSON-LD, sitemap.xml + robots, OG images, Lighthouse pass, Vercel deploy (env vars from .env.local).
+### P8 — SEO ✅
+- Root metadata: `metadataBase` (NEXT_PUBLIC_SITE_URL via `lib/site.ts`), OG + Twitter defaults, keywords, canonical.
+- **schema.org Dentist JSON-LD** on homepage (address, hours Sat–Thu 17–21, founder, makesOffer top services; aggregateRating deliberately OMITTED until real reviews exist). FAQPage JSON-LD already on service details.
+- `sitemap.ts` (static + all 10 service slugs) + `robots.ts` (disallow /admin /portal /api). Portal + admin route groups emit `noindex` meta.
+- Branded 404 page. All verified live: sitemap.xml, robots.txt, JSON-LD in HTML, noindex on /portal/login, /nonexistent → 404.
+- [ ] **Deploy**: Vercel import repo → set env (MONGODB_URI, CLOUDINARY_*, AUTH_SECRET, SMS_API_KEY, NEXT_PUBLIC_SITE_URL=https://domain) → done. Needs client's Vercel login.
 - Post-launch TODOs: real BD SMS gateway (SMS_API_KEY), Cloudinary real photos, walk-in payment-taken → auto-bill, calendar drag-reschedule, slotDuration/maxSerials driving slot generation.
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper
 - [ ] Then P3 Booking (`Booking Flow.dc.html`), P4 Auth, P5 Portal (`Patient Portal.dc.html`), P6 Admin (`Clinic Admin.dc.html`)
