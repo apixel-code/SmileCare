@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/Button";
 import { WhatsAppIcon, MenuIcon, CloseIcon } from "@/components/ui/icons";
@@ -17,115 +17,144 @@ export function Navbar() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // Close the drawer on route change; lock body scroll while it's open.
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-primary-light bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-[76px] max-w-container items-center justify-between gap-4 px-5 md:px-8">
-        <Logo />
+    // NOTE: backdrop-blur lives on the inner bar, NOT on <header> — a
+    // backdrop-filter ancestor becomes the containing block for position:fixed
+    // children and would trap the drawer inside the 76px-tall header.
+    // z-[80]: the header is a stacking context, so the drawer inside it can
+    // only beat the FloatingWhatsApp bubble (z-[70]) if the header itself does.
+    <header className="sticky top-0 z-[80]">
+      <div className="border-b border-primary-light bg-white/95 backdrop-blur-md">
+        <div className="mx-auto flex h-[76px] max-w-container items-center justify-between gap-4 px-5 md:px-8">
+          <Logo />
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 lg:flex xl:gap-7">
-          {PRIMARY_NAV.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "relative text-[15px] font-medium transition-colors hover:text-primary",
-                isActive(link.href) ? "text-primary" : "text-ink",
-              )}
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-6 lg:flex xl:gap-7">
+            {PRIMARY_NAV.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "relative text-[15px] font-medium transition-colors hover:text-primary",
+                  isActive(link.href) ? "text-primary" : "text-ink",
+                )}
+              >
+                {link.label}
+                {isActive(link.href) && (
+                  <span className="absolute -bottom-[27px] left-0 h-[2px] w-full bg-primary" />
+                )}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <a
+              href={WHATSAPP_URL}
+              aria-label="Chat on WhatsApp"
+              className="hidden h-12 w-12 items-center justify-center rounded-xl border-[1.5px] border-whatsapp bg-white transition-colors hover:bg-[#F0FBF4] xl:flex"
             >
-              {link.label}
-              {isActive(link.href) && (
-                <span className="absolute -bottom-[27px] left-0 h-[2px] w-full bg-primary" />
-              )}
-            </Link>
-          ))}
-        </nav>
+              <WhatsAppIcon color="#25D366" />
+            </a>
+            <Button href={BOOK_HREF} variant="cta" className="hidden sm:inline-flex">
+              Book Appointment
+            </Button>
 
-        <div className="flex items-center gap-3">
-          <a
-            href={WHATSAPP_URL}
-            aria-label="Chat on WhatsApp"
-            className="hidden h-12 w-12 items-center justify-center rounded-xl border-[1.5px] border-whatsapp bg-white transition-colors hover:bg-[#F0FBF4] xl:flex"
-          >
-            <WhatsAppIcon color="#25D366" />
-          </a>
-          <Button href={BOOK_HREF} variant="cta" className="hidden sm:inline-flex">
-            Book Appointment
-          </Button>
-
-          {/* Mobile hamburger */}
-          <button
-            type="button"
-            aria-label="Open menu"
-            aria-expanded={open}
-            onClick={() => setOpen(true)}
-            className="flex h-12 w-12 items-center justify-center rounded-xl text-ink lg:hidden"
-          >
-            <MenuIcon size={26} />
-          </button>
+            {/* Mobile hamburger */}
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={open}
+              onClick={() => setOpen(true)}
+              className="flex h-12 w-12 items-center justify-center rounded-xl text-ink lg:hidden"
+            >
+              <MenuIcon size={26} />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile slide-in drawer */}
-      {open && (
-        <div className="fixed inset-0 z-[60] lg:hidden">
-          <div
-            className="absolute inset-0 bg-ink/40"
-            onClick={() => setOpen(false)}
-            aria-hidden
-          />
-          <div className="absolute right-0 top-0 flex h-full w-[82%] max-w-sm flex-col bg-white p-6 shadow-lift">
-            <div className="flex items-center justify-between">
-              <Logo />
-              <button
-                type="button"
-                aria-label="Close menu"
+      <div
+        className={cn(
+          // above the FloatingWhatsApp bubble (z-[70])
+          "fixed inset-0 z-[80] lg:hidden",
+          open ? "visible" : "invisible",
+        )}
+        aria-hidden={!open}
+      >
+        {/* Backdrop */}
+        <div
+          className={cn(
+            "absolute inset-0 bg-ink/40 transition-opacity duration-300",
+            open ? "opacity-100" : "opacity-0",
+          )}
+          onClick={() => setOpen(false)}
+          aria-hidden
+        />
+        {/* Panel */}
+        <div
+          className={cn(
+            "absolute right-0 top-0 flex h-full w-[82%] max-w-sm flex-col overflow-y-auto bg-white p-6 shadow-lift transition-transform duration-300 ease-smooth",
+            open ? "translate-x-0" : "translate-x-full",
+          )}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
+        >
+          <div className="flex items-center justify-between">
+            <Logo />
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={() => setOpen(false)}
+              className="flex h-12 w-12 items-center justify-center rounded-xl text-ink"
+            >
+              <CloseIcon size={26} />
+            </button>
+          </div>
+          <nav className="mt-8 flex flex-col gap-1">
+            {PRIMARY_NAV.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
                 onClick={() => setOpen(false)}
-                className="flex h-12 w-12 items-center justify-center rounded-xl text-ink"
+                className={cn(
+                  "rounded-xl px-4 py-3 text-[17px] font-medium transition-colors",
+                  isActive(link.href)
+                    ? "bg-primary-light text-primary"
+                    : "text-ink hover:bg-primary-light",
+                )}
               >
-                <CloseIcon size={26} />
-              </button>
-            </div>
-            <nav className="mt-8 flex flex-col gap-1">
-              {PRIMARY_NAV.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "rounded-xl px-4 py-3 text-[17px] font-medium transition-colors",
-                    isActive(link.href)
-                      ? "bg-primary-light text-primary"
-                      : "text-ink hover:bg-primary-light",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-            {/* Booking CTA always visible */}
-            <div className="mt-auto flex flex-col gap-3 pt-6">
-              <Button
-                href={BOOK_HREF}
-                variant="cta"
-                size="lg"
-                className="w-full"
-              >
-                Book Appointment
-              </Button>
-              <Button
-                href={WHATSAPP_URL}
-                external
-                variant="whatsapp"
-                size="lg"
-                className="w-full"
-              >
-                <WhatsAppIcon color="#25D366" /> Chat on WhatsApp
-              </Button>
-            </div>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          {/* Booking CTA always visible */}
+          <div className="mt-auto flex flex-col gap-3 pt-6">
+            <Button href={BOOK_HREF} variant="cta" size="lg" className="w-full">
+              Book Appointment
+            </Button>
+            <Button
+              href={WHATSAPP_URL}
+              external
+              variant="whatsapp"
+              size="lg"
+              className="w-full"
+            >
+              <WhatsAppIcon color="#25D366" /> Chat on WhatsApp
+            </Button>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }
