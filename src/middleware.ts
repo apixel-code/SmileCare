@@ -15,12 +15,27 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const session = token ? await verifySessionToken(token) : null;
 
+  const unauthorized = () =>
+    NextResponse.json(
+      { ok: false, error: { message: "Please log in." } },
+      { status: 401 },
+    );
   const loginUrl = (path: string) => {
     const url = request.nextUrl.clone();
     url.pathname = path;
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   };
+
+  // APIs get 401 JSON; pages get a login redirect.
+  if (pathname.startsWith("/api/portal")) {
+    if (session?.role !== "patient") return unauthorized();
+    return NextResponse.next();
+  }
+  if (pathname.startsWith("/api/admin")) {
+    if (!session || !STAFF_ROLES.includes(session.role)) return unauthorized();
+    return NextResponse.next();
+  }
 
   if (pathname.startsWith("/portal")) {
     if (session?.role !== "patient") return loginUrl("/portal/login");
@@ -36,5 +51,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/portal/:path*", "/admin/:path*"],
+  matcher: [
+    "/portal/:path*",
+    "/admin/:path*",
+    "/api/portal/:path*",
+    "/api/admin/:path*",
+  ],
 };

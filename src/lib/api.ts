@@ -134,6 +134,68 @@ export async function cancelAppointment(
   }
 }
 
+// ── Admin ───────────────────────────────────────────────────────────
+export async function advanceQueue(appointmentId: string): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/admin/queue/advance", { appointmentId });
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not update." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function submitWalkin(input: {
+  name: string;
+  phone: string;
+  age?: string | number;
+  serviceSlug: string;
+  timeSlot: string;
+  paymentTaken?: boolean;
+}): Promise<{ ok: true; serialNo: number } | { ok: false; error: string; fieldErrors?: FieldErrors }> {
+  try {
+    const json = await postJson("/api/admin/walkin", input);
+    if (json?.ok) return { ok: true, serialNo: json.data.serialNo };
+    return {
+      ok: false,
+      error: json?.error?.message ?? "Could not add the walk-in.",
+      fieldErrors: json?.error?.details,
+    };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function saveTooth(input: {
+  patientId: string;
+  toothNo: number;
+  condition: string | null;
+}): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/admin/chart", input);
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not save." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function savePrescription(input: {
+  patientId: string;
+  diagnosis?: string;
+  medicines: Array<{ name: string; dose: string; durationDays: number; afterMeal: boolean }>;
+  advice: string[];
+  nextVisitDate?: string;
+}): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/admin/prescriptions", input);
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not save." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
 // ── Booking ─────────────────────────────────────────────────────────
 export type BookingResult =
   | { ok: true; ticket: BookingTicket }

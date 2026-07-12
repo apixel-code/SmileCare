@@ -37,6 +37,70 @@ export async function createAppointment(
 
 export type AppointmentDoc = IAppointment & { _id: unknown };
 
+/** Full day queue for a doctor, in serial order. */
+export async function findQueueByDate(
+  doctorKey: string,
+  date: string,
+): Promise<AppointmentDoc[]> {
+  await connectDB();
+  return Appointment.find({ doctorKey, date })
+    .sort({ serialNo: 1 })
+    .lean();
+}
+
+/** All active appointments for a doctor in [fromDate, toDate] (calendar). */
+export async function findInRange(
+  doctorKey: string,
+  fromDate: string,
+  toDate: string,
+): Promise<AppointmentDoc[]> {
+  await connectDB();
+  return Appointment.find({
+    doctorKey,
+    date: { $gte: fromDate, $lte: toDate },
+    status: { $ne: "cancelled" },
+  })
+    .sort({ date: 1, timeSlot: 1 })
+    .lean();
+}
+
+/** All appointments for a patient, newest first (admin history tab). */
+export async function findAllByPatient(
+  patientId: string,
+  limit = 50,
+): Promise<AppointmentDoc[]> {
+  await connectDB();
+  return Appointment.find({ patient: patientId })
+    .sort({ date: -1, serialNo: -1 })
+    .limit(limit)
+    .lean();
+}
+
+/**
+ * Advance queue status: waiting → in_chamber → completed.
+ * Only one patient in the chamber at a time (others revert to waiting).
+ */
+export async function advanceAppointment(
+  appointmentId: string,
+): Promise<{ ok: boolean; newStatus?: string }> {
+  await connectDB();
+  const appt = await Appointment.findById(appointmentId);
+  if (!appt) return { ok: false };
+  if (appt.status === "waiting") {
+    await Appointment.updateMany(
+      { doctorKey: appt.doctorKey, date: appt.date, status: "in_chamber" },
+      { $set: { status: "waiting" } },
+    );
+    appt.status = "in_chamber";
+  } else if (appt.status === "in_chamber") {
+    appt.status = "completed";
+  } else {
+    return { ok: false };
+  }
+  await appt.save();
+  return { ok: true, newStatus: appt.status };
+}
+
 /** Upcoming (waiting) appointments for a patient, soonest first. */
 export async function findUpcomingByPatient(
   patientId: string,

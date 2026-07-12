@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## Current Phase
-P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · **P5 — Patient Portal ✅ COMPLETE** · Next: P6 Admin PMS
+P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · P5 ✅ · **P6 — Admin PMS ✅ COMPLETE** · Next: P7 Payments/Settings/Reports
 
 ## Done
 ### P1 Setup
@@ -119,9 +119,18 @@ P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · **P5 — Patient Portal ✅ COMPLETE** �
 - `POST /api/portal/cancel` — session-checked, only own+future+waiting appointments (repo-level filter). New reusable `StatusPill` (all appointment+payment states, admin reuses in P6).
 - **Verified E2E (Playwright):** booked self+family via API → OTP login → dashboard showed real serial #1 card ✓ → family switcher → Arif's view ✓ → prescription letterhead rendered from DB ✓ → Cancel → empty state ✓. All test data cleaned.
 
+### P6 — Admin PMS ✅ (real data, staff-gated)
+- **AdminShell** (Clinic Admin design): dark ink sidebar (active teal; Payments/Reports/Settings = "Soon" for P7), user footer, topbar (screen title + Dhaka date + "+ Add Walk-in Patient" + logout), mobile pill-nav below lg. Shell lives at `(admin)/admin/(shell)/layout.tsx` so `/admin/login` stays chrome-free.
+- **Today's Queue `/admin`:** stat chips (Total/Completed/Waiting/No-show) + table — big serial, 🌐/🚶 source icon, patient link, StatusPill, ONE advancing action (Call In → Mark Complete; repo enforces single in-chamber by reverting others), in-chamber row teal-edged. Empty state included.
+- **Walk-in modal** (global, toast on success): name/phone/age/service/slot + payment-taken toggle (accepted, recording TODO(P7)); capacity-checked; atomic serial; appends to today's queue.
+- **Patients `/admin/patients`:** search (name/phone, regex-escaped) + paginated table with allergy badges. **Profile `/admin/patients/[id]`:** header (avatar, ALLERGY badge, age/phone/blood/SC-ID) + 4 tabs: History (visits + StatusPill) · **Dental Chart** (32-tooth grid, click cycles healthy→cavity→filled→extracted→crown, optimistic + per-click save, `DentalChartEntry` unique patient+tooth) · **Prescriptions** (writer: medicine suggestions from `lib/medicines.ts`, dose chips 1+0+1 etc, after/before-meal toggle, duration, advice lines, diagnosis → saves REAL Prescription that the patient portal reads; previous list below) · Payments (summary + AMOUNT DUE box, recording lands P7).
+- **Calendar `/admin/calendar`:** week view (6 open days, Fri skipped), rows = SLOT_TIMES, real color-coded cells (confirmed teal / completed gray / no-show coral), prev/next week (?w=), doctor chip. Drag-reschedule deferred.
+- **Backend:** middleware now also guards `/api/admin/*` + `/api/portal/*` (401 JSON) — role logic stays in ONE place. APIs: queue/advance, walkin, chart, prescriptions (shared Zod in `lib/validators/admin.ts`). Repos: findQueueByDate/findInRange/findAllByPatient/advanceAppointment, searchPatients/findPatientById, dentalchart get/upsert, createPrescription. `displayPhone()` helper (fixed +88→ display bug).
+- **Verified E2E (Playwright, staff login → real flows):** queue rows ✓ walk-in→serial #3 + toast ✓ Call In→In Chamber (teal row) ✓ Mark Complete ✓ search→profile ✓ tooth 14→Filled persisted ✓ prescription saved (portal-readable, verified in DB) ✓ calendar shows walk-in ✓. All test data cleaned.
+
 ## Next Up
-- [ ] **P6 Admin PMS** (`Clinic Admin.dc.html`) — AdminShell (teal sidebar), Today's Queue (real appointments: stat chips + advancing actions Call In→Complete), patients + dental chart, calendar, walk-in modal. Doctor writes prescriptions (portal already reads them).
-- [ ] P7 Payments/Settings/Reports, P8 SEO/perf/deploy.
+- [ ] **P7 Payments/Settings/Reports** — payments screen (stat cards, filter tabs, collect-payment modal + transactions), record-payment from patient profile + walk-in toggle, ClinicSettings model + editor, reports (aggregation pipelines).
+- [ ] P8 SEO (metadata/schema.org/sitemap) + performance + deploy.
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper
 - [ ] Then P3 Booking (`Booking Flow.dc.html`), P4 Auth, P5 Portal (`Patient Portal.dc.html`), P6 Admin (`Clinic Admin.dc.html`)
 
