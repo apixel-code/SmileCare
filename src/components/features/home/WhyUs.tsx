@@ -2,6 +2,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
 import { WHY_CARDS } from "@/lib/demo-data";
+import { stagger } from "@/lib/motion";
 
 /** "Why Patients Choose Us" — 4 reassurance cards. */
 export function WhyUs() {
@@ -17,7 +18,7 @@ export function WhyUs() {
       </Reveal>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {WHY_CARDS.map((card, i) => (
-          <Reveal key={card.title} variant="up" delay={i * 100} className="h-full">
+          <Reveal key={card.title} variant="up" delay={stagger(i, 4)} className="h-full">
             <Card hoverable className="h-full p-7">
               <span className="mb-[18px] flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-primary-light font-heading text-[19px] font-extrabold text-primary">
                 {card.glyph}

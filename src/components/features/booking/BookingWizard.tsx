@@ -142,8 +142,11 @@ export function BookingWizard() {
             <Stepper steps={STEP_LABELS} current={step} />
           </div>
 
-          {/* Step content */}
-          <div className="px-6 py-8 md:px-10 md:py-9">
+          {/* Step content — keyed by step so each change re-animates in rhythm */}
+          <div
+            key={step}
+            className="animate-fade-up-fast px-6 py-8 motion-reduce:animate-none md:px-10 md:py-9"
+          >
             {step === 1 && (
               <ServiceStep selected={serviceSlug} onPick={setServiceSlug} />
             )}

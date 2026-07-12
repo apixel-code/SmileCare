@@ -7,6 +7,7 @@ import { CheckIcon } from "@/components/ui/icons";
 import { DOCTOR } from "@/lib/constants";
 import { BOOK_HREF } from "@/lib/navigation";
 import { DOCTOR_PORTRAIT } from "@/lib/demo-data";
+import { STAGGER_MS } from "@/lib/motion";
 
 /** Doctor profile hero — portrait + BMDC badge (left), bio + CTAs (right). */
 export function DoctorHero() {
@@ -39,7 +40,7 @@ export function DoctorHero() {
           </div>
         </Reveal>
 
-        <Reveal variant="right" delay={120}>
+        <Reveal variant="right" delay={STAGGER_MS}>
           <div className="mb-4 inline-flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-primary">
             <span className="inline-block h-[2px] w-7 bg-primary" />
             {DOCTOR.title}

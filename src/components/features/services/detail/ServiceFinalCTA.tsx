@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import { DOCTOR, WHATSAPP_URL } from "@/lib/constants";
 import { DOCTOR_IMAGE } from "@/lib/demo-data";
+import { STAGGER_MS } from "@/lib/motion";
 
 /** Doctor credibility strip + final booking CTA on brand teal. */
 export function ServiceFinalCTA() {
@@ -35,7 +36,7 @@ export function ServiceFinalCTA() {
           </div>
         </Reveal>
 
-        <Reveal variant="up" delay={120} className="text-center">
+        <Reveal variant="up" delay={STAGGER_MS} className="text-center">
           <div className="mb-[18px] font-heading text-[24px] font-extrabold leading-[1.4] text-white md:text-[26px]">
             Book Your Appointment Today
           </div>

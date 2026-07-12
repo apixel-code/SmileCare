@@ -6,6 +6,7 @@ import { ProblemSolutionCard } from "@/components/features/problems/ProblemSolut
 import { MythVsFact } from "@/components/features/problems/MythVsFact";
 import { EmergencyStrip } from "@/components/features/problems/EmergencyStrip";
 import { PROBLEMS } from "@/lib/demo-data";
+import { stagger } from "@/lib/motion";
 
 export const metadata: Metadata = {
   title: "Problems We Solve",
@@ -33,7 +34,7 @@ export default function ProblemsPage() {
             <Reveal
               key={item.pain}
               variant="up"
-              delay={(i % 2) * 100}
+              delay={stagger(i, 2)}
               className="h-full"
             >
               <ProblemSolutionCard item={item} />

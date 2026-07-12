@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { DOCTOR_EDUCATION } from "@/lib/demo-data";
+import { stagger } from "@/lib/motion";
 
 /** Vertical education & training timeline. */
 export function EducationTimeline() {
@@ -20,7 +21,7 @@ export function EducationTimeline() {
             <Reveal
               key={ed.year}
               variant="up"
-              delay={i * 90}
+              delay={stagger(i)}
               className="grid grid-cols-[64px_32px_1fr] md:grid-cols-[100px_40px_1fr]"
             >
               <div className="pb-9 pt-1 text-right font-heading text-[15px] font-extrabold text-primary md:text-[16px]">

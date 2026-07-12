@@ -16,7 +16,7 @@ export function Hero() {
         fill
         priority
         sizes="100vw"
-        className="object-cover"
+        className="animate-hero-zoom object-cover motion-reduce:animate-none"
       />
       <div
         className="absolute inset-0 bg-gradient-to-r from-[rgba(16,38,52,0.96)] via-[rgba(16,52,58,0.80)] to-transparent"

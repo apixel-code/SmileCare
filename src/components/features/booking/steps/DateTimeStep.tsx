@@ -69,7 +69,7 @@ export function DateTimeStep({
 
       {/* Scarcity */}
       {selectedDate && !slotsLoading && (
-        <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-cta/35 bg-[#FFF3EF] px-4 py-3">
+        <div className="mt-4 flex animate-fade-in items-center gap-2.5 rounded-xl border border-cta/35 bg-[#FFF3EF] px-4 py-3 motion-reduce:animate-none">
           <span className="inline-block h-2 w-2 flex-none rounded-full bg-cta" />
           <span className="text-[13.5px] font-medium text-ink">
             {scarcityText}
@@ -87,7 +87,7 @@ export function DateTimeStep({
         ) : slotsLoading ? (
           <p className="text-[14px] text-ink-muted">Loading times…</p>
         ) : (
-          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+          <div className="grid animate-fade-in grid-cols-3 gap-2.5 motion-reduce:animate-none sm:grid-cols-4">
             {slots.map((s) => {
               const sel = selectedSlot === s.time;
               return (

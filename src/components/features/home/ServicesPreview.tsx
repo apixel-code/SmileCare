@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { ServiceCard } from "@/components/features/services/ServiceCard";
 import { SERVICES } from "@/lib/demo-data";
+import { stagger } from "@/lib/motion";
 
 /** Services preview band (sky background) — 6 cards + "View all" link. */
 export function ServicesPreview() {
@@ -27,7 +28,7 @@ export function ServicesPreview() {
         </Reveal>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.slice(0, 6).map((svc, i) => (
-            <Reveal key={svc.slug} variant="up" delay={(i % 3) * 100} className="h-full">
+            <Reveal key={svc.slug} variant="up" delay={stagger(i, 3)} className="h-full">
               <ServiceCard service={svc} />
             </Reveal>
           ))}

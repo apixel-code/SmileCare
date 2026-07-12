@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { BOOK_HREF } from "@/lib/navigation";
 import { DOCTOR_SCHEDULE } from "@/lib/demo-data";
+import { STAGGER_MS } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 const TONE: Record<string, string> = {
@@ -49,7 +50,7 @@ export function ScheduleCTA() {
           </Card>
         </Reveal>
 
-        <Reveal variant="up" delay={120}>
+        <Reveal variant="up" delay={STAGGER_MS}>
           <h2 className="mb-3.5 text-[28px] font-extrabold text-ink md:text-[32px]">
             Book an Appointment with the Doctor
           </h2>

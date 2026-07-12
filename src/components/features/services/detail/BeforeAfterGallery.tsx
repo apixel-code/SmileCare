@@ -2,6 +2,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
 import type { ServiceDetail } from "@/lib/service-details";
+import { stagger } from "@/lib/motion";
 
 /**
  * Before/after transformations. Uses styled placeholders (real patient photos
@@ -21,7 +22,7 @@ export function BeforeAfterGallery({ service }: { service: ServiceDetail }) {
         </Reveal>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {service.gallery.map((pair, i) => (
-            <Reveal key={pair.caption} variant="up" delay={i * 100} className="h-full">
+            <Reveal key={pair.caption} variant="up" delay={stagger(i, 3)} className="h-full">
               <Card className="h-full overflow-hidden p-0">
                 <div className="grid grid-cols-2">
                   <GalleryPane label="BEFORE" labelClass="bg-ink/85" />

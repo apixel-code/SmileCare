@@ -2,6 +2,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
 import type { ServiceDetail } from "@/lib/service-details";
+import { stagger } from "@/lib/motion";
 
 /** "How the treatment works" — 4-step timeline with PAINLESS labels. */
 export function TreatmentSteps({ service }: { service: ServiceDetail }) {
@@ -18,7 +19,7 @@ export function TreatmentSteps({ service }: { service: ServiceDetail }) {
         </Reveal>
         <div className="grid gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
           {service.steps.map((step, i) => (
-            <Reveal key={step.n} variant="up" delay={i * 100} className="h-full">
+            <Reveal key={step.n} variant="up" delay={stagger(i, 4)} className="h-full">
               <Card className="h-full p-[26px]">
                 <div className="mb-4 flex items-center justify-between">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary font-heading text-[17px] font-extrabold text-white">

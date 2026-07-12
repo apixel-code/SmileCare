@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ClockIcon } from "@/components/ui/icons";
 import { DOCTOR, CLINIC } from "@/lib/constants";
 import { DOCTOR_IMAGE } from "@/lib/demo-data";
+import { STAGGER_MS } from "@/lib/motion";
 
 /** Doctor spotlight with portrait, bio, chamber hours and profile CTA. */
 export function DoctorSpotlight() {
@@ -26,7 +27,7 @@ export function DoctorSpotlight() {
             BMDC Registered
           </div>
         </Reveal>
-        <Reveal variant="right" delay={120}>
+        <Reveal variant="right" delay={STAGGER_MS}>
           <div className="mb-3.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-primary">
             Meet Your Doctor
           </div>

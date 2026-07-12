@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { CLINIC } from "@/lib/constants";
 import { BOOK_HREF } from "@/lib/navigation";
 import { REVIEWS } from "@/lib/demo-data";
+import { stagger } from "@/lib/motion";
 
 /** Google-review-style testimonials + booking CTA band. */
 export function Testimonials() {
@@ -26,7 +27,7 @@ export function Testimonials() {
 
         <div className="grid gap-5 md:grid-cols-3">
           {REVIEWS.map((rev, i) => (
-            <Reveal key={rev.name} variant="up" delay={i * 100} className="h-full">
+            <Reveal key={rev.name} variant="up" delay={stagger(i, 3)} className="h-full">
               <Card hoverable className="flex h-full flex-col gap-3.5 p-6">
               <div className="flex items-center justify-between">
                 <span className="tracking-[3px] text-[16px] text-[#F5A623]">

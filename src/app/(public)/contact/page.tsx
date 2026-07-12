@@ -6,6 +6,7 @@ import { MapPlaceholder } from "@/components/ui/MapPlaceholder";
 import { ContactInfo } from "@/components/features/contact/ContactInfo";
 import { ContactForm } from "@/components/features/contact/ContactForm";
 import { CLINIC } from "@/lib/constants";
+import { STAGGER_MS } from "@/lib/motion";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -26,7 +27,7 @@ export default function ContactPage() {
           <Reveal variant="up">
             <ContactInfo />
           </Reveal>
-          <Reveal variant="up" delay={100}>
+          <Reveal variant="up" delay={STAGGER_MS}>
             <ContactForm />
           </Reveal>
         </div>

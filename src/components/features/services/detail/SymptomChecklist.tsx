@@ -3,6 +3,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { CheckIcon } from "@/components/ui/icons";
 import { WHATSAPP_URL } from "@/lib/constants";
 import type { ServiceDetail } from "@/lib/service-details";
+import { stagger } from "@/lib/motion";
 
 /** "Are you experiencing these symptoms?" — intro + checklist of signs. */
 export function SymptomChecklist({ service }: { service: ServiceDetail }) {
@@ -19,7 +20,7 @@ export function SymptomChecklist({ service }: { service: ServiceDetail }) {
         </Reveal>
         <div className="flex flex-col gap-3">
           {service.symptoms.map((s, i) => (
-            <Reveal key={s} variant="up" delay={i * 80}>
+            <Reveal key={s} variant="up" delay={stagger(i)}>
               <div className="flex items-center gap-4 rounded-xl border border-primary-light bg-white px-5 py-4 shadow-[0_2px_10px_rgba(26,43,60,0.04)]">
                 <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-primary-light text-primary">
                   <CheckIcon size={16} />

@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ServiceGridCard } from "@/components/features/services/ServiceGridCard";
 import { ServicesWhatsAppBar } from "@/components/features/services/ServicesWhatsAppBar";
 import { SERVICES } from "@/lib/demo-data";
+import { stagger } from "@/lib/motion";
 
 export const metadata: Metadata = {
   title: "Our Dental Services",
@@ -27,7 +28,7 @@ export default function ServicesPage() {
             <Reveal
               key={svc.slug}
               variant="up"
-              delay={(i % 3) * 90}
+              delay={stagger(i, 3)}
               className="h-full"
             >
               <ServiceGridCard service={svc} />

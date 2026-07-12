@@ -38,6 +38,13 @@ P1 ✅ · P2 Public pages ✅ · **P3 — Booking flow ✅ COMPLETE** (DB-backed
 - **Rhythmic reveals applied:** Hero (staggered on-load intro), TrustStrip, WhyUs, ServicesPreview, DoctorSpotlight (image scale + floating badge), Testimonials, LocationSection, Services grid (per-row stagger), PageHero intro. Grid cards use `h-full` so staggered `Reveal` wrappers keep equal heights.
 - Typecheck + build clean (0 warnings); `/`, `/services`, `/blog` all static + 200.
 
+### Animation rhythm pass (site-wide) ✅
+- ONE tempo everywhere: `STAGGER_MS = 100` + `stagger(i, wrap)` helper in `lib/motion.ts` — wrap = column count so late-scrolling items never queue long delays (index delays apply AFTER intersection). ALL ad-hoc delays (80/90/120ms) replaced; grep-verified zero stray `delay={n}`.
+- Verified beats via computed styles: WhyUs 0/100/200/300, Services rows 0/100/200 cycling.
+- Booking wizard steps now animate (`key={step}` + `fade-up-fast` 0.45s); slot grid + scarcity banner fade in after fetch.
+- Hero images (Home/Service detail/Problems) get a slow 1.6s `hero-zoom` settle; accordion fade tightened to 0.4s; `scroll-behavior: smooth` (reduced-motion aware).
+- Everything still respects `prefers-reduced-motion`.
+
 ## Decisions Log
 - Stack locked: Next.js 15 App Router, TS strict, MongoDB/Mongoose, Tailwind, Yarn, Cloudinary, Zod.
 - **Tailwind v3 over v4**: design-system.md mandates tokens in `tailwind.config.ts`; create-next-app now ships v4 (CSS `@theme`) — downgraded to v3 to match the spec + "no custom CSS files" rule.

@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
 import { TEAM } from "@/lib/demo-data";
+import { stagger } from "@/lib/motion";
 
 /** Team member cards. */
 export function TeamGrid() {
@@ -20,7 +21,7 @@ export function TeamGrid() {
         </Reveal>
         <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
           {TEAM.map((tm, i) => (
-            <Reveal key={tm.name} variant="up" delay={(i % 4) * 90} className="h-full">
+            <Reveal key={tm.name} variant="up" delay={stagger(i, 4)} className="h-full">
               <Card hoverable className="h-full overflow-hidden p-0 text-center">
                 <div className="relative h-[200px] w-full bg-[#DCE9EF] md:h-[220px]">
                   <Image

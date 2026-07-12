@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { MYTHS } from "@/lib/demo-data";
+import { stagger } from "@/lib/motion";
 
 /** Myth vs Fact — dispels common fears that delay treatment. */
 export function MythVsFact() {
@@ -17,7 +18,7 @@ export function MythVsFact() {
         </Reveal>
         <div className="flex flex-col gap-4">
           {MYTHS.map((m, i) => (
-            <Reveal key={m.myth} variant="up" delay={i * 80}>
+            <Reveal key={m.myth} variant="up" delay={stagger(i, 2)}>
               <div className="grid grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-soft sm:grid-cols-2">
                 <div className="border-b border-primary-light px-[26px] py-6 sm:border-b-0 sm:border-r">
                   <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#F4F6F8] px-3.5 py-[5px] font-heading text-[12px] font-bold tracking-[0.06em] text-ink-muted">

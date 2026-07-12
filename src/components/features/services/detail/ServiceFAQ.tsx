@@ -1,6 +1,7 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { Accordion } from "@/components/ui/Accordion";
 import type { ServiceDetail } from "@/lib/service-details";
+import { STAGGER_MS } from "@/lib/motion";
 
 /** "Questions patients ask us" — answer-first FAQ accordion (SEO/AEO). */
 export function ServiceFAQ({ service }: { service: ServiceDetail }) {
@@ -14,7 +15,7 @@ export function ServiceFAQ({ service }: { service: ServiceDetail }) {
           Honest answers, in plain language.
         </p>
       </Reveal>
-      <Reveal variant="up" delay={80}>
+      <Reveal variant="up" delay={STAGGER_MS}>
         <Accordion items={service.faqs} name={`faq-${service.slug}`} />
       </Reveal>
     </section>
