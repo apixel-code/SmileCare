@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## Current Phase
-P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · P5 ✅ · **P6 — Admin PMS ✅ COMPLETE** · Next: P7 Payments/Settings/Reports
+P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · P5 ✅ · P6 ✅ · **P7 — Payments/Settings/Reports ✅ COMPLETE** · Next: P8 SEO/perf/deploy
 
 ## Done
 ### P1 Setup
@@ -128,9 +128,18 @@ P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · P5 ✅ · **P6 — Admin PMS ✅ COMPLET
 - **Backend:** middleware now also guards `/api/admin/*` + `/api/portal/*` (401 JSON) — role logic stays in ONE place. APIs: queue/advance, walkin, chart, prescriptions (shared Zod in `lib/validators/admin.ts`). Repos: findQueueByDate/findInRange/findAllByPatient/advanceAppointment, searchPatients/findPatientById, dentalchart get/upsert, createPrescription. `displayPhone()` helper (fixed +88→ display bug).
 - **Verified E2E (Playwright, staff login → real flows):** queue rows ✓ walk-in→serial #3 + toast ✓ Call In→In Chamber (teal row) ✓ Mark Complete ✓ search→profile ✓ tooth 14→Filled persisted ✓ prescription saved (portal-readable, verified in DB) ✓ calendar shows walk-in ✓. All test data cleaned.
 
+### P7 — Payments / Settings / Reports ✅
+- **Payments `/admin/payments`:** stat cards (Collected Today/Month, Total Due in danger, Pending Bills) → filter tabs All/Paid/Due/Partial (client) → table (method badge, StatusPill, due in red) with **Collect Payment modal** (amount + method chips → transaction pushed, paid/due/status recomputed in repo), **View Receipt modal** (transaction list + total), **SMS reminder** ✉ (template-driven, stub gateway).
+- **Bills:** "+ New Bill" on patient profile Payments tab (label/total/paid-now/method → Payment doc; status auto paid/partial/due). Collections then happen on the Payments screen.
+- **Settings `/admin/settings`** (admin-only — non-admins see a notice; API 403s): Clinic Profile, **Chamber Schedule editor** (per-day open/close + on/off toggles), Appointment Settings (slot duration, max serials/day, **online booking toggle**), **SMS templates** ({patient_name}/{serial_no}/{time} chips), **Staff & Access** (list, active toggles w/ can't-deactivate-self guard, Add Staff modal → scrypt hash). **Sticky Save bar** with dirty tracking.
+- **Reports `/admin/reports`:** all via **aggregation pipelines** — KPI cards (patients this month distinct, revenue from transactions, total due, new patients), Popular Services bars, New-vs-Returning donut ($lookup on patient createdAt), 6-month Revenue Trend line (pure SVG per design; empty-month fill).
+- **Settings actually wired into booking:** `createBooking` now checks `onlineBookingEnabled` (verified: booking BLOCKED when off), `maxSerialsPerDay` (DAY_FULL), and sends the confirmation SMS from the editable template. ClinicSettings doc auto-creates with sensible defaults on first read.
+- New: ClinicSettings model + settings.repository, payments.service, reports.service, staff list/toggle repo fns, P7 Zod schemas, client API helpers.
+- **Verified E2E (Playwright as admin):** bill ৳5,500/paid ৳3,000 (bKash, partial) → payments screen due ৳2,500 → collect cash → Paid + receipt modal ✓ reports render ✓ settings save toast ✓ online-booking OFF blocks /api/book ✓ (restored) staff added ✓. Test data cleaned (settings doc kept — it's the live config now).
+
 ## Next Up
-- [ ] **P7 Payments/Settings/Reports** — payments screen (stat cards, filter tabs, collect-payment modal + transactions), record-payment from patient profile + walk-in toggle, ClinicSettings model + editor, reports (aggregation pipelines).
-- [ ] P8 SEO (metadata/schema.org/sitemap) + performance + deploy.
+- [ ] **P8 — SEO + performance + deploy**: metadata polish, schema.org LocalBusiness/Dentist JSON-LD, sitemap.xml + robots, OG images, Lighthouse pass, Vercel deploy (env vars from .env.local).
+- Post-launch TODOs: real BD SMS gateway (SMS_API_KEY), Cloudinary real photos, walk-in payment-taken → auto-bill, calendar drag-reschedule, slotDuration/maxSerials driving slot generation.
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper
 - [ ] Then P3 Booking (`Booking Flow.dc.html`), P4 Auth, P5 Portal (`Patient Portal.dc.html`), P6 Admin (`Clinic Admin.dc.html`)
 

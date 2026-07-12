@@ -9,9 +9,9 @@ const NAV = [
   { href: "/admin", label: "Today's Queue", icon: "🕐", exact: true },
   { href: "/admin/patients", label: "Patients", icon: "👤" },
   { href: "/admin/calendar", label: "Appointment Calendar", icon: "🗓" },
-  { href: null, label: "Payments", icon: "৳" },
-  { href: null, label: "Reports", icon: "📊" },
-  { href: null, label: "Settings", icon: "⚙" },
+  { href: "/admin/payments", label: "Payments", icon: "৳" },
+  { href: "/admin/reports", label: "Reports", icon: "📊" },
+  { href: "/admin/settings", label: "Settings", icon: "⚙" },
 ] as const;
 
 /** Dark sidebar — Clinic Manager navigation (P7 items marked Soon). */
@@ -42,21 +42,6 @@ export function AdminSidebar({
 
       <nav className="flex flex-col gap-1 p-3">
         {NAV.map((item) => {
-          if (!item.href) {
-            return (
-              <span
-                key={item.label}
-                className="flex min-h-[48px] cursor-not-allowed items-center gap-3 rounded-[11px] px-3.5 font-heading text-[14px] font-bold text-white/30"
-                title="Coming soon"
-              >
-                <span className="w-[22px] text-center text-[16px]">{item.icon}</span>
-                {item.label}
-                <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/50">
-                  Soon
-                </span>
-              </span>
-            );
-          }
           const active =
             "exact" in item && item.exact
               ? pathname === item.href
