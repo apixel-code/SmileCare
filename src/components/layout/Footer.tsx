@@ -2,23 +2,31 @@ import Link from "next/link";
 import { Logo } from "./Logo";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import { PRIMARY_NAV, FOOTER_SERVICE_LINKS, BOOK_HREF } from "@/lib/navigation";
-import { CLINIC, WHATSAPP_URL, TEL_URL } from "@/lib/constants";
+import { CLINIC, WHATSAPP_URL } from "@/lib/constants";
 
 const year = new Date().getFullYear();
 
-export function Footer() {
+export function Footer({
+  clinicName = CLINIC.shortName,
+  address = CLINIC.address,
+  phone = CLINIC.phoneDisplay,
+}: {
+  clinicName?: string;
+  address?: string;
+  phone?: string;
+}) {
   return (
     <footer className="bg-ink text-white">
       <div className="mx-auto max-w-container px-5 py-14 md:px-8">
         <div className="grid gap-10 border-b border-white/10 pb-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           {/* About */}
           <div>
-            <Logo onDark />
+            <Logo onDark name={clinicName} />
             <p className="mt-4 max-w-[300px] text-sm leading-relaxed text-white/65">
               {CLINIC.about}
             </p>
             <p className="mt-3 max-w-[300px] text-[13px] leading-relaxed text-white/50">
-              {CLINIC.address}
+              {address}
             </p>
           </div>
 
@@ -50,10 +58,10 @@ export function Footer() {
                 Emergency Hotline — 24/7
               </div>
               <a
-                href={TEL_URL}
+                href={`tel:${phone.replace(/[\s-]/g, "")}`}
                 className="font-heading text-[22px] font-extrabold text-white transition-colors hover:text-cta"
               >
-                {CLINIC.phoneDisplay}
+                {phone}
               </a>
             </div>
             <div className="flex flex-col gap-3">

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE, verifySessionToken } from "@/server/auth/session";
+import { canAccessAdminPath, canAccessAdminApi } from "@/lib/permissions";
 
 const STAFF_ROLES = ["admin", "doctor", "receptionist"];
 
@@ -34,6 +35,12 @@ export async function middleware(request: NextRequest) {
   }
   if (pathname.startsWith("/api/admin")) {
     if (!session || !STAFF_ROLES.includes(session.role)) return unauthorized();
+    if (!canAccessAdminApi(session.role, pathname)) {
+      return NextResponse.json(
+        { ok: false, error: { message: "Your role doesn't have access to this." } },
+        { status: 403 },
+      );
+    }
     return NextResponse.next();
   }
 
@@ -44,6 +51,13 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith("/admin")) {
     if (!session || !STAFF_ROLES.includes(session.role)) {
       return loginUrl("/admin/login");
+    }
+    // Role-restricted screens (matrix in lib/permissions.ts) → back to queue.
+    if (!canAccessAdminPath(session.role, pathname)) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin";
+      url.search = "";
+      return NextResponse.redirect(url);
     }
   }
 

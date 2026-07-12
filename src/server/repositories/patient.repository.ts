@@ -55,6 +55,24 @@ export async function searchPatients(
   };
 }
 
+/** Delete a patient and every record that belongs to them (cascade). */
+export async function deletePatientCascade(id: string): Promise<void> {
+  await connectDB();
+  const { Appointment } = await import("@/server/models/Appointment");
+  const { Payment } = await import("@/server/models/Payment");
+  const { Prescription } = await import("@/server/models/Prescription");
+  const { DentalChartEntry } = await import(
+    "@/server/models/DentalChartEntry"
+  );
+  await Promise.all([
+    Appointment.deleteMany({ patient: id }),
+    Payment.deleteMany({ patient: id }),
+    Prescription.deleteMany({ patient: id }),
+    DentalChartEntry.deleteMany({ patient: id }),
+  ]);
+  await Patient.deleteOne({ _id: id });
+}
+
 export async function findPatientById(
   id: string,
 ): Promise<PatientListItem | null> {

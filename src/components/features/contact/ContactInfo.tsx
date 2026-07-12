@@ -1,9 +1,12 @@
 import { Card } from "@/components/ui/Card";
 import { PhoneIcon, WhatsAppIcon, ClockIcon } from "@/components/ui/icons";
-import { CLINIC, TEL_URL, WHATSAPP_URL } from "@/lib/constants";
+import { CLINIC, WHATSAPP_URL } from "@/lib/constants";
+import { getPublicClinicInfo } from "@/server/repositories/settings.repository";
 
 /** Clinic contact details — address, call, WhatsApp, chamber hours. */
-export function ContactInfo() {
+export async function ContactInfo() {
+  const clinic = await getPublicClinicInfo();
+  const telHref = `tel:${clinic.phoneDisplay.replace(/[\s-]/g, "")}`;
   return (
     <div className="flex flex-col gap-4">
       <Card className="px-6 py-[22px]">
@@ -11,11 +14,11 @@ export function ContactInfo() {
           Address
         </div>
         <div className="text-[15.5px] leading-[1.7] text-ink">
-          {CLINIC.address}
+          {clinic.address}
         </div>
       </Card>
 
-      <a href={TEL_URL}>
+      <a href={telHref}>
         <Card hoverable className="flex items-center gap-4 px-6 py-[22px]">
           <IconTile>
             <PhoneIcon size={20} />
@@ -25,7 +28,7 @@ export function ContactInfo() {
               Call Now
             </div>
             <div className="font-heading text-[19px] font-extrabold text-ink">
-              {CLINIC.phoneDisplay}
+              {clinic.phoneDisplay}
             </div>
           </div>
         </Card>

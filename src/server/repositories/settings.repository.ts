@@ -1,9 +1,13 @@
+import { unstable_cache, revalidateTag } from "next/cache";
 import { connectDB } from "@/server/db";
 import {
   ClinicSettings,
   type IClinicSettings,
 } from "@/server/models/ClinicSettings";
 import { CLINIC } from "@/lib/constants";
+
+/** Cache tag — public pages read cached settings; admin save busts it. */
+export const SETTINGS_TAG = "clinic-settings";
 
 export type SettingsDoc = IClinicSettings & { _id: unknown };
 
@@ -44,4 +48,31 @@ export async function updateSettings(
 ): Promise<void> {
   await connectDB();
   await ClinicSettings.findOneAndUpdate({}, { $set: patch }, { upsert: true });
+  // Public pages re-fetch the new clinic profile on next request.
+  revalidateTag(SETTINGS_TAG);
 }
+
+export interface PublicClinicInfo {
+  name: string;
+  address: string;
+  phoneDisplay: string;
+  email: string;
+}
+
+/**
+ * Cached public clinic profile — drives the marketing site's name/address/phone.
+ * Revalidated instantly whenever settings are saved (SETTINGS_TAG).
+ */
+export const getPublicClinicInfo = unstable_cache(
+  async (): Promise<PublicClinicInfo> => {
+    const s = await getSettings();
+    return {
+      name: s.clinicName,
+      address: s.address,
+      phoneDisplay: s.phones[0] ?? CLINIC.phoneDisplay,
+      email: s.email ?? CLINIC.email,
+    };
+  },
+  ["public-clinic-info"],
+  { tags: [SETTINGS_TAG] },
+);

@@ -11,6 +11,7 @@ import {
   upsertPatient,
   findPatientById,
   searchPatients,
+  deletePatientCascade,
   type PatientListItem,
 } from "@/server/repositories/patient.repository";
 import { findPaymentsByPatient } from "@/server/repositories/payment.repository";
@@ -20,13 +21,13 @@ import {
 } from "@/server/repositories/prescription.repository";
 import { nextSeq } from "@/server/repositories/counter.repository";
 import {
-  DEFAULT_DOCTOR,
   SLOT_TIMES,
   SLOT_CAPACITY,
   serviceNameFromSlug,
   ticketDateLabel,
 } from "@/lib/booking";
 import { todayKey } from "./portal.service";
+import { resolveDoctor } from "./doctors.service";
 import { normalizePhone } from "@/lib/validators/booking";
 import { displayPhone } from "@/lib/utils";
 
@@ -43,6 +44,7 @@ export interface QueueRow {
   time: string;
   status: string;
   source: string;
+  doctorName: string;
 }
 
 export interface QueueData {
@@ -63,12 +65,13 @@ function toRow(a: AppointmentDoc): QueueRow {
     time: a.timeSlot,
     status: a.status,
     source: a.source,
+    doctorName: a.doctorName || "",
   };
 }
 
-export async function getTodayQueue(): Promise<QueueData> {
+export async function getTodayQueue(doctorKey?: string): Promise<QueueData> {
   const date = todayKey();
-  const docs = await findQueueByDate(DEFAULT_DOCTOR.key, date);
+  const docs = await findQueueByDate(date, doctorKey);
   const rows = docs.filter((d) => d.status !== "cancelled").map(toRow);
   return {
     date,
@@ -94,7 +97,8 @@ export interface WalkinInput {
   age?: number;
   serviceSlug: string;
   timeSlot: string;
-  paymentTaken?: boolean; // TODO(P7): record against a Payment with amount
+  doctorKey?: string;
+  paymentTaken?: boolean; // TODO: record against a Payment with amount
 }
 
 export async function addWalkin(
@@ -104,7 +108,8 @@ export async function addWalkin(
   if (!SLOT_TIMES.includes(input.timeSlot as (typeof SLOT_TIMES)[number])) {
     return { ok: false, error: "Pick a valid time slot." };
   }
-  const counts = await slotCounts(DEFAULT_DOCTOR.key, date);
+  const doctor = await resolveDoctor(input.doctorKey);
+  const counts = await slotCounts(doctor.key, date);
   if ((counts[input.timeSlot] ?? 0) >= SLOT_CAPACITY) {
     return { ok: false, error: "That slot is full — pick another." };
   }
@@ -116,12 +121,13 @@ export async function addWalkin(
     age: input.age,
     isFamily: false,
   });
-  const serialNo = await nextSeq(`${DEFAULT_DOCTOR.key}:${date}`);
+  const serialNo = await nextSeq(`${doctor.key}:${date}`);
   await createAppointment({
     serialNo,
     patientId: patient.id,
     patientName: patient.name,
-    doctorKey: DEFAULT_DOCTOR.key,
+    doctorKey: doctor.key,
+    doctorName: doctor.name,
     serviceSlug: input.serviceSlug,
     serviceName: serviceNameFromSlug(input.serviceSlug),
     date,
@@ -135,6 +141,10 @@ export async function addWalkin(
 // ── Patients ────────────────────────────────────────────────────────
 export async function adminSearchPatients(q: string, page = 1) {
   return searchPatients(q, page);
+}
+
+export async function deletePatientById(patientId: string): Promise<void> {
+  return deletePatientCascade(patientId);
 }
 
 export async function getAdminPatientProfile(patientId: string) {
@@ -161,7 +171,7 @@ export async function getAdminPatientProfile(patientId: string) {
       note: v.problemNote ?? "",
       status: v.status,
       serialNo: v.serialNo,
-      doctorName: DEFAULT_DOCTOR.name,
+      doctorName: v.doctorName || "Dr. Mahmudul Hasan",
     })),
     payments: payments.map((p) => ({
       id: String(p._id),
@@ -190,19 +200,25 @@ export type AdminPatient = PatientListItem;
 
 // ── Calendar ────────────────────────────────────────────────────────
 export interface CalendarCell {
+  patientId: string;
   name: string;
   service: string;
   status: string;
 }
 
-export async function getWeekCalendar(fromDate: string, toDate: string) {
-  const docs = await findInRange(DEFAULT_DOCTOR.key, fromDate, toDate);
+export async function getWeekCalendar(
+  fromDate: string,
+  toDate: string,
+  doctorKey?: string,
+) {
+  const docs = await findInRange(fromDate, toDate, doctorKey);
   // date -> timeSlot -> appointments
   const map: Record<string, Record<string, CalendarCell[]>> = {};
   for (const a of docs) {
     map[a.date] ??= {};
     map[a.date][a.timeSlot] ??= [];
     map[a.date][a.timeSlot].push({
+      patientId: String(a.patient),
       name: a.patientName,
       service: a.serviceName,
       status: a.status,

@@ -48,3 +48,22 @@ export async function staffExists(phone: string): Promise<boolean> {
   await connectDB();
   return (await Staff.exists({ phone })) !== null;
 }
+
+export async function deleteStaff(id: string): Promise<void> {
+  await connectDB();
+  await Staff.deleteOne({ _id: id });
+}
+
+export interface DoctorOption {
+  key: string; // staff id used as appointment doctorKey
+  name: string;
+}
+
+/** Active doctors — drive booking/queue/calendar. */
+export async function findActiveDoctors(): Promise<DoctorOption[]> {
+  await connectDB();
+  const docs = await Staff.find({ role: "doctor", isActive: true })
+    .sort({ createdAt: 1 })
+    .lean();
+  return docs.map((d) => ({ key: String(d._id), name: d.name }));
+}

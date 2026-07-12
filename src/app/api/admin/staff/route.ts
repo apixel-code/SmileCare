@@ -1,9 +1,13 @@
+import { z } from "zod";
 import { staffCreateSchema, staffToggleSchema } from "@/lib/validators/admin";
 import {
   createStaff,
   setStaffActive,
   staffExists,
+  deleteStaff,
 } from "@/server/repositories/staff.repository";
+import { revalidateTag } from "next/cache";
+import { DOCTORS_TAG } from "@/server/services/doctors.service";
 import { hashPassword } from "@/server/auth/password";
 import { normalizePhone } from "@/lib/validators/booking";
 import { getSession } from "@/server/auth/guard";
@@ -47,9 +51,39 @@ export async function POST(request: Request) {
       passwordHash: await hashPassword(parsed.data.password),
       role: parsed.data.role,
     });
+    revalidateTag(DOCTORS_TAG); // a new doctor should appear in booking/queue
     return apiResponse({ id: result.id }, { status: 201 });
   } catch {
     return apiError("Could not add the staff member.", { status: 500 });
+  }
+}
+
+const staffDeleteSchema = z.object({ staffId: z.string().min(8) });
+
+/** Remove a staff member permanently (admin only). */
+export async function DELETE(request: Request) {
+  const admin = await requireAdmin();
+  if (!admin) {
+    return apiError("Only the admin can manage staff.", { status: 403 });
+  }
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return apiError("Invalid request body", { status: 400 });
+  }
+  const parsed = staffDeleteSchema.safeParse(body);
+  if (!parsed.success) return apiError("Invalid request", { status: 422 });
+  if (parsed.data.staffId === admin.sub) {
+    return apiError("You can't remove yourself.", { status: 409 });
+  }
+
+  try {
+    await deleteStaff(parsed.data.staffId);
+    revalidateTag(DOCTORS_TAG);
+    return apiResponse({ deleted: true });
+  } catch {
+    return apiError("Could not remove the staff member.", { status: 500 });
   }
 }
 
@@ -73,6 +107,7 @@ export async function PATCH(request: Request) {
 
   try {
     await setStaffActive(parsed.data.staffId, parsed.data.isActive);
+    revalidateTag(DOCTORS_TAG);
     return apiResponse({ saved: true });
   } catch {
     return apiError("Could not update the staff member.", { status: 500 });

@@ -37,9 +37,12 @@ export async function submitContact(
 
 export async function fetchAvailability(
   date: string,
+  doctorKey?: string,
 ): Promise<DayAvailability | null> {
   try {
-    const res = await fetch(`/api/availability?date=${date}`);
+    const q = new URLSearchParams({ date });
+    if (doctorKey) q.set("doctor", doctorKey);
+    const res = await fetch(`/api/availability?${q.toString()}`);
     const json = await res.json();
     return json?.ok ? (json.data as DayAvailability) : null;
   } catch {
@@ -283,6 +286,34 @@ export async function toggleStaffApi(
     const json = await res.json();
     if (json?.ok) return { ok: true };
     return { ok: false, error: json?.error?.message ?? "Could not update." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function deleteStaffApi(staffId: string): Promise<SimpleResult> {
+  try {
+    const res = await fetch("/api/admin/staff", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ staffId }),
+    });
+    const json = await res.json();
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not remove." };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+export async function deletePatientApi(patientId: string): Promise<SimpleResult> {
+  try {
+    const res = await fetch(`/api/admin/patients/${patientId}/delete`, {
+      method: "POST",
+    });
+    const json = await res.json();
+    if (json?.ok) return { ok: true };
+    return { ok: false, error: json?.error?.message ?? "Could not delete." };
   } catch {
     return { ok: false, error: "Network error." };
   }
