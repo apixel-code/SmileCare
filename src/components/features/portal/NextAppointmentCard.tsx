@@ -42,21 +42,21 @@ export function NextAppointmentCard({ appt }: { appt: PortalAppointment }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white shadow-[0_12px_34px_rgba(26,43,60,0.12)]">
-      <div className="flex items-center justify-between border-b border-[#EDF4F7] px-5 py-4">
+    <div className="overflow-hidden rounded-[26px] border border-white bg-white shadow-[0_20px_50px_rgba(26,43,60,0.16)]">
+      <div className="flex items-center justify-between border-b border-[#EDF4F7] bg-gradient-to-r from-white to-primary-light/60 px-5 py-4">
         <span className="text-[12px] font-semibold uppercase tracking-[0.08em] text-primary">
           Next Appointment
         </span>
-        <span className="rounded-full bg-[#F0FBF4] px-3 py-1 font-heading text-[11.5px] font-bold text-[#1F8A5B]">
+        <span className="rounded-full bg-[#F0FBF4] px-3 py-1 font-heading text-[11.5px] font-bold text-[#1F8A5B] shadow-soft">
           CONFIRMED
         </span>
       </div>
       <div className="flex items-center gap-4 px-5 py-4">
-        <div className="flex h-[58px] w-[58px] flex-none flex-col items-center justify-center rounded-[14px] bg-primary-light">
-          <span className="font-heading text-[20px] font-extrabold leading-none text-primary">
+        <div className="flex h-[64px] w-[64px] flex-none flex-col items-center justify-center rounded-2xl bg-primary text-white shadow-soft-md">
+          <span className="font-heading text-[20px] font-extrabold leading-none text-white">
             {dayNum}
           </span>
-          <span className="text-[11px] font-semibold text-ink-muted">
+          <span className="text-[11px] font-semibold text-white/75">
             {monName}
           </span>
         </div>

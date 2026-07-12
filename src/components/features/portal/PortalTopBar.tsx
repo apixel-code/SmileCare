@@ -32,11 +32,13 @@ export function PortalTopBar({
   }, [open]);
 
   return (
-    <div className="bg-primary px-5 pb-16 pt-5 md:px-8">
-      <div className="mx-auto flex max-w-2xl items-center justify-between gap-3">
+    <div className="relative overflow-hidden bg-ink px-5 pb-20 pt-5 md:px-8">
+      <div className="absolute inset-0 surface-pattern opacity-20" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/95 to-primary-dark/80" aria-hidden />
+      <div className="relative mx-auto flex max-w-2xl items-center justify-between gap-3">
         <div>
           <div className="text-[13px] text-white/75">{greeting}</div>
-          <div className="font-heading text-[22px] font-extrabold text-white">
+          <div className="font-heading text-[24px] font-extrabold text-white">
             Hello, {selected?.name}
           </div>
         </div>
@@ -45,7 +47,7 @@ export function PortalTopBar({
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            className="flex min-h-[48px] items-center gap-2.5 rounded-xl border-[1.5px] border-white/40 bg-white/10 px-3.5 font-heading text-[14px] font-bold text-white transition-colors hover:bg-white/20"
+            className="flex min-h-[48px] items-center gap-2.5 rounded-2xl border-[1.5px] border-white/40 bg-white/14 px-3.5 font-heading text-[14px] font-bold text-white shadow-[0_12px_34px_rgba(0,0,0,0.12)] backdrop-blur-md transition-colors hover:bg-white/20"
           >
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[13px] font-extrabold text-primary">
               {selected?.name?.charAt(0) ?? "?"}
@@ -55,7 +57,7 @@ export function PortalTopBar({
           </button>
 
           {open && (
-            <div className="absolute right-0 top-[54px] z-20 flex min-w-[220px] animate-fade-up-fast flex-col gap-0.5 rounded-xl bg-white p-2 shadow-[0_16px_40px_rgba(26,43,60,0.25)] motion-reduce:animate-none">
+            <div className="absolute right-0 top-[54px] z-20 flex min-w-[220px] animate-fade-up-fast flex-col gap-0.5 rounded-2xl bg-white p-2 shadow-[0_16px_40px_rgba(26,43,60,0.25)] motion-reduce:animate-none">
               {members.map((m) => (
                 <button
                   key={m.id}

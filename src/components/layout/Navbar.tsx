@@ -32,26 +32,23 @@ export function Navbar() {
     // children and would trap the drawer inside the 76px-tall header.
     // z-[80]: the header is a stacking context, so the drawer inside it can
     // only beat the FloatingWhatsApp bubble (z-[70]) if the header itself does.
-    <header className="sticky top-0 z-[80]">
-      <div className="border-b border-primary-light bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex h-[76px] max-w-container items-center justify-between gap-4 px-5 md:px-8">
+    <header className="sticky top-0 z-[80] px-3 pt-3">
+      <div className="mx-auto max-w-container rounded-[22px] border border-white/70 bg-white/86 shadow-[0_12px_34px_rgba(26,43,60,0.09)] backdrop-blur-xl">
+        <div className="flex h-[68px] items-center justify-between gap-4 px-4 md:px-5">
           <Logo />
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-6 lg:flex xl:gap-7">
+          <nav className="hidden items-center gap-1.5 rounded-full bg-primary-light/70 p-1.5 lg:flex">
             {PRIMARY_NAV.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "relative text-[15px] font-medium transition-colors hover:text-primary",
-                  isActive(link.href) ? "text-primary" : "text-ink",
+                  "rounded-full px-3.5 py-2 text-[14px] font-semibold transition-colors hover:bg-white hover:text-primary xl:px-4",
+                  isActive(link.href) ? "bg-white text-primary shadow-soft" : "text-ink",
                 )}
               >
                 {link.label}
-                {isActive(link.href) && (
-                  <span className="absolute -bottom-[27px] left-0 h-[2px] w-full bg-primary" />
-                )}
               </Link>
             ))}
           </nav>

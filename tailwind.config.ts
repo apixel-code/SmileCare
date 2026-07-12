@@ -91,6 +91,14 @@ const config: Config = {
           "0%": { transform: "scale(1.06)" },
           "100%": { transform: "scale(1)" },
         },
+        "soft-pulse": {
+          "0%, 100%": { opacity: "0.62", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.04)" },
+        },
+        "slide-shine": {
+          "0%": { transform: "translateX(-120%) skewX(-18deg)" },
+          "100%": { transform: "translateX(220%) skewX(-18deg)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both",
@@ -101,6 +109,8 @@ const config: Config = {
         "ticket-pop": "ticket-pop 0.5s ease-out both",
         "check-draw": "check-draw 0.6s ease-out 0.3s both",
         "hero-zoom": "hero-zoom 1.6s cubic-bezier(0.16,1,0.3,1) both",
+        "soft-pulse": "soft-pulse 3.8s ease-in-out infinite",
+        "slide-shine": "slide-shine 2.6s ease-in-out infinite",
       },
     },
   },

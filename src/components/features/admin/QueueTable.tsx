@@ -46,10 +46,10 @@ export function QueueTable({ rows }: { rows: QueueRow[] }) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-[#E1EBF0] bg-white shadow-soft">
+    <div className="overflow-x-auto rounded-[24px] border border-[#E1EBF0] bg-white shadow-[0_16px_44px_rgba(26,43,60,0.08)]">
       <table className="w-full min-w-[760px] border-collapse text-left">
         <thead>
-          <tr className="border-b border-[#E1EBF0] bg-[#F7FBFC]">
+          <tr className="border-b border-[#E1EBF0] bg-primary-light/70">
             <Th className="pl-[18px]">SERIAL</Th>
             <Th>PATIENT</Th>
             <Th>SERVICE</Th>

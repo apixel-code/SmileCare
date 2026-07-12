@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 
 /**
- * Centered page hero — sky→white gradient, dashed eyebrow, title + subtitle.
+ * Centered page hero — elevated inner-page intro with brand texture.
  * Reused across inner marketing pages (Services, Problems, Doctor...).
  */
 export function PageHero({
@@ -14,25 +14,25 @@ export function PageHero({
   subtitle?: string;
 }) {
   return (
-    <section className="bg-gradient-to-b from-primary-light to-white">
-      <Container className="py-16 text-center md:py-[72px] [&>*]:animate-fade-up motion-reduce:[&>*]:animate-none">
+    <section className="relative overflow-hidden bg-primary-light">
+      <div className="absolute inset-0 surface-pattern opacity-70" aria-hidden />
+      <Container className="relative py-16 text-center md:py-24 [&>*]:animate-fade-up motion-reduce:[&>*]:animate-none">
         <div
-          className="mb-[18px] inline-flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-primary"
+          className="mb-[18px] inline-flex items-center gap-2.5 rounded-full bg-white px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-primary shadow-soft"
           style={{ animationDelay: "0.05s" }}
         >
-          <span className="inline-block h-[2px] w-6 bg-primary" />
+          <span className="inline-block h-2 w-2 rounded-full bg-cta" />
           {eyebrow}
-          <span className="inline-block h-[2px] w-6 bg-primary" />
         </div>
         <h1
-          className="mb-4 text-[32px] font-extrabold text-ink md:text-[44px]"
+          className="mx-auto mb-4 max-w-[840px] text-balance text-[36px] font-extrabold leading-tight text-ink md:text-[56px]"
           style={{ animationDelay: "0.15s" }}
         >
           {title}
         </h1>
         {subtitle && (
           <p
-            className="mx-auto max-w-[560px] text-[18px] leading-[1.7] text-ink-muted"
+            className="mx-auto max-w-[650px] text-[18px] leading-[1.8] text-ink-muted"
             style={{ animationDelay: "0.25s" }}
           >
             {subtitle}
