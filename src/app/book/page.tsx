@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function BookPage() {
   return (
-    <main className="min-h-screen bg-primary-light">
+    <main>
       <BookingWizard />
     </main>
   );

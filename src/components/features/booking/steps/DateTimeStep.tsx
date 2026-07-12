@@ -27,9 +27,9 @@ export function DateTimeStep({
   onNext: () => void;
 }) {
   return (
-    <div className="flex flex-1 flex-col gap-[18px] pb-8 pt-6">
-      <div className="px-5">
-        <h1 className="mb-1 font-heading text-[24px] font-extrabold leading-[1.3] text-ink">
+    <div className="flex flex-1 flex-col gap-[18px] pb-8 pt-6 lg:pt-9">
+      <div className="px-5 lg:px-10">
+        <h1 className="mb-1 font-heading text-[24px] font-extrabold leading-[1.3] text-ink lg:text-[28px]">
           When would you like to come?
         </h1>
         <p className="text-[14.5px] leading-[1.6] text-ink-muted">
@@ -38,7 +38,7 @@ export function DateTimeStep({
       </div>
 
       {/* Date pills */}
-      <div className="flex gap-2.5 overflow-x-auto px-5 pb-2 pt-1">
+      <div className="flex gap-2.5 overflow-x-auto px-5 pb-2 pt-1 lg:px-10">
         {dates.map((d) => {
           const sel = selectedDate === d.key;
           return (
@@ -74,7 +74,7 @@ export function DateTimeStep({
 
       {/* Scarcity */}
       {selectedDate && !slotsLoading && (
-        <div className="mx-5 flex items-center gap-2.5 rounded-xl border border-cta/35 bg-[#FFF3EF] px-4 py-3">
+        <div className="mx-5 flex items-center gap-2.5 rounded-xl border border-cta/35 bg-[#FFF3EF] px-4 py-3 lg:mx-10">
           <span className="inline-block h-2 w-2 flex-none rounded-full bg-cta" />
           <span className="text-[13.5px] font-medium text-ink">
             {scarcityText}
@@ -83,7 +83,7 @@ export function DateTimeStep({
       )}
 
       {/* Slots */}
-      <div className="px-5">
+      <div className="px-5 lg:px-10">
         <div className="mb-3 font-heading text-[15px] font-bold text-ink">
           Available times
         </div>
@@ -92,7 +92,7 @@ export function DateTimeStep({
         ) : slotsLoading ? (
           <p className="text-[14px] text-ink-muted">Loading times…</p>
         ) : (
-          <div className="grid grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-3 gap-2.5 md:grid-cols-4">
             {slots.map((s) => {
               const sel = selectedSlot === s.time;
               return (
@@ -118,13 +118,13 @@ export function DateTimeStep({
         )}
       </div>
 
-      <div className="mt-auto px-5">
+      <div className="mt-auto px-5 pt-2 lg:px-10 md:flex md:justify-end">
         <button
           type="button"
           onClick={onNext}
           disabled={!canNext}
           className={cn(
-            "min-h-[56px] w-full rounded-xl font-heading text-[17px] font-bold text-white shadow-[0_6px_20px_rgba(255,122,89,0.35)] transition-colors",
+            "min-h-[56px] w-full rounded-xl font-heading text-[17px] font-bold text-white shadow-[0_6px_20px_rgba(255,122,89,0.35)] transition-colors md:w-auto md:min-w-[220px] md:px-12",
             canNext ? "bg-cta hover:bg-cta-dark" : "cursor-not-allowed bg-[#F0B4A2]",
           )}
         >

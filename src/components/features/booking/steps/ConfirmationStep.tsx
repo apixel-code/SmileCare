@@ -23,7 +23,7 @@ export function ConfirmationStep({
   );
 
   return (
-    <div className="flex flex-1 flex-col items-center gap-[18px] bg-gradient-to-b from-[#F0FBF4] to-white px-5 py-8">
+    <div className="flex flex-1 flex-col items-center gap-[18px] bg-gradient-to-b from-[#F0FBF4] to-white px-5 py-8 lg:justify-center lg:py-12">
       <div className="flex h-[88px] w-[88px] animate-ticket-pop items-center justify-center rounded-full bg-[#1F8A5B] shadow-[0_12px_32px_rgba(31,138,91,0.35)]">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
           <path
@@ -48,7 +48,7 @@ export function ConfirmationStep({
       </div>
 
       {/* Ticket */}
-      <div className="w-full animate-ticket-pop overflow-hidden rounded-2xl bg-white shadow-[0_12px_34px_rgba(26,43,60,0.12)]">
+      <div className="w-full max-w-[440px] animate-ticket-pop overflow-hidden rounded-2xl bg-white shadow-[0_12px_34px_rgba(26,43,60,0.12)]">
         <div className="flex items-center justify-between bg-primary px-[22px] py-[18px]">
           <div>
             <div className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-white/70">
@@ -75,7 +75,7 @@ export function ConfirmationStep({
         </div>
       </div>
 
-      <div className="grid w-full grid-cols-2 gap-3">
+      <div className="grid w-full max-w-[440px] grid-cols-2 gap-3">
         <a
           href={calUrl}
           target="_blank"
@@ -99,7 +99,7 @@ export function ConfirmationStep({
         </a>
       </div>
 
-      <div className="w-full rounded-xl bg-primary-light px-[18px] py-3.5 text-center text-[13.5px] leading-[1.6] text-ink">
+      <div className="w-full max-w-[440px] rounded-xl bg-primary-light px-[18px] py-3.5 text-center text-[13.5px] leading-[1.6] text-ink">
         🔔 You&rsquo;ll receive a reminder SMS 1 hour before your appointment.
       </div>
 

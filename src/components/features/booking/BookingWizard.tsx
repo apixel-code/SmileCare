@@ -15,6 +15,7 @@ import {
   type DetailsValues,
 } from "./steps/DetailsStep";
 import { ConfirmationStep } from "./steps/ConfirmationStep";
+import { BookingBrandPanel } from "./BookingBrandPanel";
 import type { DayAvailability } from "@/server/services/availability.service";
 import type { BookingTicket } from "@/server/services/booking.service";
 
@@ -123,100 +124,130 @@ export function BookingWizard() {
   const backVisible = step > 1 && step < 4;
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-[430px] flex-col bg-white shadow-[0_0_40px_rgba(26,43,60,0.08)]">
-      {/* Header + progress */}
-      <div className="sticky top-0 z-10 border-b border-primary-light bg-white px-5 pb-3 pt-3.5">
-        <div className="mb-3 flex items-center justify-between">
-          <button
-            type="button"
-            aria-label="Back"
-            onClick={() => step > 1 && setStep(step - 1)}
-            className={cn(
-              "flex h-11 w-11 items-center justify-center rounded-xl border border-primary-light bg-white text-[18px] text-ink",
-              !backVisible && "invisible",
-            )}
-          >
-            ←
-          </button>
-          <div className="text-center">
-            <div className="font-heading text-[16px] font-extrabold text-ink">
-              Book Appointment
+    <div className="min-h-screen bg-primary-light lg:flex lg:items-center lg:justify-center lg:p-8">
+      <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-white shadow-[0_0_40px_rgba(26,43,60,0.08)] md:my-8 md:min-h-0 md:max-w-2xl md:rounded-3xl lg:my-0 lg:max-w-5xl lg:flex-row lg:shadow-[0_30px_80px_rgba(26,43,60,0.18)]">
+        {/* Desktop side panel (lg+) */}
+        <BookingBrandPanel step={step} />
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          {/* Mobile / tablet header + progress bar */}
+          <div className="sticky top-0 z-10 border-b border-primary-light bg-white px-5 pb-3 pt-3.5 lg:hidden">
+            <div className="mb-3 flex items-center justify-between">
+              <button
+                type="button"
+                aria-label="Back"
+                onClick={() => step > 1 && setStep(step - 1)}
+                className={cn(
+                  "flex h-11 w-11 items-center justify-center rounded-xl border border-primary-light bg-white text-[18px] text-ink",
+                  !backVisible && "invisible",
+                )}
+              >
+                ←
+              </button>
+              <div className="text-center">
+                <div className="font-heading text-[16px] font-extrabold text-ink">
+                  Book Appointment
+                </div>
+                <div className="mt-0.5 text-[12.5px] text-ink-muted">
+                  {step === 4 ? "Done!" : `Step ${step} of 4`}
+                </div>
+              </div>
+              <div className="w-11" />
             </div>
-            <div className="mt-0.5 text-[12.5px] text-ink-muted">
-              {step === 4 ? "Done!" : `Step ${step} of 4`}
+            <div className="flex gap-1.5">
+              {[1, 2, 3, 4].map((n) => (
+                <div
+                  key={n}
+                  className={cn(
+                    "h-[5px] flex-1 rounded-full",
+                    n <= step ? "bg-primary" : "bg-[#E1EBF0]",
+                  )}
+                />
+              ))}
             </div>
           </div>
-          <div className="w-11" />
-        </div>
-        <div className="flex gap-1.5">
-          {[1, 2, 3, 4].map((n) => (
-            <div
-              key={n}
+
+          {/* Desktop header (stepper lives in the side panel) */}
+          <div className="hidden items-center gap-4 border-b border-primary-light px-10 pb-5 pt-8 lg:flex">
+            <button
+              type="button"
+              aria-label="Back"
+              onClick={() => step > 1 && setStep(step - 1)}
               className={cn(
-                "h-[5px] flex-1 rounded-full",
-                n <= step ? "bg-primary" : "bg-[#E1EBF0]",
+                "flex h-10 w-10 items-center justify-center rounded-xl border border-primary-light bg-white text-[18px] text-ink transition-colors hover:border-primary",
+                !backVisible && "invisible",
               )}
+            >
+              ←
+            </button>
+            <div>
+              <div className="font-heading text-[19px] font-extrabold text-ink">
+                Book Appointment
+              </div>
+              <div className="text-[13px] text-ink-muted">
+                {step === 4 ? "All done!" : `Step ${step} of 4`}
+              </div>
+            </div>
+          </div>
+
+          {step === 1 && (
+            <ServiceStep selected={serviceSlug} onPick={pickService} />
+          )}
+          {step === 2 && (
+            <DateTimeStep
+              dates={dates}
+              selectedDate={dateKey}
+              onPickDate={pickDate}
+              slots={availability?.slots ?? []}
+              slotsLoading={slotsLoading}
+              selectedSlot={slot}
+              onPickSlot={setSlot}
+              scarcityText={scarcityText}
+              canNext={!!dateKey && !!slot}
+              onNext={() => dateKey && slot && setStep(3)}
             />
-          ))}
+          )}
+          {step === 3 && (
+            <DetailsStep
+              values={details}
+              errors={errors}
+              onChange={(patch) => setDetails((v) => ({ ...v, ...patch }))}
+              onWho={(who) => setDetails((v) => ({ ...v, who }))}
+              canConfirm={canConfirm}
+              submitting={submitting}
+              serverError={serverError}
+              onConfirm={confirm}
+            />
+          )}
+          {step === 4 && ticket && (
+            <ConfirmationStep ticket={ticket} onRestart={restart} />
+          )}
+
+          {/* Fallback (mobile / tablet only — desktop has it in the side panel) */}
+          {step !== 4 && (
+            <div className="flex flex-col gap-3 border-t border-primary-light bg-[#F7FBFC] p-5 lg:hidden">
+              <div className="text-center text-[14px] text-ink-muted">
+                Having trouble booking online? Call us directly — we&rsquo;ll do
+                it for you.
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <a
+                  href={TEL_URL}
+                  className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-primary font-heading text-[15px] font-bold text-white transition-colors hover:bg-primary-dark"
+                >
+                  <PhoneIcon size={18} /> Call Now
+                </a>
+                <a
+                  href={WHATSAPP_URL}
+                  className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-whatsapp font-heading text-[15px] font-bold text-white transition-colors hover:bg-whatsapp-dark"
+                >
+                  <WhatsAppIcon size={18} color="#fff" /> WhatsApp
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {step === 1 && (
-        <ServiceStep selected={serviceSlug} onPick={pickService} />
-      )}
-      {step === 2 && (
-        <DateTimeStep
-          dates={dates}
-          selectedDate={dateKey}
-          onPickDate={pickDate}
-          slots={availability?.slots ?? []}
-          slotsLoading={slotsLoading}
-          selectedSlot={slot}
-          onPickSlot={setSlot}
-          scarcityText={scarcityText}
-          canNext={!!dateKey && !!slot}
-          onNext={() => dateKey && slot && setStep(3)}
-        />
-      )}
-      {step === 3 && (
-        <DetailsStep
-          values={details}
-          errors={errors}
-          onChange={(patch) => setDetails((v) => ({ ...v, ...patch }))}
-          onWho={(who) => setDetails((v) => ({ ...v, who }))}
-          canConfirm={canConfirm}
-          submitting={submitting}
-          serverError={serverError}
-          onConfirm={confirm}
-        />
-      )}
-      {step === 4 && ticket && (
-        <ConfirmationStep ticket={ticket} onRestart={restart} />
-      )}
-
-      {/* Fallback */}
-      {step !== 4 && (
-        <div className="flex flex-col gap-3 border-t border-primary-light bg-[#F7FBFC] p-5">
-          <div className="text-center text-[14px] text-ink-muted">
-            Having trouble booking online? Call us directly — we&rsquo;ll do it
-            for you.
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <a
-              href={TEL_URL}
-              className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-primary font-heading text-[15px] font-bold text-white transition-colors hover:bg-primary-dark"
-            >
-              <PhoneIcon size={18} /> Call Now
-            </a>
-            <a
-              href={WHATSAPP_URL}
-              className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-whatsapp font-heading text-[15px] font-bold text-white transition-colors hover:bg-whatsapp-dark"
-            >
-              <WhatsAppIcon size={18} color="#fff" /> WhatsApp
-            </a>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -92,6 +92,7 @@ P1 ✅ · P2 Public pages ✅ · **P3 — Booking flow ✅ COMPLETE** (DB-backed
 - New reusable: `CountUp` reused? no — booking-specific steps under `components/features/booking/`.
 - **Verified end-to-end:** curl (serial #1→#2 increments, slot left 3→1, SLOT_FULL→409, validation→422) AND Playwright drove the full UI (service→date→slot→details→confirm) creating a real appointment (serial #4), ticket rendered. Test data cleaned from DB afterwards. Build clean, `/book` static, APIs dynamic.
 - DB decision: dbName pinned to `smilecare` in `connectDB` (URI had none → was defaulting to `test`).
+- **Responsive redesign (mobile kept, md/lg custom-designed):** mobile = original 430px full-height card (unchanged). md (tablet) = wider centered rounded card (max-w-2xl) with top progress + 2-col service grid + 4-col slots. lg (desktop) = **two-pane**: branded teal `BookingBrandPanel` (logo + vertical stepper + trust checklist + Call/WhatsApp fallback) beside a wide content card with its own header; buttons become auto-width/right-aligned, confirmation ticket centered+capped. Verified with Playwright at all three widths.
 
 ## Next Up
 - [ ] **P4 Auth** — patient OTP (phone → 4-digit) + staff credentials/roles (doctor|receptionist|admin); one role-check middleware helper. Enables portal + admin.

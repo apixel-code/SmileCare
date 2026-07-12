@@ -36,8 +36,8 @@ export function DetailsStep({
   const nameLabel = values.who === "self" ? "Your Full Name" : "Patient's Full Name";
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-5 pb-8 pt-6">
-      <h1 className="font-heading text-[24px] font-extrabold leading-[1.3] text-ink">
+    <div className="flex flex-1 flex-col gap-4 px-5 pb-8 pt-6 lg:px-10 lg:pt-9">
+      <h1 className="font-heading text-[24px] font-extrabold leading-[1.3] text-ink lg:text-[28px]">
         Almost done! Who is coming?
       </h1>
 
@@ -131,13 +131,13 @@ export function DetailsStep({
         </p>
       )}
 
-      <div className="mt-auto">
+      <div className="mt-auto pt-2 md:flex md:justify-end">
         <button
           type="button"
           onClick={onConfirm}
           disabled={!canConfirm || submitting}
           className={cn(
-            "min-h-[56px] w-full rounded-xl font-heading text-[17px] font-bold text-white shadow-[0_6px_20px_rgba(255,122,89,0.35)] transition-colors",
+            "min-h-[56px] w-full rounded-xl font-heading text-[17px] font-bold text-white shadow-[0_6px_20px_rgba(255,122,89,0.35)] transition-colors md:w-auto md:min-w-[280px] md:px-12",
             canConfirm && !submitting
               ? "bg-cta hover:bg-cta-dark"
               : "cursor-not-allowed bg-[#F0B4A2]",
