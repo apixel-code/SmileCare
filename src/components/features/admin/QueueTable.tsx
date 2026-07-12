@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { advanceQueue } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
@@ -15,24 +15,55 @@ const ACTION: Record<string, { label: string; cls: string } | undefined> = {
 };
 
 /** Today's queue — one advancing action per row, in-chamber highlighted. */
-export function QueueTable({ rows }: { rows: QueueRow[] }) {
+export function QueueTable({ rows: serverRows }: { rows: QueueRow[] }) {
   const router = useRouter();
   const toast = useToast();
   const [busyId, setBusyId] = useState<string | null>(null);
+  // Optimistic status overrides — the UI flips instantly, the server syncs after.
+  const [overrides, setOverrides] = useState<Record<string, string>>({});
+
+  // Fresh server data wins: drop local overrides whenever props update.
+  useEffect(() => setOverrides({}), [serverRows]);
+
+  const rows = serverRows.map((r) => ({
+    ...r,
+    status: overrides[r.id] ?? r.status,
+  }));
 
   async function advance(row: QueueRow) {
+    const next = row.status === "waiting" ? "in_chamber" : "completed";
+
+    // Optimistic flip (and only one patient in the chamber at a time).
+    setOverrides((prev) => {
+      const map = { ...prev, [row.id]: next };
+      if (next === "in_chamber") {
+        for (const r of serverRows) {
+          if (r.id !== row.id && (map[r.id] ?? r.status) === "in_chamber") {
+            map[r.id] = "waiting";
+          }
+        }
+      }
+      return map;
+    });
+    toast(
+      next === "in_chamber"
+        ? `#${row.serialNo} ${row.name} called in`
+        : `#${row.serialNo} ${row.name} completed`,
+    );
+
     setBusyId(row.id);
     const res = await advanceQueue(row.id);
     setBusyId(null);
     if (!res.ok) {
+      // Roll back — the server refused.
+      setOverrides((prev) => {
+        const map = { ...prev };
+        delete map[row.id];
+        return map;
+      });
       toast(res.error);
       return;
     }
-    toast(
-      row.status === "waiting"
-        ? `#${row.serialNo} ${row.name} called in`
-        : `#${row.serialNo} ${row.name} completed`,
-    );
     router.refresh();
   }
 
