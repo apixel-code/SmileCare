@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## Current Phase
-P1 — Setup ✅ · **P2 — Public pages ✅ COMPLETE** (Home, Services, Service Detail, Problems, Doctor, Blog, Contact) · Next: P3 Booking flow
+P1 ✅ · P2 Public pages ✅ · **P3 — Booking flow ✅ COMPLETE** (DB-backed, live on MongoDB) · Next: P4 Auth
 
 ## Done
 ### P1 Setup
@@ -81,10 +81,21 @@ P1 — Setup ✅ · **P2 — Public pages ✅ COMPLETE** (Home, Services, Servic
 - New reusable primitives: `Input`, `Textarea` (shared `fieldBase`), `Field` (label+error), `MapPlaceholder` (also refactored into Home LocationSection — removed the inline copy).
 - Verified end-to-end: API valid→201, invalid→422 with per-field errors; UI form submit drives the success card (Playwright); desktop+mobile clean, no overflow.
 
+### P3 — Booking flow `/book` (DB-backed) ✅
+- Faithful to Booking Flow.dc.html: mobile-first 4-step wizard in a 430px card (no marketing chrome — `/book` sits OUTSIDE the (public) group). Header + 4-seg progress + back; Service → Date/time → Details → Confirmation ticket; fallback Call/WhatsApp strip on steps 1–3.
+- **Full layered backend, live on MongoDB `smilecare` db:**
+  - Models: `Counter`, `Patient`, `Appointment` (indexes incl. unique {doctorKey,date,serialNo}).
+  - Repositories (only Mongoose): `counter.nextSeq` (atomic $inc upsert — race-safe serials), `patient.upsertPatient` (match phone+name so family members get own record), `appointment.createAppointment` + `slotCounts` (aggregate).
+  - Services: `booking.service.createBooking` (validate date/slot → capacity check → upsert patient → atomic serial → persist; SLOT_FULL guard), `availability.service.getAvailability`.
+  - API: `GET /api/availability?date=`, `POST /api/book` — thin, shared Zod `bookingSchema`, apiResponse/apiError. Typed client helpers `fetchAvailability`/`submitBooking`.
+  - Config in `lib/booking.ts`: SLOT_TIMES, SLOT_CAPACITY=3, chamber days (skip Fri), Dhaka-TZ date generation, Google-Calendar link builder. DEFAULT_DOCTOR is a string key (Staff ref lands in P4). Service is denormalized (serviceSlug+serviceName) until a Service collection exists.
+- New reusable: `CountUp` reused? no — booking-specific steps under `components/features/booking/`.
+- **Verified end-to-end:** curl (serial #1→#2 increments, slot left 3→1, SLOT_FULL→409, validation→422) AND Playwright drove the full UI (service→date→slot→details→confirm) creating a real appointment (serial #4), ticket rendered. Test data cleaned from DB afterwards. Build clean, `/book` static, APIs dynamic.
+- DB decision: dbName pinned to `smilecare` in `connectDB` (URI had none → was defaulting to `test`).
+
 ## Next Up
-- [ ] **P3 Booking flow** (`Booking Flow.dc.html`) — 4-step wizard (Service → Date/time → Details → Confirmation), Stepper, serial generation (atomic Counter), slot capacity server-side. Needs DB models + repositories + services.
-- [ ] Then P4 Auth (OTP + staff roles), P5 Patient Portal (`Patient Portal.dc.html`), P6 Admin PMS (`Clinic Admin.dc.html`), P7 Payments/Settings/Reports, P8 SEO/perf/deploy.
-- Note: P3+ need MongoDB models — `.env.local` MONGODB_URI is set; wire `connectDB` + models/repositories per data-models.md.
+- [ ] **P4 Auth** — patient OTP (phone → 4-digit) + staff credentials/roles (doctor|receptionist|admin); one role-check middleware helper. Enables portal + admin.
+- [ ] P5 Patient Portal (`Patient Portal.dc.html`), P6 Admin PMS (`Clinic Admin.dc.html` — queue reads real appointments now!), P7 Payments/Settings/Reports, P8 SEO/perf/deploy.
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper
 - [ ] Then P3 Booking (`Booking Flow.dc.html`), P4 Auth, P5 Portal (`Patient Portal.dc.html`), P6 Admin (`Clinic Admin.dc.html`)
 

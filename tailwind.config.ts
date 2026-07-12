@@ -78,12 +78,23 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-8px)" },
         },
+        "ticket-pop": {
+          "0%": { transform: "scale(0.6)", opacity: "0" },
+          "60%": { transform: "scale(1.08)" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "check-draw": {
+          from: { strokeDashoffset: "48" },
+          to: { strokeDashoffset: "0" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both",
         "fade-in": "fade-in 0.6s ease-out both",
         "scale-in": "scale-in 0.5s cubic-bezier(0.16,1,0.3,1) both",
         float: "float 4s ease-in-out infinite",
+        "ticket-pop": "ticket-pop 0.5s ease-out both",
+        "check-draw": "check-draw 0.6s ease-out 0.3s both",
       },
     },
   },
