@@ -9,6 +9,25 @@ export interface UpsertPatientInput {
 }
 
 /**
+ * OTP login: reuse the first record under this phone (the family head);
+ * only create a placeholder when the phone has never been seen.
+ */
+export async function findOrCreatePatientByPhone(
+  phone: string,
+): Promise<{ id: string; name: string }> {
+  await connectDB();
+  const existing = await Patient.findOne({ phone })
+    .sort({ createdAt: 1 })
+    .lean();
+  if (existing) return { id: String(existing._id), name: existing.name };
+  const created = await Patient.create({
+    name: `Patient ${phone.slice(-4)}`,
+    phone,
+  });
+  return { id: String(created._id), name: created.name };
+}
+
+/**
  * Find-or-create a patient. Matching on (phone + name) means each family
  * member under one phone gets their own record; a returning patient reuses it.
  */

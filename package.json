@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "cloudinary": "^2.5.1",
+    "jose": "^6.2.3",
     "mongoose": "^8.9.5",
     "next": "15.5.20",
     "react": "19.1.0",

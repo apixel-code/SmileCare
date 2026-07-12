@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## Current Phase
-P1 ✅ · P2 Public pages ✅ · **P3 — Booking flow ✅ COMPLETE** (DB-backed, live on MongoDB) · Next: P4 Auth
+P1 ✅ · P2 ✅ · P3 Booking ✅ · **P4 — Auth ✅ COMPLETE** · Next: P5 Patient Portal
 
 ## Done
 ### P1 Setup
@@ -101,9 +101,19 @@ P1 ✅ · P2 Public pages ✅ · **P3 — Booking flow ✅ COMPLETE** (DB-backed
 - DB decision: dbName pinned to `smilecare` in `connectDB` (URI had none → was defaulting to `test`).
 - **REDESIGNED as a normal site page (per client):** `/book` moved INTO the (public) group → now uses the original site Navbar/logo + Footer + FloatingWhatsApp (unchanged, like every page). Standalone phone-card shell + two-pane BookingBrandPanel removed. New design in the home-page language: `PageHero` ("Online Booking" / "Book Your Appointment") → centered `Card` (max-w-3xl) with a reusable horizontal `Stepper` header → step content → footer nav (Back / Continue / Confirm) → "trouble booking? call/WhatsApp" note. Steps rewritten to use the site primitives (Field/Input/Textarea, StepHeading). Fully responsive (mobile compact stepper + single-col; desktop full-label stepper + 2-col service / 4-col slots). New reusable: `Stepper`. Verified end-to-end with Playwright at mobile + desktop (real booking → ticket).
 
+### P4 — Auth ✅
+- **Sessions:** stateless HS256 JWT (jose) in httpOnly `sc_session` cookie (7d), signed with AUTH_SECRET. `src/server/auth/session.ts` is edge-safe (no mongoose) so middleware verifies it too.
+- **ONE role-check:** `src/middleware.ts` (edge) guards `/portal/*` (patient) + `/admin/*` (staff roles) with `?next=` redirects; `server/auth/guard.ts` (`getSession`/`requireRole`) for server components. No per-route checks.
+- **Patient OTP:** `POST /api/auth/otp/request` → crypto-random 4-digit, sha256-hashed in `OtpCode` (TTL index 5min, 60s resend cooldown, max 5 attempts) → SMS stub (logs in dev, `SMS_API_KEY` gateway TODO). `verify` consumes the code, reuses the phone's first Patient record (`findOrCreatePatientByPhone` — no duplicate placeholder if they booked before), sets cookie.
+- **Staff login:** `POST /api/auth/login` — phone+password (scrypt, no deps), role from `Staff` record, anti-enumeration error. `POST /api/auth/logout` clears the cookie.
+- Models `OtpCode`/`Staff` + repositories; shared Zod schemas in `lib/validators/auth.ts`; typed client helpers in `lib/api.ts`.
+- **UI:** `AuthCard` shell; `/portal/login` (2-phase OTP, resend countdown, change-number) + `/admin/login`; placeholder dashboards at `/portal` + `/admin` (SimpleTopBar + LogoutButton) — replaced by P5/P6.
+- **Seed:** `node scripts/seed-staff.mjs <phone> <password> [role] [name]` (client must create the real admin; test admin removed after verification).
+- **Verified E2E (curl + Playwright UI):** guard redirects, OTP request→SMS log→wrong-code countdown→verify→cookie→/portal 200; patient↛/admin, staff↛/portal (role isolation both ways); staff wrong-password generic error; logout clears. Test data cleaned.
+
 ## Next Up
-- [ ] **P4 Auth** — patient OTP (phone → 4-digit) + staff credentials/roles (doctor|receptionist|admin); one role-check middleware helper. Enables portal + admin.
-- [ ] P5 Patient Portal (`Patient Portal.dc.html`), P6 Admin PMS (`Clinic Admin.dc.html` — queue reads real appointments now!), P7 Payments/Settings/Reports, P8 SEO/perf/deploy.
+- [ ] **P5 Patient Portal** (`Patient Portal.dc.html`) — dashboard (next appointment, quick actions, timeline, payments, family switcher), prescriptions. Auth is live; portal reads real Appointments by session phone.
+- [ ] P6 Admin PMS (`Clinic Admin.dc.html` — queue reads real appointments), P7 Payments/Settings/Reports, P8 SEO/perf/deploy.
 - [ ] Extract remaining ui primitives when 2nd use appears: StatusPill, Input, Select, Accordion (FAQ), Stepper
 - [ ] Then P3 Booking (`Booking Flow.dc.html`), P4 Auth, P5 Portal (`Patient Portal.dc.html`), P6 Admin (`Clinic Admin.dc.html`)
 

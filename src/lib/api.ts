@@ -47,6 +47,81 @@ export async function fetchAvailability(
   }
 }
 
+// ── Auth ────────────────────────────────────────────────────────────
+export type SimpleResult =
+  | { ok: true }
+  | { ok: false; error: string; fieldErrors?: FieldErrors };
+
+export type LoginResult =
+  | { ok: true; role: string; name: string }
+  | { ok: false; error: string; fieldErrors?: FieldErrors };
+
+async function postJson(url: string, body: unknown) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return res.json();
+}
+
+export async function requestOtp(phone: string): Promise<SimpleResult> {
+  try {
+    const json = await postJson("/api/auth/otp/request", { phone });
+    if (json?.ok) return { ok: true };
+    return {
+      ok: false,
+      error: json?.error?.message ?? "Something went wrong.",
+      fieldErrors: json?.error?.details,
+    };
+  } catch {
+    return { ok: false, error: "Network error. Please try again." };
+  }
+}
+
+export async function verifyOtp(
+  phone: string,
+  code: string,
+): Promise<LoginResult> {
+  try {
+    const json = await postJson("/api/auth/otp/verify", { phone, code });
+    if (json?.ok) return { ok: true, role: json.data.role, name: json.data.name };
+    return {
+      ok: false,
+      error: json?.error?.message ?? "Something went wrong.",
+      fieldErrors: json?.error?.details,
+    };
+  } catch {
+    return { ok: false, error: "Network error. Please try again." };
+  }
+}
+
+export async function staffLogin(
+  phone: string,
+  password: string,
+): Promise<LoginResult> {
+  try {
+    const json = await postJson("/api/auth/login", { phone, password });
+    if (json?.ok) return { ok: true, role: json.data.role, name: json.data.name };
+    return {
+      ok: false,
+      error: json?.error?.message ?? "Something went wrong.",
+      fieldErrors: json?.error?.details,
+    };
+  } catch {
+    return { ok: false, error: "Network error. Please try again." };
+  }
+}
+
+export async function logout(): Promise<void> {
+  try {
+    await fetch("/api/auth/logout", { method: "POST" });
+  } catch {
+    // best-effort
+  }
+}
+
+// ── Booking ─────────────────────────────────────────────────────────
 export type BookingResult =
   | { ok: true; ticket: BookingTicket }
   | { ok: false; error: string; code?: string; fieldErrors?: FieldErrors };
