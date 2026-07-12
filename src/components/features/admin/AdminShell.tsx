@@ -13,6 +13,9 @@ const TITLES: Array<[RegExp, string]> = [
   [/^\/admin\/patients\/.+/, "Patient Profile"],
   [/^\/admin\/patients/, "Patients"],
   [/^\/admin\/calendar/, "Appointment Calendar"],
+  [/^\/admin\/payments/, "Payments"],
+  [/^\/admin\/reports/, "Monthly Report"],
+  [/^\/admin\/settings/, "Settings"],
   [/^\/admin/, "Today's Queue"],
 ];
 
@@ -20,6 +23,9 @@ const MOBILE_NAV = [
   { href: "/admin", label: "Queue" },
   { href: "/admin/patients", label: "Patients" },
   { href: "/admin/calendar", label: "Calendar" },
+  { href: "/admin/payments", label: "Payments" },
+  { href: "/admin/reports", label: "Reports" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export function AdminShell({
