@@ -8,9 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function BookPage() {
-  return (
-    <main>
-      <BookingWizard />
-    </main>
-  );
+  return <BookingWizard />;
 }

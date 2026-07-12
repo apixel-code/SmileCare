@@ -5,8 +5,11 @@ import { bookingDates } from "@/lib/booking";
 import { bookingSchema } from "@/lib/validators/booking";
 import { fetchAvailability, submitBooking } from "@/lib/api";
 import { TEL_URL, WHATSAPP_URL } from "@/lib/constants";
-import { cn } from "@/lib/utils";
-import { PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { Container } from "@/components/ui/Container";
+import { PageHero } from "@/components/ui/PageHero";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Stepper } from "@/components/ui/Stepper";
 import { ServiceStep } from "./steps/ServiceStep";
 import { DateTimeStep } from "./steps/DateTimeStep";
 import {
@@ -15,9 +18,10 @@ import {
   type DetailsValues,
 } from "./steps/DetailsStep";
 import { ConfirmationStep } from "./steps/ConfirmationStep";
-import { BookingBrandPanel } from "./BookingBrandPanel";
 import type { DayAvailability } from "@/server/services/availability.service";
 import type { BookingTicket } from "@/server/services/booking.service";
+
+const STEP_LABELS = ["Service", "Date & Time", "Your Details", "Confirmation"];
 
 export function BookingWizard() {
   const dates = useMemo(() => bookingDates(), []);
@@ -45,15 +49,10 @@ export function BookingWizard() {
   async function loadAvailability(key: string) {
     setSlotsLoading(true);
     setAvailability(null);
-    const data = await fetchAvailability(key);
-    setAvailability(data);
+    setAvailability(await fetchAvailability(key));
     setSlotsLoading(false);
   }
 
-  function pickService(slug: string) {
-    setServiceSlug(slug);
-    setStep(2);
-  }
   function pickDate(key: string) {
     setDateKey(key);
     setSlot(null);
@@ -62,17 +61,25 @@ export function BookingWizard() {
 
   const scarcityText = (() => {
     const count = availability?.availableCount ?? 0;
-    if (dateKey && dateKey === dates[0]?.key) {
-      return `Only ${count} slots left today — booking now is a good idea`;
-    }
-    return `${count} slots available on this day`;
+    return dateKey && dateKey === dates[0]?.key
+      ? `Only ${count} slots left today — booking now is a good idea`
+      : `${count} slots available on this day`;
   })();
 
-  const canConfirm =
-    details.name.trim().length > 1 &&
-    details.phone.replace(/[\s-]/g, "").length >= 11;
+  const canContinue =
+    step === 1
+      ? serviceSlug !== null
+      : step === 2
+        ? !!dateKey && !!slot
+        : details.name.trim().length > 1 &&
+          details.phone.replace(/[\s-]/g, "").length >= 11;
 
-  async function confirm() {
+  async function primary() {
+    if (step < 3) {
+      setStep(step + 1);
+      return;
+    }
+    // step 3 → confirm
     setServerError("");
     const parsed = bookingSchema.safeParse({
       serviceSlug,
@@ -103,7 +110,6 @@ export function BookingWizard() {
       setSlot(null);
       if (dateKey) void loadAvailability(dateKey);
       setStep(2);
-      setServerError("");
       return;
     }
     setServerError(res.error);
@@ -121,133 +127,96 @@ export function BookingWizard() {
     setTicket(null);
   }
 
-  const backVisible = step > 1 && step < 4;
-
   return (
-    <div className="min-h-screen bg-primary-light lg:flex lg:items-center lg:justify-center lg:p-8">
-      <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-white shadow-[0_0_40px_rgba(26,43,60,0.08)] md:my-8 md:min-h-0 md:max-w-2xl md:rounded-3xl lg:my-0 lg:max-w-5xl lg:flex-row lg:shadow-[0_30px_80px_rgba(26,43,60,0.18)]">
-        {/* Desktop side panel (lg+) */}
-        <BookingBrandPanel step={step} />
+    <>
+      <PageHero
+        eyebrow="Online Booking"
+        title="Book Your Appointment"
+        subtitle="It takes 2 minutes — no advance payment. Pick a service and time, and get your serial number instantly."
+      />
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          {/* Mobile / tablet header + progress bar */}
-          <div className="sticky top-0 z-10 border-b border-primary-light bg-white px-5 pb-3 pt-3.5 lg:hidden">
-            <div className="mb-3 flex items-center justify-between">
-              <button
-                type="button"
-                aria-label="Back"
-                onClick={() => step > 1 && setStep(step - 1)}
-                className={cn(
-                  "flex h-11 w-11 items-center justify-center rounded-xl border border-primary-light bg-white text-[18px] text-ink",
-                  !backVisible && "invisible",
-                )}
-              >
-                ←
-              </button>
-              <div className="text-center">
-                <div className="font-heading text-[16px] font-extrabold text-ink">
-                  Book Appointment
-                </div>
-                <div className="mt-0.5 text-[12.5px] text-ink-muted">
-                  {step === 4 ? "Done!" : `Step ${step} of 4`}
-                </div>
-              </div>
-              <div className="w-11" />
-            </div>
-            <div className="flex gap-1.5">
-              {[1, 2, 3, 4].map((n) => (
-                <div
-                  key={n}
-                  className={cn(
-                    "h-[5px] flex-1 rounded-full",
-                    n <= step ? "bg-primary" : "bg-[#E1EBF0]",
-                  )}
-                />
-              ))}
-            </div>
+      <Container className="pb-20">
+        <Card className="mx-auto -mt-6 max-w-3xl overflow-hidden md:-mt-8">
+          {/* Stepper header */}
+          <div className="border-b border-primary-light px-6 py-6 md:px-10">
+            <Stepper steps={STEP_LABELS} current={step} />
           </div>
 
-          {/* Desktop header (stepper lives in the side panel) */}
-          <div className="hidden items-center gap-4 border-b border-primary-light px-10 pb-5 pt-8 lg:flex">
-            <button
-              type="button"
-              aria-label="Back"
-              onClick={() => step > 1 && setStep(step - 1)}
-              className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-xl border border-primary-light bg-white text-[18px] text-ink transition-colors hover:border-primary",
-                !backVisible && "invisible",
+          {/* Step content */}
+          <div className="px-6 py-8 md:px-10 md:py-9">
+            {step === 1 && (
+              <ServiceStep selected={serviceSlug} onPick={setServiceSlug} />
+            )}
+            {step === 2 && (
+              <DateTimeStep
+                dates={dates}
+                selectedDate={dateKey}
+                onPickDate={pickDate}
+                slots={availability?.slots ?? []}
+                slotsLoading={slotsLoading}
+                selectedSlot={slot}
+                onPickSlot={setSlot}
+                scarcityText={scarcityText}
+              />
+            )}
+            {step === 3 && (
+              <DetailsStep
+                values={details}
+                errors={errors}
+                onChange={(patch) => setDetails((v) => ({ ...v, ...patch }))}
+                onWho={(who) => setDetails((v) => ({ ...v, who }))}
+                serverError={serverError}
+              />
+            )}
+            {step === 4 && ticket && (
+              <ConfirmationStep ticket={ticket} onRestart={restart} />
+            )}
+          </div>
+
+          {/* Footer nav (hidden on confirmation) */}
+          {step < 4 && (
+            <div className="flex items-center justify-between gap-3 border-t border-primary-light bg-[#F9FBFC] px-6 py-5 md:px-10">
+              {step > 1 ? (
+                <Button variant="outline" onClick={() => setStep(step - 1)}>
+                  ← Back
+                </Button>
+              ) : (
+                <span />
               )}
-            >
-              ←
-            </button>
-            <div>
-              <div className="font-heading text-[19px] font-extrabold text-ink">
-                Book Appointment
-              </div>
-              <div className="text-[13px] text-ink-muted">
-                {step === 4 ? "All done!" : `Step ${step} of 4`}
-              </div>
-            </div>
-          </div>
-
-          {step === 1 && (
-            <ServiceStep selected={serviceSlug} onPick={pickService} />
-          )}
-          {step === 2 && (
-            <DateTimeStep
-              dates={dates}
-              selectedDate={dateKey}
-              onPickDate={pickDate}
-              slots={availability?.slots ?? []}
-              slotsLoading={slotsLoading}
-              selectedSlot={slot}
-              onPickSlot={setSlot}
-              scarcityText={scarcityText}
-              canNext={!!dateKey && !!slot}
-              onNext={() => dateKey && slot && setStep(3)}
-            />
-          )}
-          {step === 3 && (
-            <DetailsStep
-              values={details}
-              errors={errors}
-              onChange={(patch) => setDetails((v) => ({ ...v, ...patch }))}
-              onWho={(who) => setDetails((v) => ({ ...v, who }))}
-              canConfirm={canConfirm}
-              submitting={submitting}
-              serverError={serverError}
-              onConfirm={confirm}
-            />
-          )}
-          {step === 4 && ticket && (
-            <ConfirmationStep ticket={ticket} onRestart={restart} />
-          )}
-
-          {/* Fallback (mobile / tablet only — desktop has it in the side panel) */}
-          {step !== 4 && (
-            <div className="flex flex-col gap-3 border-t border-primary-light bg-[#F7FBFC] p-5 lg:hidden">
-              <div className="text-center text-[14px] text-ink-muted">
-                Having trouble booking online? Call us directly — we&rsquo;ll do
-                it for you.
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <a
-                  href={TEL_URL}
-                  className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-primary font-heading text-[15px] font-bold text-white transition-colors hover:bg-primary-dark"
-                >
-                  <PhoneIcon size={18} /> Call Now
-                </a>
-                <a
-                  href={WHATSAPP_URL}
-                  className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-whatsapp font-heading text-[15px] font-bold text-white transition-colors hover:bg-whatsapp-dark"
-                >
-                  <WhatsAppIcon size={18} color="#fff" /> WhatsApp
-                </a>
-              </div>
+              <Button
+                variant="cta"
+                size="lg"
+                onClick={primary}
+                disabled={!canContinue || submitting}
+                className={
+                  !canContinue || submitting ? "opacity-60" : undefined
+                }
+              >
+                {step === 3
+                  ? submitting
+                    ? "Confirming…"
+                    : "Confirm My Appointment ✓"
+                  : "Continue →"}
+              </Button>
             </div>
           )}
-        </div>
-      </div>
-    </div>
+        </Card>
+
+        {/* Trouble booking */}
+        {step < 4 && (
+          <p className="mx-auto mt-6 max-w-3xl text-center text-[14px] text-ink-muted">
+            Trouble booking online?{" "}
+            <a href={TEL_URL} className="font-semibold text-primary hover:text-primary-dark">
+              Call us
+            </a>{" "}
+            or{" "}
+            <a href={WHATSAPP_URL} className="font-semibold text-primary hover:text-primary-dark">
+              message on WhatsApp
+            </a>{" "}
+            — we&rsquo;ll book it for you.
+          </p>
+        )}
+      </Container>
+    </>
   );
 }

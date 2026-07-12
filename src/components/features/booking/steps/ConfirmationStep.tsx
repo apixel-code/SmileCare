@@ -23,9 +23,9 @@ export function ConfirmationStep({
   );
 
   return (
-    <div className="flex flex-1 flex-col items-center gap-[18px] bg-gradient-to-b from-[#F0FBF4] to-white px-5 py-8 lg:justify-center lg:py-12">
-      <div className="flex h-[88px] w-[88px] animate-ticket-pop items-center justify-center rounded-full bg-[#1F8A5B] shadow-[0_12px_32px_rgba(31,138,91,0.35)]">
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+    <div className="mx-auto flex max-w-[460px] flex-col items-center gap-5 text-center">
+      <div className="flex h-20 w-20 animate-ticket-pop items-center justify-center rounded-full bg-[#1F8A5B] shadow-[0_12px_32px_rgba(31,138,91,0.35)]">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
           <path
             d="M5 12.5 10 17.5 19 7"
             stroke="#fff"
@@ -38,18 +38,18 @@ export function ConfirmationStep({
         </svg>
       </div>
 
-      <div className="text-center">
-        <h1 className="mb-1.5 font-heading text-[24px] font-extrabold text-ink">
+      <div>
+        <h2 className="mb-1.5 font-heading text-[24px] font-extrabold text-ink md:text-[28px]">
           Your Appointment Is Confirmed!
-        </h1>
-        <div className="text-[14px] text-ink-muted">
+        </h2>
+        <p className="text-[14.5px] text-ink-muted">
           Details sent to your phone via SMS 📱
-        </div>
+        </p>
       </div>
 
       {/* Ticket */}
-      <div className="w-full max-w-[440px] animate-ticket-pop overflow-hidden rounded-2xl bg-white shadow-[0_12px_34px_rgba(26,43,60,0.12)]">
-        <div className="flex items-center justify-between bg-primary px-[22px] py-[18px]">
+      <div className="w-full animate-ticket-pop overflow-hidden rounded-2xl border border-primary-light shadow-soft">
+        <div className="flex items-center justify-between bg-primary px-[22px] py-[18px] text-left">
           <div>
             <div className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-white/70">
               Your Serial No.
@@ -67,7 +67,7 @@ export function ConfirmationStep({
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-3 border-t-2 border-dashed border-[#E1EBF0] px-[22px] py-[18px]">
+        <div className="flex flex-col gap-3 border-t-2 border-dashed border-primary-light bg-white px-[22px] py-[18px] text-left">
           <TicketRow label="Service" value={ticket.serviceName} />
           <TicketRow label="Doctor" value={ticket.doctorName} />
           <TicketRow label="Patient" value={ticket.patientName} />
@@ -75,12 +75,12 @@ export function ConfirmationStep({
         </div>
       </div>
 
-      <div className="grid w-full max-w-[440px] grid-cols-2 gap-3">
+      <div className="grid w-full grid-cols-2 gap-3">
         <a
           href={calUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl border-2 border-[#E1EBF0] bg-white font-heading text-[13.5px] font-bold text-ink transition-colors hover:border-primary"
+          className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl border-2 border-primary-light bg-white font-heading text-[13.5px] font-bold text-ink transition-colors hover:border-primary"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <rect x="4" y="5" width="16" height="15" rx="3" stroke="#0E7C7B" strokeWidth="1.8" />
@@ -99,14 +99,14 @@ export function ConfirmationStep({
         </a>
       </div>
 
-      <div className="w-full max-w-[440px] rounded-xl bg-primary-light px-[18px] py-3.5 text-center text-[13.5px] leading-[1.6] text-ink">
+      <div className="w-full rounded-xl bg-primary-light px-[18px] py-3.5 text-[13.5px] leading-[1.6] text-ink">
         🔔 You&rsquo;ll receive a reminder SMS 1 hour before your appointment.
       </div>
 
       <button
         type="button"
         onClick={onRestart}
-        className="min-h-[44px] text-[13.5px] text-ink-muted underline"
+        className="min-h-[44px] text-[13.5px] text-ink-muted underline hover:text-primary"
       >
         Book another appointment
       </button>

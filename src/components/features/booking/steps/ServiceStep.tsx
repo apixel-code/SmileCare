@@ -1,7 +1,8 @@
 import { BOOKING_SERVICE_OPTIONS } from "@/lib/booking";
 import { cn } from "@/lib/utils";
+import { StepHeading } from "./StepHeading";
 
-/** Step 1 — pick a service (tapping a card advances the wizard). */
+/** Step 1 — pick a service. */
 export function ServiceStep({
   selected,
   onPick,
@@ -10,14 +11,12 @@ export function ServiceStep({
   onPick: (slug: string) => void;
 }) {
   return (
-    <div className="flex flex-1 flex-col px-5 pb-8 pt-6 lg:px-10 lg:py-9">
-      <h1 className="font-heading text-[24px] font-extrabold leading-[1.3] text-ink lg:text-[28px]">
-        What do you need help with?
-      </h1>
-      <p className="mb-4 mt-1 text-[14.5px] leading-[1.6] text-ink-muted">
-        Tap one option. Don&rsquo;t worry — you can&rsquo;t choose wrong.
-      </p>
-      <div className="grid gap-3 md:grid-cols-2">
+    <div>
+      <StepHeading
+        title="What do you need help with?"
+        sub="Choose one option — don't worry, you can't choose wrong."
+      />
+      <div className="grid gap-3 sm:grid-cols-2">
         {BOOKING_SERVICE_OPTIONS.map((svc) => {
           const sel = selected === svc.slug;
           return (
@@ -26,15 +25,15 @@ export function ServiceStep({
               type="button"
               onClick={() => onPick(svc.slug)}
               className={cn(
-                "flex min-h-[64px] items-center gap-3.5 rounded-2xl border-2 px-[18px] py-3.5 text-left transition-colors",
+                "flex min-h-[68px] items-center gap-3.5 rounded-2xl border-2 px-4 py-3.5 text-left transition-all",
                 sel
-                  ? "border-primary bg-[#F0F9F9]"
-                  : "border-[#E1EBF0] bg-white hover:border-primary/40 hover:bg-[#FaFCFD]",
+                  ? "border-primary bg-primary-light/60 shadow-soft"
+                  : "border-primary-light bg-white hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-soft",
               )}
             >
               <span
                 className={cn(
-                  "flex h-11 w-11 flex-none items-center justify-center rounded-xl font-heading text-[16px] font-extrabold",
+                  "flex h-11 w-11 flex-none items-center justify-center rounded-xl font-heading text-[16px] font-extrabold transition-colors",
                   sel ? "bg-primary text-white" : "bg-primary-light text-primary",
                 )}
               >
@@ -50,7 +49,7 @@ export function ServiceStep({
               </span>
               <span
                 className={cn(
-                  "flex h-6 w-6 flex-none items-center justify-center rounded-full border-2",
+                  "flex h-6 w-6 flex-none items-center justify-center rounded-full border-2 transition-colors",
                   sel ? "border-primary bg-primary" : "border-[#CBD5E1] bg-white",
                 )}
               >
