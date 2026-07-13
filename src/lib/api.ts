@@ -154,6 +154,7 @@ export async function submitWalkin(input: {
   age?: string | number;
   serviceSlug: string;
   timeSlot: string;
+  doctorKey?: string;
   paymentTaken?: boolean;
 }): Promise<{ ok: true; serialNo: number } | { ok: false; error: string; fieldErrors?: FieldErrors }> {
   try {

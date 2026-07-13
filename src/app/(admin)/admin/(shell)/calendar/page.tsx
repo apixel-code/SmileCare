@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getWeekCalendar } from "@/server/services/admin.service";
+import { getDoctors } from "@/server/services/doctors.service";
 import { todayKey } from "@/server/services/portal.service";
-import { SLOT_TIMES, CLOSED_WEEKDAY, DEFAULT_DOCTOR } from "@/lib/booking";
+import { SLOT_TIMES, CLOSED_WEEKDAY } from "@/lib/booking";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Appointment Calendar" };
@@ -48,19 +49,31 @@ const CELL_STYLE: Record<string, { bg: string; edge: string; text: string }> = {
 export default async function AdminCalendarPage({
   searchParams,
 }: {
-  searchParams: Promise<{ w?: string }>;
+  searchParams: Promise<{ w?: string; doctor?: string }>;
 }) {
-  const { w = "0" } = await searchParams;
+  const { w = "0", doctor } = await searchParams;
   const offset = Number(w) || 0;
   const days = weekDays(offset);
-  const map = await getWeekCalendar(days[0].key, days[days.length - 1].key);
+  const doctors = await getDoctors();
+  const activeDoctor =
+    doctor && doctors.some((d) => d.key === doctor) ? doctor : undefined;
+  const map = await getWeekCalendar(
+    days[0].key,
+    days[days.length - 1].key,
+    activeDoctor,
+  );
+  const wq = (extra: Record<string, string>) => {
+    const q = new URLSearchParams({ w: String(offset), ...extra });
+    if (activeDoctor && !("doctor" in extra)) q.set("doctor", activeDoctor);
+    return `/admin/calendar?${q.toString()}`;
+  };
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Link
-            href={`/admin/calendar?w=${offset - 1}`}
+            href={wq({ w: String(offset - 1) })}
             className="flex h-11 w-11 items-center justify-center rounded-[11px] border border-[#E1EBF0] bg-white text-[16px] text-ink transition-colors hover:border-primary"
           >
             ←
@@ -69,15 +82,45 @@ export default async function AdminCalendarPage({
             {days[0].num} – {days[days.length - 1].num}
           </span>
           <Link
-            href={`/admin/calendar?w=${offset + 1}`}
+            href={wq({ w: String(offset + 1) })}
             className="flex h-11 w-11 items-center justify-center rounded-[11px] border border-[#E1EBF0] bg-white text-[16px] text-ink transition-colors hover:border-primary"
           >
             →
           </Link>
         </div>
-        <span className="rounded-[11px] border-2 border-primary bg-primary-light px-4 py-2.5 font-heading text-[13px] font-bold text-primary">
-          {DEFAULT_DOCTOR.name}
-        </span>
+        {doctors.length > 1 ? (
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={wq({ w: String(offset), doctor: "" })}
+              className={cn(
+                "rounded-[11px] border-2 px-4 py-2.5 font-heading text-[13px] font-bold transition-colors",
+                !activeDoctor
+                  ? "border-primary bg-primary text-white"
+                  : "border-[#E1EBF0] bg-white text-ink-muted hover:border-primary/40",
+              )}
+            >
+              All doctors
+            </Link>
+            {doctors.map((d) => (
+              <Link
+                key={d.key}
+                href={wq({ w: String(offset), doctor: d.key })}
+                className={cn(
+                  "rounded-[11px] border-2 px-4 py-2.5 font-heading text-[13px] font-bold transition-colors",
+                  activeDoctor === d.key
+                    ? "border-primary bg-primary text-white"
+                    : "border-[#E1EBF0] bg-white text-ink-muted hover:border-primary/40",
+                )}
+              >
+                {d.name}
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <span className="rounded-[11px] border-2 border-primary bg-primary-light px-4 py-2.5 font-heading text-[13px] font-bold text-primary">
+            {doctors[0]?.name}
+          </span>
+        )}
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-[#E1EBF0] bg-white shadow-soft">
@@ -121,11 +164,12 @@ export default async function AdminCalendarPage({
                     {cells.map((c, i) => {
                       const st = CELL_STYLE[c.status] ?? CELL_STYLE.completed;
                       return (
-                        <div
+                        <Link
                           key={i}
-                          title={`${c.name} — ${c.service}`}
+                          href={`/admin/patients/${c.patientId}`}
+                          title={`${c.name} — ${c.service} · open profile`}
                           className={cn(
-                            "mb-[3px] overflow-hidden rounded-lg border-l-[3px] px-2 py-1 last:mb-0",
+                            "mb-[3px] block overflow-hidden rounded-lg border-l-[3px] px-2 py-1 transition-shadow last:mb-0 hover:shadow-soft-md",
                             st.bg,
                             st.edge,
                           )}
@@ -136,7 +180,7 @@ export default async function AdminCalendarPage({
                           <div className="truncate text-[10.5px] text-ink-muted">
                             {c.service}
                           </div>
-                        </div>
+                        </Link>
                       );
                     })}
                   </div>

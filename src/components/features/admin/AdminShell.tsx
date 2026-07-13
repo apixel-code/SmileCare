@@ -8,6 +8,7 @@ import { WalkinModal } from "./WalkinModal";
 import { ToastProvider } from "@/components/ui/Toast";
 import { logout } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { can, canAccessAdminPath } from "@/lib/permissions";
 
 const TITLES: Array<[RegExp, string]> = [
   [/^\/admin\/patients\/.+/, "Patient Profile"],
@@ -59,15 +60,17 @@ export function AdminShell({
               <div className="text-[12.5px] text-ink-muted">{dateLabel}</div>
             </div>
             <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => setWalkinOpen(true)}
-                className="flex min-h-[50px] items-center gap-2 rounded-xl bg-cta px-4 font-heading text-[15px] font-bold text-white shadow-[0_4px_14px_rgba(255,122,89,0.35)] transition-colors hover:bg-cta-dark md:px-6"
-              >
-                <span className="text-[20px] leading-none">+</span>
-                <span className="hidden sm:inline">Add Walk-in Patient</span>
-                <span className="sm:hidden">Walk-in</span>
-              </button>
+              {can(userRole, "walkin.add") && (
+                <button
+                  type="button"
+                  onClick={() => setWalkinOpen(true)}
+                  className="flex min-h-[50px] items-center gap-2 rounded-xl bg-cta px-4 font-heading text-[15px] font-bold text-white shadow-[0_4px_14px_rgba(255,122,89,0.35)] transition-colors hover:bg-cta-dark md:px-6"
+                >
+                  <span className="text-[20px] leading-none">+</span>
+                  <span className="hidden sm:inline">Add Walk-in Patient</span>
+                  <span className="sm:hidden">Walk-in</span>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={async () => {
@@ -84,7 +87,7 @@ export function AdminShell({
 
           {/* Mobile nav (sidebar hidden below lg) */}
           <div className="flex gap-2 overflow-x-auto border-b border-[#E1EBF0] bg-white px-5 py-2.5 lg:hidden">
-            {MOBILE_NAV.map((item) => {
+            {MOBILE_NAV.filter((item) => canAccessAdminPath(userRole, item.href)).map((item) => {
               const active =
                 item.href === "/admin"
                   ? pathname === "/admin"

@@ -9,12 +9,26 @@ import { useToast } from "@/components/ui/Toast";
 import { createBillApi } from "@/lib/api";
 import { formatTaka, PAYMENT_METHOD } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { can } from "@/lib/permissions";
 import type { AdminPatientProfile } from "@/server/services/admin.service";
 
-const TABS = ["History", "Dental Chart", "Prescriptions", "Payments"] as const;
+type Tab = "History" | "Dental Chart" | "Prescriptions" | "Payments";
 
-export function PatientTabs({ profile }: { profile: AdminPatientProfile }) {
-  const [tab, setTab] = useState<(typeof TABS)[number]>("History");
+export function PatientTabs({
+  profile,
+  role,
+}: {
+  profile: AdminPatientProfile;
+  role: string;
+}) {
+  // Tabs follow the permission matrix — see lib/permissions.ts.
+  const TABS: Tab[] = [
+    "History",
+    ...(can(role, "chart.edit") ? (["Dental Chart"] as const) : []),
+    ...(can(role, "prescription.write") ? (["Prescriptions"] as const) : []),
+    ...(can(role, "payments.manage") ? (["Payments"] as const) : []),
+  ];
+  const [tab, setTab] = useState<Tab>("History");
 
   return (
     <div className="flex flex-col gap-4">

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { submitWalkin } from "@/lib/api";
 import { walkinSchema } from "@/lib/validators/admin";
 import { BOOKING_SERVICE_OPTIONS, SLOT_TIMES } from "@/lib/booking";
 import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
+import type { DoctorOption } from "@/server/repositories/staff.repository";
 
 const EMPTY = {
   name: "",
@@ -14,6 +15,7 @@ const EMPTY = {
   age: "",
   serviceSlug: BOOKING_SERVICE_OPTIONS[4].slug, // General Checkup
   timeSlot: SLOT_TIMES[0] as string,
+  doctorKey: "",
   paymentTaken: false,
 };
 
@@ -26,19 +28,39 @@ export function WalkinModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   const toast = useToast();
   const [values, setValues] = useState(EMPTY);
+  const [doctors, setDoctors] = useState<DoctorOption[]>([]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
+  useEffect(() => {
+    let live = true;
+    fetch("/api/doctors")
+      .then((r) => r.json())
+      .then((j) => {
+        if (live && j?.ok) {
+          setDoctors(j.data);
+          setValues((v) => ({ ...v, doctorKey: j.data[0]?.key ?? "" }));
+        }
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, []);
+
   async function submit() {
     setError("");
-    const parsed = walkinSchema.safeParse(values);
+    const parsed = walkinSchema.safeParse({
+      ...values,
+      doctorKey: values.doctorKey || undefined,
+    });
     if (!parsed.success) {
       const fe = parsed.error.flatten().fieldErrors;
       setError(fe.name?.[0] ?? fe.phone?.[0] ?? fe.age?.[0] ?? "Check the form");
       return;
     }
     setBusy(true);
-    const res = await submitWalkin(values);
+    const res = await submitWalkin(parsed.data);
     setBusy(false);
     if (!res.ok) {
       setError(res.error);
@@ -147,6 +169,25 @@ export function WalkinModal({ onClose }: { onClose: () => void }) {
             </select>
           </label>
         </div>
+
+        {doctors.length > 1 && (
+          <label className="flex flex-col gap-1.5">
+            <span className={labelCls}>Doctor</span>
+            <select
+              className={fieldCls}
+              value={values.doctorKey}
+              onChange={(e) =>
+                setValues((v) => ({ ...v, doctorKey: e.target.value }))
+              }
+            >
+              {doctors.map((d) => (
+                <option key={d.key} value={d.key}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
 
         <div className="flex items-center justify-between gap-3 rounded-xl border border-[#E1EBF0] bg-[#F7FBFC] px-3.5 py-3">
           <span className="font-heading text-[13.5px] font-bold text-ink">

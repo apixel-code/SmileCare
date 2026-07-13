@@ -22,6 +22,7 @@ export const walkinSchema = z.object({
     ),
   serviceSlug: z.string().min(2),
   timeSlot: z.enum(SLOT_TIMES),
+  doctorKey: z.string().min(1).optional(),
   paymentTaken: z.boolean().optional(),
 });
 

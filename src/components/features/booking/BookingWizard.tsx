@@ -18,16 +18,22 @@ import {
   type DetailsValues,
 } from "./steps/DetailsStep";
 import { ConfirmationStep } from "./steps/ConfirmationStep";
+import { cn } from "@/lib/utils";
 import type { DayAvailability } from "@/server/services/availability.service";
 import type { BookingTicket } from "@/server/services/booking.service";
+import type { DoctorOption } from "@/server/repositories/staff.repository";
 
 const STEP_LABELS = ["Service", "Date & Time", "Your Details", "Confirmation"];
 
-export function BookingWizard() {
+export function BookingWizard({ doctors = [] }: { doctors?: DoctorOption[] }) {
   const dates = useMemo(() => bookingDates(), []);
+  const multiDoctor = doctors.length > 1;
 
   const [step, setStep] = useState(1);
   const [serviceSlug, setServiceSlug] = useState<string | null>(null);
+  const [doctorKey, setDoctorKey] = useState<string | null>(
+    doctors[0]?.key ?? null,
+  );
   const [dateKey, setDateKey] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
 
@@ -46,10 +52,10 @@ export function BookingWizard() {
   const [serverError, setServerError] = useState("");
   const [ticket, setTicket] = useState<BookingTicket | null>(null);
 
-  async function loadAvailability(key: string) {
+  async function loadAvailability(key: string, doc = doctorKey) {
     setSlotsLoading(true);
     setAvailability(null);
-    setAvailability(await fetchAvailability(key));
+    setAvailability(await fetchAvailability(key, doc ?? undefined));
     setSlotsLoading(false);
   }
 
@@ -57,6 +63,12 @@ export function BookingWizard() {
     setDateKey(key);
     setSlot(null);
     void loadAvailability(key);
+  }
+
+  function pickDoctor(key: string) {
+    setDoctorKey(key);
+    setSlot(null);
+    if (dateKey) void loadAvailability(dateKey, key);
   }
 
   const scarcityText = (() => {
@@ -83,6 +95,7 @@ export function BookingWizard() {
     setServerError("");
     const parsed = bookingSchema.safeParse({
       serviceSlug,
+      doctorKey: doctorKey ?? undefined,
       date: dateKey,
       timeSlot: slot,
       who: details.who,
@@ -151,16 +164,42 @@ export function BookingWizard() {
               <ServiceStep selected={serviceSlug} onPick={setServiceSlug} />
             )}
             {step === 2 && (
-              <DateTimeStep
-                dates={dates}
-                selectedDate={dateKey}
-                onPickDate={pickDate}
-                slots={availability?.slots ?? []}
-                slotsLoading={slotsLoading}
-                selectedSlot={slot}
-                onPickSlot={setSlot}
-                scarcityText={scarcityText}
-              />
+              <>
+                {multiDoctor && (
+                  <div className="mb-6">
+                    <div className="mb-2.5 font-heading text-[15px] font-bold text-ink">
+                      Choose your doctor
+                    </div>
+                    <div className="flex flex-wrap gap-2.5">
+                      {doctors.map((d) => (
+                        <button
+                          key={d.key}
+                          type="button"
+                          onClick={() => pickDoctor(d.key)}
+                          className={cn(
+                            "min-h-[46px] rounded-xl border-2 px-4 font-heading text-[14px] font-bold transition-colors",
+                            doctorKey === d.key
+                              ? "border-primary bg-primary text-white"
+                              : "border-primary-light bg-white text-ink hover:border-primary/40",
+                          )}
+                        >
+                          {d.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <DateTimeStep
+                  dates={dates}
+                  selectedDate={dateKey}
+                  onPickDate={pickDate}
+                  slots={availability?.slots ?? []}
+                  slotsLoading={slotsLoading}
+                  selectedSlot={slot}
+                  onPickSlot={setSlot}
+                  scarcityText={scarcityText}
+                />
+              </>
             )}
             {step === 3 && (
               <DetailsStep
