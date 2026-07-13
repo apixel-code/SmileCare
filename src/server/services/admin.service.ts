@@ -19,7 +19,7 @@ import { getChart } from "@/server/repositories/dentalchart.repository";
 import {
   findPrescriptionsByPatient,
 } from "@/server/repositories/prescription.repository";
-import { nextSeq } from "@/server/repositories/counter.repository";
+import { nextDailySerial } from "@/server/repositories/counter.repository";
 import {
   SLOT_TIMES,
   SLOT_CAPACITY,
@@ -121,7 +121,7 @@ export async function addWalkin(
     age: input.age,
     isFamily: false,
   });
-  const serialNo = await nextSeq(`${doctor.key}:${date}`);
+  const serialNo = await nextDailySerial(date);
   await createAppointment({
     serialNo,
     patientId: patient.id,

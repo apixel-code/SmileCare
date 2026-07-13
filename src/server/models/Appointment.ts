@@ -2,7 +2,7 @@ import mongoose, { Schema, type Model, type Types } from "mongoose";
 import { APPOINTMENT_STATUS, APPOINTMENT_SOURCE } from "@/lib/constants";
 
 export interface IAppointment {
-  serialNo: number; // per doctor per day
+  serialNo: number; // clinic-wide, per day (one queue line for all doctors)
   patient: Types.ObjectId;
   patientName: string; // denormalized for quick queue display
   doctorKey: string; // staff id (or the default-doctor key)
@@ -38,11 +38,9 @@ const AppointmentSchema = new Schema<IAppointment>(
   { timestamps: true },
 );
 
-// Unique serial per doctor per day; fast queue + capacity lookups.
-AppointmentSchema.index(
-  { doctorKey: 1, date: 1, serialNo: 1 },
-  { unique: true },
-);
+// One clinic-wide serial line per day → serial is unique per date.
+AppointmentSchema.index({ date: 1, serialNo: 1 }, { unique: true });
+// Per-doctor slot capacity + calendar filtering still key on the doctor.
 AppointmentSchema.index({ doctorKey: 1, date: 1, timeSlot: 1 });
 AppointmentSchema.index({ date: 1, status: 1 });
 AppointmentSchema.index({ patient: 1, date: -1 });

@@ -24,7 +24,7 @@ Design reference: exported Claude Design `.dc.html` files. Navbar/Footer: use HO
 ## Booking `/book` — 4-step wizard (client component, Stepper)
 1 Service (large tap cards incl. "Not sure — let the doctor decide") → 2 Date & time (DatePills + TimeSlotChips, unavailable grayed, "Only N slots left") → 3 Details (name, mobile, age, self/family toggle, optional note — NO email/password) → 4 Confirmation: ticket-style serial card (big serial no, date/time, doctor, address), "SMS sent" note, Add to Calendar / Save to WhatsApp, reminder note.
 Fallback state: "Trouble booking? Call us" + Call/WhatsApp buttons.
-Rules: serial = per-doctor per-day sequence (service layer, atomic). Slot capacity checked server-side at confirm.
+Rules: serial = clinic-wide per-day sequence — one queue line shared by all doctors (service layer, atomic). Slot capacity checked server-side at confirm.
 
 ## Portal (patient, OTP login: phone → 4-digit code)
 Dashboard: greeting + next-appointment card (Reschedule/Cancel) → quick actions grid (Book, Prescriptions, History, Reports) → treatment timeline → payment history (due in danger + Pay Now) → family member switcher (one phone = whole family's records).
