@@ -30,9 +30,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={show}>
       {children}
       {msg && (
-        <div className="fixed bottom-7 left-1/2 z-[200] flex -translate-x-1/2 animate-fade-up-fast items-center gap-2.5 whitespace-nowrap rounded-xl bg-ink px-6 py-3.5 font-heading text-[14px] font-bold text-white shadow-[0_12px_30px_rgba(26,43,60,0.35)]">
-          <span className="text-[16px] text-[#4ADE80]">✓</span>
-          {msg}
+        <div className="fixed inset-x-4 bottom-5 z-[200] mx-auto flex w-fit max-w-[calc(100vw-2rem)] animate-fade-up-fast items-center gap-2.5 rounded-xl bg-ink px-5 py-3.5 font-heading text-[13.5px] font-bold text-white shadow-[0_12px_30px_rgba(26,43,60,0.35)] sm:bottom-7 sm:max-w-md sm:px-6 sm:text-[14px]">
+          <span className="mt-px flex-none text-[16px] leading-none text-[#4ADE80]">✓</span>
+          <span className="min-w-0">{msg}</span>
         </div>
       )}
     </ToastContext.Provider>
