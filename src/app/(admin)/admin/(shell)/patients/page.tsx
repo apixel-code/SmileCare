@@ -25,18 +25,59 @@ export default async function AdminPatientsPage({
           name="q"
           defaultValue={q}
           placeholder="Search by name or phone…"
-          className="h-[50px] w-full max-w-md rounded-xl border-2 border-[#E1EBF0] bg-white px-4 text-[15px] text-ink outline-none transition-colors focus:border-primary"
+          className="h-[50px] min-w-0 flex-1 rounded-xl border-2 border-[#E1EBF0] bg-white px-4 text-[15px] text-ink outline-none transition-colors focus:border-primary md:max-w-md md:flex-none md:w-full"
         />
         <button
           type="submit"
-          className="h-[50px] rounded-xl bg-primary px-6 font-heading text-[14px] font-bold text-white transition-colors hover:bg-primary-dark"
+          className="h-[50px] flex-none rounded-xl bg-primary px-5 font-heading text-[14px] font-bold text-white transition-colors hover:bg-primary-dark sm:px-6"
         >
           Search
         </button>
       </form>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-2xl border border-[#E1EBF0] bg-white shadow-soft">
+      {/* Mobile: card list (no horizontal scroll) */}
+      <div className="flex flex-col gap-2.5 md:hidden">
+        {items.length === 0 ? (
+          <div className="rounded-2xl border border-[#E1EBF0] bg-white px-4 py-10 text-center text-[14px] text-ink-muted shadow-soft">
+            {q ? `No patients match “${q}”.` : "No patients yet."}
+          </div>
+        ) : (
+          items.map((p) => (
+            <Link
+              key={p.id}
+              href={`/admin/patients/${p.id}`}
+              className="flex items-center gap-3.5 rounded-2xl border border-[#E1EBF0] bg-white p-4 shadow-soft transition-transform active:scale-[0.99]"
+            >
+              <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-primary-light font-heading text-[16px] font-extrabold text-primary">
+                {p.name.charAt(0)}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-heading text-[15.5px] font-bold text-ink">
+                  {p.name}
+                </span>
+                <span className="mt-0.5 block text-[13.5px] text-ink-muted">
+                  {displayPhone(p.phone)}
+                </span>
+                <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-ink-muted">
+                  <span>Age {p.age ?? "—"}</span>
+                  <span>Blood {p.bloodGroup ?? "—"}</span>
+                  {p.allergies.length > 0 && (
+                    <span className="rounded-full border border-[#F5C6C6] bg-[#FDE8E8] px-2.5 py-0.5 font-heading text-[11px] font-extrabold text-[#C0392B]">
+                      ⚠ {p.allergies.join(", ")}
+                    </span>
+                  )}
+                </span>
+              </span>
+              <span className="flex-none font-heading text-[18px] text-primary">
+                →
+              </span>
+            </Link>
+          ))
+        )}
+      </div>
+
+      {/* Desktop: full table */}
+      <div className="hidden overflow-x-auto rounded-2xl border border-[#E1EBF0] bg-white shadow-soft md:block">
         <table className="w-full min-w-[640px] border-collapse text-left">
           <thead>
             <tr className="border-b border-[#E1EBF0] bg-[#F7FBFC]">

@@ -215,24 +215,30 @@ export function BookingWizard({ doctors = [] }: { doctors?: DoctorOption[] }) {
             )}
           </div>
 
-          {/* Footer nav (hidden on confirmation) */}
+          {/* Footer nav (hidden on confirmation) — stacks on mobile so the
+              CTA is always full-width and never overflows narrow screens. */}
           {step < 4 && (
-            <div className="flex items-center justify-between gap-3 border-t border-primary-light bg-[#F9FBFC] px-6 py-5 md:px-10">
+            <div className="flex flex-col-reverse gap-3 border-t border-primary-light bg-[#F9FBFC] px-6 py-5 sm:flex-row sm:items-center sm:justify-between md:px-10">
               {step > 1 ? (
-                <Button variant="outline" onClick={() => setStep(step - 1)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setStep(step - 1)}
+                  className="w-full sm:w-auto"
+                >
                   ← Back
                 </Button>
               ) : (
-                <span />
+                <span className="hidden sm:block" />
               )}
               <Button
                 variant="cta"
                 size="lg"
                 onClick={primary}
                 disabled={!canContinue || submitting}
-                className={
-                  !canContinue || submitting ? "opacity-60" : undefined
-                }
+                className={cn(
+                  "w-full sm:w-auto",
+                  (!canContinue || submitting) && "opacity-60",
+                )}
               >
                 {step === 3
                   ? submitting
