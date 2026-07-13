@@ -33,7 +33,12 @@ export const walkinSchema = z.object({
       "Enter a valid amount",
     ),
   paymentMethod: z.enum(PAYMENT_METHOD).optional(),
-});
+}).refine(
+  // If payment is marked taken, an amount is required (mirrors the UI guard,
+  // so non-UI callers can't assert "paid" while recording nothing).
+  (v) => !v.paymentTaken || (v.paymentAmount !== undefined && v.paymentAmount > 0),
+  { message: "Enter the amount received", path: ["paymentAmount"] },
+);
 
 export const toothSchema = z.object({
   patientId: z.string().min(8),

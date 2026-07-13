@@ -23,7 +23,10 @@ export async function POST(request: Request) {
     const session = await getSession();
     const result = await addWalkin(parsed.data, session?.sub ?? "reception");
     if (!result.ok) return apiError(result.error, { status: 409 });
-    return apiResponse({ serialNo: result.serialNo }, { status: 201 });
+    return apiResponse(
+      { serialNo: result.serialNo, paymentFailed: result.paymentFailed ?? false },
+      { status: 201 },
+    );
   } catch {
     return apiError("Could not add the walk-in.", { status: 500 });
   }

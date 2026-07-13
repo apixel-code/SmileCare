@@ -55,14 +55,22 @@ export function serviceNameFromSlug(slug: string): string {
   );
 }
 
-// ── Clinic-time (Asia/Dhaka, fixed +06:00) date helpers ───────────────
+// ── Clinic-time (Asia/Dhaka) date helpers ─────────────────────────────
 // Appointment `date`s are stored as Dhaka day-strings, so every "today" /
 // "this month" boundary in stats & reports MUST be computed in clinic time,
 // never UTC — otherwise revenue lands in the wrong day/month near midnight.
 
+// Built once, not per call — Intl.DateTimeFormat construction is expensive
+// and clinicDateKey runs in per-transaction loops (payments/reports).
+const clinicDateFmt = new Intl.DateTimeFormat("en-CA", { timeZone: CLINIC_TZ });
+const clinicOffsetFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: CLINIC_TZ,
+  timeZoneName: "longOffset",
+});
+
 /** Date key (YYYY-MM-DD) of an instant, in clinic time. */
 export function clinicDateKey(at: Date = new Date()): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: CLINIC_TZ }).format(at);
+  return clinicDateFmt.format(at);
 }
 
 /** Month key (YYYY-MM) of an instant, in clinic time. */
@@ -70,16 +78,29 @@ export function clinicMonthKey(at: Date = new Date()): string {
   return clinicDateKey(at).slice(0, 7);
 }
 
+/** Minutes CLINIC_TZ is ahead of UTC at a given instant (derived, not hardcoded). */
+function clinicOffsetMinutes(at: Date): number {
+  const name =
+    clinicOffsetFmt
+      .formatToParts(at)
+      .find((p) => p.type === "timeZoneName")?.value ?? "GMT+00:00";
+  const m = name.match(/GMT([+-])(\d{2}):(\d{2})/);
+  if (!m) return 0;
+  return (m[1] === "-" ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3]));
+}
+
 /**
  * The exact instant a clinic-time month begins, `monthsBack` months before
- * the current one — for comparing absolute transaction timestamps.
+ * the current one — for comparing absolute transaction timestamps. The offset
+ * is read from CLINIC_TZ (handles a future TZ change / DST) rather than fixed.
  */
 export function clinicMonthStart(monthsBack = 0, at: Date = new Date()): Date {
   const [y, m] = clinicMonthKey(at).split("-").map(Number);
   const total = y * 12 + (m - 1) - monthsBack;
   const yy = Math.floor(total / 12);
-  const mm = String((total % 12) + 1).padStart(2, "0");
-  return new Date(`${yy}-${mm}-01T00:00:00+06:00`);
+  const mm = total % 12; // 0-based month
+  const utcGuess = Date.UTC(yy, mm, 1);
+  return new Date(utcGuess - clinicOffsetMinutes(new Date(utcGuess)) * 60_000);
 }
 
 export interface BookingDate {
@@ -97,10 +118,7 @@ const MONTHS = [
 
 /** Bookable dates (Dhaka time), skipping the closed weekday. */
 export function bookingDates(count = BOOKING_DAYS_AHEAD): BookingDate[] {
-  const todayKey = new Intl.DateTimeFormat("en-CA", {
-    timeZone: CLINIC_TZ,
-  }).format(new Date()); // YYYY-MM-DD
-  const [y, m, d] = todayKey.split("-").map(Number);
+  const [y, m, d] = clinicDateKey().split("-").map(Number);
   const base = Date.UTC(y, m - 1, d);
 
   const out: BookingDate[] = [];
