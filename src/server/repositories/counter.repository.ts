@@ -15,3 +15,11 @@ export async function nextSeq(key: string): Promise<number> {
   ).lean();
   return doc!.seq;
 }
+
+/** Counter key for the clinic-wide daily serial line. */
+export const dailySerialKey = (date: string) => `serial:${date}`;
+
+/** Next clinic-wide serial number for a given day (all doctors share one line). */
+export function nextDailySerial(date: string): Promise<number> {
+  return nextSeq(dailySerialKey(date));
+}

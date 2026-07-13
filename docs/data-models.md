@@ -10,13 +10,13 @@ Index: `{ phone: 1 }`, `{ familyHeadPhone: 1 }`
 
 ## Appointment
 ```
-serialNo (per doctor per day), patient: ref, doctor: ref(Staff),
+serialNo (clinic-wide, per day — one queue line for all doctors), patient: ref, doctor: ref(Staff),
 service: ref, date (YYYY-MM-DD string), timeSlot ("17:30"),
 status: waiting|in_chamber|completed|no_show|cancelled,
 source: online|walk_in|phone, problemNote?, bookedByPhone
 ```
-Indexes: `{ doctor: 1, date: 1, serialNo: 1 }` unique; `{ date: 1, status: 1 }`; `{ patient: 1, date: -1 }`
-Serial generation: atomic `findOneAndUpdate` on a Counter collection `{ key: "docId:date", seq }` — never count documents (race-safe).
+Indexes: `{ date: 1, serialNo: 1 }` unique (one serial line per day); `{ doctorKey: 1, date: 1, timeSlot: 1 }` (slot capacity + calendar filter); `{ date: 1, status: 1 }`; `{ patient: 1, date: -1 }`
+Serial generation: atomic `findOneAndUpdate` on a Counter collection `{ key: "serial:date", seq }` — one clinic-wide daily line, never count documents (race-safe).
 
 ## Service
 ```

@@ -1,4 +1,4 @@
-import { nextSeq } from "@/server/repositories/counter.repository";
+import { nextDailySerial } from "@/server/repositories/counter.repository";
 import { upsertPatient } from "@/server/repositories/patient.repository";
 import {
   createAppointment,
@@ -73,7 +73,7 @@ export async function createBooking(
     isFamily: input.who === "family",
   });
 
-  const serialNo = await nextSeq(`${doctor.key}:${input.date}`);
+  const serialNo = await nextDailySerial(input.date);
   if (serialNo > settings.maxSerialsPerDay) {
     return {
       ok: false,
