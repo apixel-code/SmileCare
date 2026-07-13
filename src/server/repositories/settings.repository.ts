@@ -2,6 +2,7 @@ import { unstable_cache, revalidateTag } from "next/cache";
 import { connectDB } from "@/server/db";
 import {
   ClinicSettings,
+  SETTINGS_SINGLETON,
   type IClinicSettings,
 } from "@/server/models/ClinicSettings";
 import { CLINIC } from "@/lib/constants";
@@ -34,20 +35,40 @@ const DEFAULTS = {
   },
 };
 
-/** Single settings document — created with defaults on first read. */
+/**
+ * The one settings document — atomically found-or-created on first read.
+ * Keying the upsert on the unique `singleton` field means concurrent cold
+ * reads can never create duplicate settings docs (the loser hits the unique
+ * index and we simply re-read).
+ */
 export async function getSettings(): Promise<SettingsDoc> {
   await connectDB();
-  const existing = await ClinicSettings.findOne().lean();
-  if (existing) return existing;
-  const created = await ClinicSettings.create(DEFAULTS);
-  return created.toObject();
+  try {
+    const doc = await ClinicSettings.findOneAndUpdate(
+      { singleton: SETTINGS_SINGLETON },
+      { $setOnInsert: DEFAULTS },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    ).lean();
+    return doc as SettingsDoc;
+  } catch {
+    // Lost the insert race on the unique index — the winner's doc now exists.
+    const existing = await ClinicSettings.findOne({
+      singleton: SETTINGS_SINGLETON,
+    }).lean();
+    if (existing) return existing as SettingsDoc;
+    throw new Error("Clinic settings unavailable");
+  }
 }
 
 export async function updateSettings(
   patch: Partial<Omit<IClinicSettings, "createdAt" | "updatedAt">>,
 ): Promise<void> {
   await connectDB();
-  await ClinicSettings.findOneAndUpdate({}, { $set: patch }, { upsert: true });
+  await ClinicSettings.findOneAndUpdate(
+    { singleton: SETTINGS_SINGLETON },
+    { $set: patch },
+    { upsert: true, setDefaultsOnInsert: true },
+  );
   // Public pages re-fetch the new clinic profile on next request.
   revalidateTag(SETTINGS_TAG);
 }

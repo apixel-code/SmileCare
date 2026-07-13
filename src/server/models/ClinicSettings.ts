@@ -7,7 +7,11 @@ export interface IScheduleDay {
   isOff: boolean;
 }
 
+/** Fixed key for the one-and-only settings document (enforces a singleton). */
+export const SETTINGS_SINGLETON = "clinic";
+
 export interface IClinicSettings {
+  singleton: string; // always SETTINGS_SINGLETON — unique, so only one doc exists
   clinicName: string;
   logoPublicId?: string;
   address: string;
@@ -35,6 +39,12 @@ const ScheduleDaySchema = new Schema<IScheduleDay>(
 
 const ClinicSettingsSchema = new Schema<IClinicSettings>(
   {
+    singleton: {
+      type: String,
+      default: SETTINGS_SINGLETON,
+      unique: true, // guarantees a single settings document
+      immutable: true,
+    },
     clinicName: { type: String, required: true },
     logoPublicId: { type: String },
     address: { type: String, required: true },
