@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
-import { MapPlaceholder } from "@/components/ui/MapPlaceholder";
+import { ClinicMap } from "@/components/ui/ClinicMap";
 import { ContactInfo } from "@/components/features/contact/ContactInfo";
 import { ContactForm } from "@/components/features/contact/ContactForm";
 import { CLINIC } from "@/lib/constants";
@@ -33,7 +33,7 @@ export default function ContactPage() {
         </div>
 
         <Reveal variant="up" className="mt-8">
-          <MapPlaceholder />
+          <ClinicMap />
         </Reveal>
       </Container>
     </>
