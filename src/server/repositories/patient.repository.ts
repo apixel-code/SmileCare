@@ -130,11 +130,14 @@ export async function upsertPatient(
   input: UpsertPatientInput,
 ): Promise<{ id: string; name: string }> {
   await connectDB();
+  // Normalize the name so "Rahim ", " Rahim" and "Rahim  Uddin" don't each
+  // spawn a separate record for the same person under one phone.
+  const name = input.name.trim().replace(/\s+/g, " ");
   const patient = await Patient.findOneAndUpdate(
-    { phone: input.phone, name: input.name },
+    { phone: input.phone, name },
     {
       $set: {
-        name: input.name,
+        name,
         phone: input.phone,
         ...(input.age !== undefined ? { age: input.age } : {}),
         ...(input.isFamily ? { familyHeadPhone: input.phone } : {}),

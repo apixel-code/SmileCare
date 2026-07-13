@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { submitWalkin } from "@/lib/api";
 import { walkinSchema } from "@/lib/validators/admin";
 import { BOOKING_SERVICE_OPTIONS, SLOT_TIMES } from "@/lib/booking";
+import { PAYMENT_METHOD } from "@/lib/constants";
 import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 import type { DoctorOption } from "@/server/repositories/staff.repository";
@@ -17,6 +18,8 @@ const EMPTY = {
   timeSlot: SLOT_TIMES[0] as string,
   doctorKey: "",
   paymentTaken: false,
+  paymentAmount: "",
+  paymentMethod: "cash",
 };
 
 const fieldCls =
@@ -50,9 +53,15 @@ export function WalkinModal({ onClose }: { onClose: () => void }) {
 
   async function submit() {
     setError("");
+    if (values.paymentTaken && !(Number(values.paymentAmount) > 0)) {
+      setError("Enter the amount received (or turn payment off).");
+      return;
+    }
     const parsed = walkinSchema.safeParse({
       ...values,
       doctorKey: values.doctorKey || undefined,
+      paymentAmount: values.paymentTaken ? values.paymentAmount : undefined,
+      paymentMethod: values.paymentTaken ? values.paymentMethod : undefined,
     });
     if (!parsed.success) {
       const fe = parsed.error.flatten().fieldErrors;
@@ -189,33 +198,72 @@ export function WalkinModal({ onClose }: { onClose: () => void }) {
           </label>
         )}
 
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-[#E1EBF0] bg-[#F7FBFC] px-3.5 py-3">
-          <span className="font-heading text-[13.5px] font-bold text-ink">
-            Payment taken?
-          </span>
-          <div className="flex items-center gap-2.5">
-            <span className="text-[13px] font-semibold text-ink-muted">
-              {values.paymentTaken ? "Yes" : "No"}
+        <div className="flex flex-col gap-2.5 rounded-xl border border-[#E1EBF0] bg-[#F7FBFC] px-3.5 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <span className="font-heading text-[13.5px] font-bold text-ink">
+              Payment taken?
             </span>
-            <button
-              type="button"
-              aria-label="Toggle payment taken"
-              onClick={() =>
-                setValues((v) => ({ ...v, paymentTaken: !v.paymentTaken }))
-              }
-              className={cn(
-                "relative h-8 w-[54px] flex-none rounded-full transition-colors",
-                values.paymentTaken ? "bg-success" : "bg-[#CBD5E1]",
-              )}
-            >
-              <span
+            <div className="flex items-center gap-2.5">
+              <span className="text-[13px] font-semibold text-ink-muted">
+                {values.paymentTaken ? "Yes" : "No"}
+              </span>
+              <button
+                type="button"
+                aria-label="Toggle payment taken"
+                onClick={() =>
+                  setValues((v) => ({ ...v, paymentTaken: !v.paymentTaken }))
+                }
                 className={cn(
-                  "absolute top-[3px] h-[26px] w-[26px] rounded-full bg-white shadow transition-all",
-                  values.paymentTaken ? "left-[25px]" : "left-[3px]",
+                  "relative h-8 w-[54px] flex-none rounded-full transition-colors",
+                  values.paymentTaken ? "bg-success" : "bg-[#CBD5E1]",
                 )}
-              />
-            </button>
+              >
+                <span
+                  className={cn(
+                    "absolute top-[3px] h-[26px] w-[26px] rounded-full bg-white shadow transition-all",
+                    values.paymentTaken ? "left-[25px]" : "left-[3px]",
+                  )}
+                />
+              </button>
+            </div>
           </div>
+
+          {values.paymentTaken && (
+            <div className="flex flex-col gap-2.5 border-t border-[#E1EBF0] pt-2.5">
+              <label className="flex flex-col gap-1.5">
+                <span className={labelCls}>Amount received (৳)</span>
+                <input
+                  className={fieldCls}
+                  type="number"
+                  inputMode="numeric"
+                  value={values.paymentAmount}
+                  onChange={(e) =>
+                    setValues((v) => ({ ...v, paymentAmount: e.target.value }))
+                  }
+                  placeholder="e.g. 500"
+                />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {PAYMENT_METHOD.map((mth) => (
+                  <button
+                    key={mth}
+                    type="button"
+                    onClick={() =>
+                      setValues((v) => ({ ...v, paymentMethod: mth }))
+                    }
+                    className={cn(
+                      "min-h-[42px] rounded-[10px] border-2 px-3.5 font-heading text-[12.5px] font-bold uppercase transition-colors",
+                      values.paymentMethod === mth
+                        ? "border-primary bg-primary text-white"
+                        : "border-[#E1EBF0] bg-white text-ink-muted hover:border-primary/40",
+                    )}
+                  >
+                    {mth}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {error && (

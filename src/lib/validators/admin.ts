@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { SLOT_TIMES } from "@/lib/booking";
 import { phoneSchema } from "@/lib/validators/auth";
-import { TOOTH_CONDITION } from "@/lib/constants";
+import { TOOTH_CONDITION, PAYMENT_METHOD } from "@/lib/constants";
 
 /** Shared admin validation — client forms AND /api/admin routes. */
 
@@ -24,6 +24,15 @@ export const walkinSchema = z.object({
   timeSlot: z.enum(SLOT_TIMES),
   doctorKey: z.string().min(1).optional(),
   paymentTaken: z.boolean().optional(),
+  paymentAmount: z
+    .union([z.number(), z.string()])
+    .optional()
+    .transform((v) => (v === undefined || v === "" ? undefined : Number(v)))
+    .refine(
+      (v) => v === undefined || (Number.isFinite(v) && v > 0),
+      "Enter a valid amount",
+    ),
+  paymentMethod: z.enum(PAYMENT_METHOD).optional(),
 });
 
 export const toothSchema = z.object({
@@ -56,7 +65,7 @@ export type WalkinFormInput = z.infer<typeof walkinSchema>;
 export type PrescriptionFormInput = z.infer<typeof prescriptionSchema>;
 
 // ── P7: payments / settings / staff ────────────────────────────────
-import { PAYMENT_METHOD, STAFF_ROLE } from "@/lib/constants";
+import { STAFF_ROLE } from "@/lib/constants";
 
 export const collectSchema = z.object({
   paymentId: z.string().min(8),

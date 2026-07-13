@@ -128,6 +128,7 @@ export async function findHistoryByPatient(
   await connectDB();
   return Appointment.find({
     patient: patientId,
+    status: { $ne: "cancelled" },
     $or: [{ date: { $lt: fromDate } }, { status: { $in: ["completed", "no_show"] } }],
   })
     .sort({ date: -1 })

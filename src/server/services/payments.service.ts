@@ -7,7 +7,7 @@ import {
 import { findPatientById } from "@/server/repositories/patient.repository";
 import { getSettings } from "@/server/repositories/settings.repository";
 import { sendSms } from "./sms.service";
-import { ticketDateLabel } from "@/lib/booking";
+import { ticketDateLabel, clinicDateKey, clinicMonthKey } from "@/lib/booking";
 import { displayPhone } from "@/lib/utils";
 import type { PaymentMethod } from "@/lib/constants";
 
@@ -32,9 +32,8 @@ export interface PaymentsScreenData {
 
 export async function getPaymentsScreen(): Promise<PaymentsScreenData> {
   const docs = await findAllPayments();
-  const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
-  const monthStr = now.toISOString().slice(0, 7);
+  const todayStr = clinicDateKey();
+  const monthStr = clinicMonthKey();
 
   let today = 0;
   let month = 0;
@@ -43,9 +42,9 @@ export async function getPaymentsScreen(): Promise<PaymentsScreenData> {
 
   const rows: AdminPaymentRow[] = docs.map((p) => {
     for (const t of p.transactions) {
-      const at = new Date(t.at).toISOString();
-      if (at.startsWith(todayStr)) today += t.amount;
-      if (at.startsWith(monthStr)) month += t.amount;
+      const day = clinicDateKey(new Date(t.at));
+      if (day === todayStr) today += t.amount;
+      if (day.startsWith(monthStr)) month += t.amount;
     }
     if (p.status !== "paid") {
       totalDue += p.dueAmount;
@@ -53,7 +52,7 @@ export async function getPaymentsScreen(): Promise<PaymentsScreenData> {
     }
     return {
       id: String(p._id),
-      dateLabel: ticketDateLabel(new Date(p.createdAt).toISOString().slice(0, 10)),
+      dateLabel: ticketDateLabel(clinicDateKey(new Date(p.createdAt))),
       name: p.patientInfo?.name ?? "—",
       phone: p.patientInfo ? displayPhone(p.patientInfo.phone) : "",
       label: p.label,
@@ -65,7 +64,7 @@ export async function getPaymentsScreen(): Promise<PaymentsScreenData> {
       transactions: p.transactions.map((t) => ({
         amount: t.amount,
         method: t.method,
-        atLabel: ticketDateLabel(new Date(t.at).toISOString().slice(0, 10)),
+        atLabel: ticketDateLabel(clinicDateKey(new Date(t.at))),
       })),
     };
   });

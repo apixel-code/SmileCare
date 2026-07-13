@@ -32,7 +32,7 @@ function toPortalAppointment(doc: AppointmentDoc): PortalAppointment {
     dateLabel: ticketDateLabel(doc.date),
     timeSlot: doc.timeSlot,
     serviceName: doc.serviceName,
-    doctorName: DEFAULT_DOCTOR.name,
+    doctorName: doc.doctorName || DEFAULT_DOCTOR.name,
     status: doc.status,
   };
 }

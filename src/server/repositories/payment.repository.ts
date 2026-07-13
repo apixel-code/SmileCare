@@ -74,7 +74,12 @@ export async function createBill(input: CreateBillInput): Promise<{ id: string }
   return { id: String(doc._id) };
 }
 
-/** Record a collection against an existing bill. */
+/**
+ * Record a collection against an existing bill — atomic & race-safe.
+ * The `dueAmount >= amount` filter + single pipeline update means two
+ * concurrent collections can never over-collect (the second one fails to
+ * match once the due drops below its amount).
+ */
 export async function collectPayment(
   paymentId: string,
   amount: number,
@@ -82,15 +87,29 @@ export async function collectPayment(
   byKey: string,
 ): Promise<{ ok: boolean; newDue?: number }> {
   await connectDB();
-  const doc = await Payment.findById(paymentId);
-  if (!doc || amount <= 0 || amount > doc.dueAmount) return { ok: false };
-  doc.paidAmount += amount;
-  doc.dueAmount = Math.max(0, doc.totalAmount - doc.paidAmount);
-  doc.status = doc.dueAmount === 0 ? "paid" : "partial";
-  doc.method = method;
-  doc.transactions.push({ amount, method, at: new Date(), byKey });
-  await doc.save();
-  return { ok: true, newDue: doc.dueAmount };
+  if (amount <= 0) return { ok: false };
+  const updated = await Payment.findOneAndUpdate(
+    { _id: paymentId, dueAmount: { $gte: amount } },
+    [
+      {
+        $set: {
+          paidAmount: { $add: ["$paidAmount", amount] },
+          method,
+          transactions: {
+            $concatArrays: [
+              "$transactions",
+              [{ amount, method, at: "$$NOW", byKey }],
+            ],
+          },
+        },
+      },
+      { $set: { dueAmount: { $max: [0, { $subtract: ["$totalAmount", "$paidAmount"] }] } } },
+      { $set: { status: { $cond: [{ $eq: ["$dueAmount", 0] }, "paid", "partial"] } } },
+    ],
+    { new: true },
+  ).lean();
+  if (!updated) return { ok: false };
+  return { ok: true, newDue: updated.dueAmount };
 }
 
 export async function findPaymentById(id: string): Promise<PaymentDoc | null> {

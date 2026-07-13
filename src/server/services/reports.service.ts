@@ -2,6 +2,7 @@ import { connectDB } from "@/server/db";
 import { Appointment } from "@/server/models/Appointment";
 import { Payment } from "@/server/models/Payment";
 import { Patient } from "@/server/models/Patient";
+import { CLINIC_TZ, clinicMonthKey, clinicMonthStart } from "@/lib/booking";
 
 /**
  * Monthly report — all numbers via aggregation pipelines (never JS loops
@@ -25,12 +26,13 @@ const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 
 export async function getMonthlyReport(): Promise<MonthlyReport> {
   await connectDB();
-  const now = new Date();
-  const y = now.getUTCFullYear();
-  const m = now.getUTCMonth();
-  const monthPrefix = `${y}-${String(m + 1).padStart(2, "0")}`; // appointments store YYYY-MM-DD strings
-  const monthStart = new Date(Date.UTC(y, m, 1));
-  const sixMonthsAgo = new Date(Date.UTC(y, m - 5, 1));
+  // Clinic time (Asia/Dhaka) — appointment `date`s are Dhaka day-strings, so
+  // month boundaries and timestamp comparisons must be Dhaka-based too.
+  const monthPrefix = clinicMonthKey(); // YYYY-MM
+  const [y, m1] = monthPrefix.split("-").map(Number);
+  const m = m1 - 1; // 0-based, for calendar arithmetic below
+  const monthStart = clinicMonthStart(0);
+  const sixMonthsAgo = clinicMonthStart(5);
 
   const [
     apptAgg,
@@ -91,7 +93,10 @@ export async function getMonthlyReport(): Promise<MonthlyReport> {
       { $match: { "transactions.at": { $gte: sixMonthsAgo } } },
       {
         $group: {
-          _id: { y: { $year: "$transactions.at" }, m: { $month: "$transactions.at" } },
+          _id: {
+            y: { $year: { date: "$transactions.at", timezone: CLINIC_TZ } },
+            m: { $month: { date: "$transactions.at", timezone: CLINIC_TZ } },
+          },
           total: { $sum: "$transactions.amount" },
         },
       },
