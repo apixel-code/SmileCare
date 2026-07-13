@@ -77,7 +77,75 @@ export function QueueTable({ rows: serverRows }: { rows: QueueRow[] }) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-[24px] border border-[#E1EBF0] bg-white shadow-[0_16px_44px_rgba(26,43,60,0.08)]">
+    <>
+      {/* Mobile: card list (no horizontal scroll) */}
+      <div className="flex flex-col gap-2.5 md:hidden">
+        {rows.map((row) => {
+          const inChamber = row.status === "in_chamber";
+          const action = ACTION[row.status];
+          return (
+            <div
+              key={row.id}
+              className={cn(
+                "rounded-2xl border bg-white p-4 shadow-soft",
+                inChamber ? "border-primary/40 bg-[#F0F9F9]" : "border-[#E1EBF0]",
+              )}
+            >
+              <div className="flex items-start gap-3">
+                <span
+                  className={cn(
+                    "font-heading text-[26px] font-extrabold leading-none",
+                    inChamber ? "text-primary" : "text-ink",
+                  )}
+                >
+                  #{String(row.serialNo).padStart(2, "0")}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="flex-none text-[15px]"
+                      title={row.source === "online" ? "Booked online" : "Walk-in"}
+                    >
+                      {row.source === "online" ? "🌐" : "🚶"}
+                    </span>
+                    <Link
+                      href={`/admin/patients/${row.patientId}`}
+                      className="truncate text-[15px] font-bold text-ink hover:text-primary"
+                    >
+                      {row.name}
+                    </Link>
+                  </span>
+                  <span className="mt-0.5 block text-[12.5px] text-ink-muted">
+                    {row.phone}
+                  </span>
+                </span>
+                <StatusPill status={row.status} />
+              </div>
+              <div className="mt-2.5 flex items-center gap-2 text-[13px] text-ink-muted">
+                <span className="font-semibold text-ink">{row.service}</span>
+                <span>·</span>
+                <span className="font-heading font-bold">{row.time}</span>
+              </div>
+              {action && (
+                <button
+                  type="button"
+                  disabled={busyId === row.id}
+                  onClick={() => advance(row)}
+                  className={cn(
+                    "mt-3 min-h-[48px] w-full rounded-[11px] px-4 font-heading text-[14px] font-bold text-white transition-colors disabled:opacity-60",
+                    action.cls,
+                  )}
+                >
+                  {busyId === row.id ? "…" : action.label}
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop: full table */}
+      <div className="hidden overflow-x-auto rounded-[24px] border border-[#E1EBF0] bg-white shadow-[0_16px_44px_rgba(26,43,60,0.08)] md:block">
       <table className="w-full min-w-[760px] border-collapse text-left">
         <thead>
           <tr className="border-b border-[#E1EBF0] bg-primary-light/70">
@@ -163,7 +231,8 @@ export function QueueTable({ rows: serverRows }: { rows: QueueRow[] }) {
           })}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }
 

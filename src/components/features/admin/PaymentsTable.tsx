@@ -56,8 +56,87 @@ export function PaymentsTable({ rows }: { rows: AdminPaymentRow[] }) {
         ))}
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-2xl border border-[#E1EBF0] bg-white shadow-soft">
+      {/* Mobile: card list (no horizontal scroll) */}
+      <div className="flex flex-col gap-2.5 md:hidden">
+        {filtered.length === 0 ? (
+          <div className="rounded-2xl border border-[#E1EBF0] bg-white px-4 py-10 text-center text-[14px] text-[#94A3B8] shadow-soft">
+            No payments match this filter.
+          </div>
+        ) : (
+          filtered.map((p) => (
+            <div key={p.id} className="rounded-2xl border border-[#E1EBF0] bg-white p-4 shadow-soft">
+              <div className="flex items-start justify-between gap-3">
+                <span className="min-w-0">
+                  <span className="block truncate text-[15px] font-bold text-ink">{p.name}</span>
+                  <span className="block text-[12px] text-ink-muted">{p.phone}</span>
+                </span>
+                <StatusPill status={p.status} />
+              </div>
+              <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] text-ink-muted">
+                <span className="text-ink">{p.label}</span>
+                <span>·</span>
+                <span>{p.dateLabel}</span>
+                <span
+                  className={cn(
+                    "ml-auto inline-block rounded-lg px-2 py-0.5 font-heading text-[11px] font-extrabold uppercase",
+                    METHOD_BADGE[p.method] ?? "bg-[#EEF1F4] text-ink-muted",
+                  )}
+                >
+                  {p.method}
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl bg-[#F7FBFC] p-3 text-center">
+                <div>
+                  <div className="text-[11px] text-ink-muted">Total</div>
+                  <div className="font-heading text-[14px] font-bold text-ink">{formatTaka(p.total)}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-ink-muted">Paid</div>
+                  <div className="font-heading text-[14px] font-bold text-success">{formatTaka(p.paid)}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-ink-muted">Due</div>
+                  <div className={cn("font-heading text-[14px] font-extrabold", p.due > 0 ? "text-danger" : "text-ink-muted")}>
+                    {p.due > 0 ? formatTaka(p.due) : "—"}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                {p.status !== "paid" ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setCollectFor(p)}
+                      className="min-h-[48px] flex-1 rounded-[10px] bg-cta px-3.5 font-heading text-[13.5px] font-bold text-white transition-colors hover:bg-cta-dark"
+                    >
+                      Collect Payment
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Send SMS reminder"
+                      onClick={() => remind(p)}
+                      className="flex h-12 w-12 flex-none items-center justify-center rounded-[10px] border border-[#E1EBF0] text-[16px] text-primary transition-colors hover:bg-[#F0F9F9]"
+                    >
+                      ✉
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setReceiptFor(p)}
+                    className="min-h-[48px] w-full rounded-[10px] border-2 border-[#E1EBF0] bg-white px-3.5 font-heading text-[13.5px] font-bold text-primary transition-colors hover:bg-[#F0F9F9]"
+                  >
+                    View Receipt
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop: full table */}
+      <div className="hidden overflow-x-auto rounded-2xl border border-[#E1EBF0] bg-white shadow-soft md:block">
         <table className="w-full min-w-[980px] border-collapse text-left">
           <thead>
             <tr className="border-b border-[#E1EBF0] bg-[#F7FBFC]">

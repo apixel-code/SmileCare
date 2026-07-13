@@ -145,16 +145,37 @@ export function SettingsForm({
 
       {/* Chamber schedule */}
       <SectionCard title="Chamber Schedule">
-        <div className="overflow-x-auto">
-          <div className="grid min-w-[520px] grid-cols-[1.2fr_1fr_1fr_1fr] gap-2 border-b border-[#EDF4F7] pb-2 font-heading text-[11.5px] font-bold tracking-[0.05em] text-ink-muted">
+        <div className="flex flex-col gap-2.5 sm:gap-0">
+          {/* Column headers — desktop only */}
+          <div className="hidden border-b border-[#EDF4F7] pb-2 font-heading text-[11.5px] font-bold tracking-[0.05em] text-ink-muted sm:grid sm:grid-cols-[1.2fr_1fr_1fr_1fr] sm:gap-2">
             <div>DAY</div><div>OPENS</div><div>CLOSES</div><div>STATUS</div>
           </div>
           {values.schedule.map((r) => (
-            <div key={r.day} className="grid min-w-[520px] grid-cols-[1.2fr_1fr_1fr_1fr] items-center gap-2 border-b border-[#F1F5F8] py-2 last:border-b-0">
-              <div className="text-[14px] font-semibold text-ink">{DAY_NAMES[r.day]}</div>
-              <input type="time" disabled={r.isOff} value={r.open} onChange={(e) => patchDay(r.day, { open: e.target.value })} className={cn(fieldCls, "min-h-[42px] px-2.5")} />
-              <input type="time" disabled={r.isOff} value={r.close} onChange={(e) => patchDay(r.day, { close: e.target.value })} className={cn(fieldCls, "min-h-[42px] px-2.5")} />
-              <div className="flex items-center gap-2.5">
+            <div
+              key={r.day}
+              className="rounded-xl border border-[#EDF4F7] p-3 sm:grid sm:grid-cols-[1.2fr_1fr_1fr_1fr] sm:items-center sm:gap-2 sm:rounded-none sm:border-0 sm:border-b sm:border-[#F1F5F8] sm:p-0 sm:py-2 sm:last:border-b-0"
+            >
+              {/* Day name + (mobile) on/off toggle */}
+              <div className="mb-3 flex items-center justify-between sm:mb-0 sm:block">
+                <span className="text-[14px] font-semibold text-ink">{DAY_NAMES[r.day]}</span>
+                <span className="flex items-center gap-2 sm:hidden">
+                  <span className="text-[12.5px] font-semibold text-ink-muted">{r.isOff ? "Closed" : "Open"}</span>
+                  <Toggle on={!r.isOff} onClick={() => patchDay(r.day, { isOff: !r.isOff })} label={`Toggle ${DAY_NAMES[r.day]}`} />
+                </span>
+              </div>
+              {/* Time inputs — 2-col on mobile, dissolve into the grid on desktop */}
+              <div className="grid grid-cols-2 gap-2.5 sm:contents">
+                <label className="flex flex-col gap-1 sm:block">
+                  <span className="text-[11px] font-bold text-ink-muted sm:hidden">Opens</span>
+                  <input type="time" disabled={r.isOff} value={r.open} onChange={(e) => patchDay(r.day, { open: e.target.value })} className={cn(fieldCls, "min-h-[44px] px-2.5")} />
+                </label>
+                <label className="flex flex-col gap-1 sm:block">
+                  <span className="text-[11px] font-bold text-ink-muted sm:hidden">Closes</span>
+                  <input type="time" disabled={r.isOff} value={r.close} onChange={(e) => patchDay(r.day, { close: e.target.value })} className={cn(fieldCls, "min-h-[44px] px-2.5")} />
+                </label>
+              </div>
+              {/* Status toggle — desktop column only */}
+              <div className="hidden items-center gap-2.5 sm:flex">
                 <Toggle on={!r.isOff} onClick={() => patchDay(r.day, { isOff: !r.isOff })} label={`Toggle ${DAY_NAMES[r.day]}`} />
                 <span className="text-[12.5px] font-semibold text-ink-muted">{r.isOff ? "Off" : "Open"}</span>
               </div>
