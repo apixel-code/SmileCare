@@ -33,14 +33,14 @@ export function PatientTabs({
   return (
     <div className="flex flex-col gap-4">
       {/* Tab bar */}
-      <div className="flex gap-2 overflow-x-auto rounded-[14px] border border-[#E1EBF0] bg-white p-1.5 shadow-[0_2px_8px_rgba(26,43,60,0.04)]">
+      <div className="grid grid-cols-2 gap-1.5 rounded-[14px] border border-[#E1EBF0] bg-white p-1.5 shadow-[0_2px_8px_rgba(26,43,60,0.04)] sm:flex sm:gap-2">
         {TABS.map((t) => (
           <button
             key={t}
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "min-h-[46px] flex-1 whitespace-nowrap rounded-[10px] px-4 font-heading text-[14px] font-bold transition-colors",
+              "min-h-[46px] whitespace-nowrap rounded-[10px] px-4 font-heading text-[14px] font-bold transition-colors sm:flex-1",
               tab === t ? "bg-primary text-white" : "text-ink-muted hover:bg-primary-light/50",
             )}
           >

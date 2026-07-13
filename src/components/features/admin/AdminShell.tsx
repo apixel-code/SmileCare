@@ -64,7 +64,7 @@ export function AdminShell({
                 <button
                   type="button"
                   onClick={() => setWalkinOpen(true)}
-                  className="flex min-h-[50px] items-center gap-2 rounded-xl bg-cta px-4 font-heading text-[15px] font-bold text-white shadow-[0_4px_14px_rgba(255,122,89,0.35)] transition-colors hover:bg-cta-dark md:px-6"
+                  className="flex min-h-[50px] flex-none items-center gap-2 whitespace-nowrap rounded-xl bg-cta px-4 font-heading text-[15px] font-bold text-white shadow-[0_4px_14px_rgba(255,122,89,0.35)] transition-colors hover:bg-cta-dark md:px-6"
                 >
                   <span className="text-[20px] leading-none">+</span>
                   <span className="hidden sm:inline">Add Walk-in Patient</span>
@@ -85,8 +85,8 @@ export function AdminShell({
             </div>
           </div>
 
-          {/* Mobile nav (sidebar hidden below lg) */}
-          <div className="flex gap-2 overflow-x-auto border-b border-[#E1EBF0] bg-white px-5 py-2.5 lg:hidden">
+          {/* Mobile nav (sidebar hidden below lg) — wraps, never scrolls */}
+          <div className="flex flex-wrap gap-2 border-b border-[#E1EBF0] bg-white px-5 py-2.5 lg:hidden">
             {MOBILE_NAV.filter((item) => canAccessAdminPath(userRole, item.href)).map((item) => {
               const active =
                 item.href === "/admin"

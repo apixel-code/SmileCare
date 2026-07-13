@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getWeekCalendar } from "@/server/services/admin.service";
 import { getDoctors } from "@/server/services/doctors.service";
+import { CalendarMobileAgenda } from "@/components/features/admin/CalendarMobileAgenda";
 import { todayKey } from "@/server/services/portal.service";
 import { SLOT_TIMES, CLOSED_WEEKDAY } from "@/lib/booking";
 import { cn } from "@/lib/utils";
@@ -123,7 +124,11 @@ export default async function AdminCalendarPage({
         )}
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-[#E1EBF0] bg-white shadow-soft">
+      {/* Mobile: day selector + agenda (no horizontal scroll) */}
+      <CalendarMobileAgenda days={days} map={map} times={SLOT_TIMES} />
+
+      {/* Desktop: full week grid */}
+      <div className="hidden overflow-x-auto rounded-2xl border border-[#E1EBF0] bg-white shadow-soft md:block">
         <div className="min-w-[900px]">
           {/* Day headers */}
           <div className="grid grid-cols-[70px_repeat(6,minmax(0,1fr))] border-b border-[#E1EBF0] bg-[#F7FBFC]">
