@@ -5,16 +5,15 @@ import {
   slotCounts,
 } from "@/server/repositories/appointment.repository";
 import {
-  DEFAULT_DOCTOR,
   SLOT_TIMES,
   SLOT_CAPACITY,
   isBookableDate,
   serviceNameFromSlug,
   ticketDateLabel,
 } from "@/lib/booking";
-import { CLINIC } from "@/lib/constants";
 import { normalizePhone, type BookingInput } from "@/lib/validators/booking";
 import { getSettings } from "@/server/repositories/settings.repository";
+import { resolveDoctor } from "./doctors.service";
 import { sendSms } from "./sms.service";
 
 export interface BookingTicket {
@@ -56,7 +55,8 @@ export async function createBooking(
     return { ok: false, error: "Please pick a valid time slot." };
   }
 
-  const counts = await slotCounts(DEFAULT_DOCTOR.key, input.date);
+  const doctor = await resolveDoctor(input.doctorKey);
+  const counts = await slotCounts(doctor.key, input.date);
   if ((counts[input.timeSlot] ?? 0) >= SLOT_CAPACITY) {
     return {
       ok: false,
@@ -73,7 +73,7 @@ export async function createBooking(
     isFamily: input.who === "family",
   });
 
-  const serialNo = await nextSeq(`${DEFAULT_DOCTOR.key}:${input.date}`);
+  const serialNo = await nextSeq(`${doctor.key}:${input.date}`);
   if (serialNo > settings.maxSerialsPerDay) {
     return {
       ok: false,
@@ -87,7 +87,8 @@ export async function createBooking(
     serialNo,
     patientId: patient.id,
     patientName: patient.name,
-    doctorKey: DEFAULT_DOCTOR.key,
+    doctorKey: doctor.key,
+    doctorName: doctor.name,
     serviceSlug: input.serviceSlug,
     serviceName,
     date: input.date,
@@ -113,8 +114,8 @@ export async function createBooking(
       timeSlot: input.timeSlot,
       serviceName,
       patientName: patient.name,
-      doctorName: DEFAULT_DOCTOR.name,
-      address: CLINIC.address,
+      doctorName: doctor.name,
+      address: settings.address,
     },
   };
 }

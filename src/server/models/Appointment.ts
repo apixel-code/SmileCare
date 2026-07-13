@@ -5,7 +5,8 @@ export interface IAppointment {
   serialNo: number; // per doctor per day
   patient: Types.ObjectId;
   patientName: string; // denormalized for quick queue display
-  doctorKey: string; // Staff ref lands in P4; string key for now
+  doctorKey: string; // staff id (or the default-doctor key)
+  doctorName: string; // denormalized for queue/portal display
   serviceSlug: string;
   serviceName: string;
   date: string; // YYYY-MM-DD
@@ -24,6 +25,7 @@ const AppointmentSchema = new Schema<IAppointment>(
     patient: { type: Schema.Types.ObjectId, ref: "Patient", required: true },
     patientName: { type: String, required: true },
     doctorKey: { type: String, required: true },
+    doctorName: { type: String, default: "" },
     serviceSlug: { type: String, required: true },
     serviceName: { type: String, required: true },
     date: { type: String, required: true },

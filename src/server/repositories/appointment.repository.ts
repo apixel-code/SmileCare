@@ -6,6 +6,7 @@ export interface CreateAppointmentInput {
   patientId: string;
   patientName: string;
   doctorKey: string;
+  doctorName?: string;
   serviceSlug: string;
   serviceName: string;
   date: string;
@@ -24,6 +25,7 @@ export async function createAppointment(
     patient: input.patientId, // mongoose casts the hex string to ObjectId
     patientName: input.patientName,
     doctorKey: input.doctorKey,
+    doctorName: input.doctorName ?? "",
     serviceSlug: input.serviceSlug,
     serviceName: input.serviceName,
     date: input.date,
@@ -37,26 +39,26 @@ export async function createAppointment(
 
 export type AppointmentDoc = IAppointment & { _id: unknown };
 
-/** Full day queue for a doctor, in serial order. */
+/** Full day queue, in serial order. Omit doctorKey for all doctors. */
 export async function findQueueByDate(
-  doctorKey: string,
   date: string,
+  doctorKey?: string,
 ): Promise<AppointmentDoc[]> {
   await connectDB();
-  return Appointment.find({ doctorKey, date })
+  return Appointment.find({ date, ...(doctorKey ? { doctorKey } : {}) })
     .sort({ serialNo: 1 })
     .lean();
 }
 
-/** All active appointments for a doctor in [fromDate, toDate] (calendar). */
+/** Active appointments in [fromDate, toDate] (calendar). Omit doctorKey for all. */
 export async function findInRange(
-  doctorKey: string,
   fromDate: string,
   toDate: string,
+  doctorKey: string | undefined,
 ): Promise<AppointmentDoc[]> {
   await connectDB();
   return Appointment.find({
-    doctorKey,
+    ...(doctorKey ? { doctorKey } : {}),
     date: { $gte: fromDate, $lte: toDate },
     status: { $ne: "cancelled" },
   })

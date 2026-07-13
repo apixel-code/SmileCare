@@ -17,6 +17,7 @@ export default async function AdminSettingsPage() {
   return (
     <SettingsForm
       isAdmin={session?.role === "admin"}
+      selfId={session?.sub ?? ""}
       staff={staff}
       initial={{
         clinicName: settings.clinicName,

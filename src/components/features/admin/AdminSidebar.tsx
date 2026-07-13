@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { CLINIC } from "@/lib/constants";
+import { canAccessAdminPath } from "@/lib/permissions";
 
 const NAV = [
   { href: "/admin", label: "Today's Queue", icon: "🕐", exact: true },
@@ -41,7 +42,7 @@ export function AdminSidebar({
       </div>
 
       <nav className="flex flex-col gap-1 p-3">
-        {NAV.map((item) => {
+        {NAV.filter((item) => canAccessAdminPath(userRole, item.href)).map((item) => {
           const active =
             "exact" in item && item.exact
               ? pathname === item.href

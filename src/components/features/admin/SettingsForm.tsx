@@ -6,6 +6,7 @@ import {
   saveSettingsApi,
   createStaffApi,
   toggleStaffApi,
+  deleteStaffApi,
 } from "@/lib/api";
 import { settingsSchema } from "@/lib/validators/admin";
 import { STAFF_ROLE } from "@/lib/constants";
@@ -65,10 +66,12 @@ export function SettingsForm({
   initial,
   staff,
   isAdmin,
+  selfId,
 }: {
   initial: SettingsFormInput;
   staff: StaffListItem[];
   isAdmin: boolean;
+  selfId: string;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -224,7 +227,7 @@ export function SettingsForm({
       >
         <div className="flex flex-col gap-2">
           {staff.map((s) => (
-            <StaffRow key={s.id} member={s} />
+            <StaffRow key={s.id} member={s} isSelf={s.id === selfId} />
           ))}
         </div>
       </SectionCard>
@@ -254,10 +257,17 @@ export function SettingsForm({
   );
 }
 
-function StaffRow({ member }: { member: StaffListItem }) {
+function StaffRow({
+  member,
+  isSelf,
+}: {
+  member: StaffListItem;
+  isSelf: boolean;
+}) {
   const toast = useToast();
   const router = useRouter();
   const [active, setActive] = useState(member.isActive);
+  const [removing, setRemoving] = useState(false);
 
   async function toggle() {
     const next = !active;
@@ -272,6 +282,19 @@ function StaffRow({ member }: { member: StaffListItem }) {
     router.refresh();
   }
 
+  async function remove() {
+    if (!window.confirm(`Remove ${member.name} permanently? They won't be able to log in.`)) return;
+    setRemoving(true);
+    const res = await deleteStaffApi(member.id);
+    setRemoving(false);
+    if (!res.ok) {
+      toast(res.error);
+      return;
+    }
+    toast(`${member.name} removed`);
+    router.refresh();
+  }
+
   return (
     <div className="flex items-center gap-3 rounded-xl border border-[#EDF4F7] px-4 py-3">
       <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-primary-light font-heading text-[14px] font-extrabold text-primary">
@@ -280,12 +303,25 @@ function StaffRow({ member }: { member: StaffListItem }) {
       <span className="min-w-0 flex-1">
         <span className={cn("block truncate text-[14px] font-semibold", active ? "text-ink" : "text-ink-muted line-through")}>
           {member.name}
+          {isSelf && <span className="ml-2 text-[11px] font-bold text-primary">(you)</span>}
         </span>
         <span className="block text-[12px] capitalize text-ink-muted">
           {member.role} · {member.phone.replace(/^\+88/, "")}
         </span>
       </span>
       <Toggle on={active} onClick={toggle} label={`Toggle ${member.name}`} />
+      {!isSelf && (
+        <button
+          type="button"
+          disabled={removing}
+          onClick={remove}
+          aria-label={`Remove ${member.name}`}
+          title="Remove staff member"
+          className="flex h-9 w-9 flex-none items-center justify-center rounded-lg border border-[#E1EBF0] text-[14px] text-ink-muted transition-colors hover:border-danger hover:text-danger disabled:opacity-60"
+        >
+          🗑
+        </button>
+      )}
     </div>
   );
 }

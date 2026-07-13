@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAdminPatientProfile } from "@/server/services/admin.service";
+import { getSession } from "@/server/auth/guard";
 import { PatientTabs } from "@/components/features/admin/PatientTabs";
+import { DeletePatientButton } from "@/components/features/admin/DeletePatientButton";
 import { displayPhone } from "@/lib/utils";
+import { can } from "@/lib/permissions";
 
 export const metadata: Metadata = { title: "Patient Profile" };
 export const dynamic = "force-dynamic";
@@ -13,9 +16,13 @@ export default async function AdminPatientProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const profile = await getAdminPatientProfile(id).catch(() => null);
+  const [profile, session] = await Promise.all([
+    getAdminPatientProfile(id).catch(() => null),
+    getSession(),
+  ]);
   if (!profile) notFound();
   const p = profile.patient;
+  const role = session?.role ?? "";
 
   return (
     <div className="flex flex-col gap-4">
@@ -54,9 +61,12 @@ export default async function AdminPatientProfilePage({
             </span>
           </div>
         </div>
+        {can(role, "patient.delete") && (
+          <DeletePatientButton patientId={p.id} patientName={p.name} />
+        )}
       </div>
 
-      <PatientTabs profile={profile} />
+      <PatientTabs profile={profile} role={role} />
     </div>
   );
 }

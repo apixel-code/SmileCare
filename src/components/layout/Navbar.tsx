@@ -10,7 +10,7 @@ import { PRIMARY_NAV, BOOK_HREF } from "@/lib/navigation";
 import { WHATSAPP_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-export function Navbar() {
+export function Navbar({ clinicName }: { clinicName?: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -35,7 +35,7 @@ export function Navbar() {
     <header className="sticky top-0 z-[80] px-3 pt-3">
       <div className="mx-auto max-w-container rounded-[22px] border border-white/70 bg-white/86 shadow-[0_12px_34px_rgba(26,43,60,0.09)] backdrop-blur-xl">
         <div className="flex h-[68px] items-center justify-between gap-4 px-4 md:px-5">
-          <Logo />
+          <Logo name={clinicName} />
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-1.5 rounded-full bg-primary-light/70 p-1.5 lg:flex">
@@ -108,7 +108,7 @@ export function Navbar() {
           aria-label="Menu"
         >
           <div className="flex items-center justify-between">
-            <Logo />
+            <Logo name={clinicName} />
             <button
               type="button"
               aria-label="Close menu"

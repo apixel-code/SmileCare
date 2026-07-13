@@ -10,6 +10,7 @@ const SLUGS = BOOKING_SERVICE_OPTIONS.map((s) => s.slug) as [
 /** Shared booking validation — client wizard AND POST /api/book. */
 export const bookingSchema = z.object({
   serviceSlug: z.enum(SLUGS),
+  doctorKey: z.string().min(1).optional(),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date"),
   timeSlot: z.enum(SLOT_TIMES),
   who: z.enum(["self", "family"]),
