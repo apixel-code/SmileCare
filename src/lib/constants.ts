@@ -52,6 +52,10 @@ export const CLINIC = {
     { label: "Friday", value: "Closed", off: true },
   ],
   rating: { score: "4.9", source: "Google Reviews" },
+  mapEmbedSrc:
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14602.680856404053!2d90.39540586281593!3d23.79475520823997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c70c15ea1de1%3A0x97856381e88fb311!2sBanani%2C%20Dhaka!5e0!3m2!1sen!2sbd!4v1783950813928!5m2!1sen!2sbd",
+  mapDirectionsUrl:
+    "https://www.google.com/maps/dir/?api=1&destination=23.79475520823997,90.39540586281593",
 } as const;
 
 export const DOCTOR = {

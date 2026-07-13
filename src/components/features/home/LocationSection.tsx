@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
-import { MapPlaceholder } from "@/components/ui/MapPlaceholder";
+import { ClinicMap } from "@/components/ui/ClinicMap";
 import { PhoneIcon } from "@/components/ui/icons";
 import { CLINIC, TEL_URL } from "@/lib/constants";
 
@@ -21,7 +21,7 @@ export function LocationSection() {
         variant="up"
         className="grid items-stretch gap-8 lg:grid-cols-[1.1fr_0.9fr]"
       >
-        <MapPlaceholder />
+        <ClinicMap className="min-h-[360px]" />
 
         {/* Contact cards */}
         <div className="flex flex-col gap-4">
