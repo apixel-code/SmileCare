@@ -156,6 +156,8 @@ export async function submitWalkin(input: {
   timeSlot: string;
   doctorKey?: string;
   paymentTaken?: boolean;
+  paymentAmount?: string | number;
+  paymentMethod?: string;
 }): Promise<{ ok: true; serialNo: number } | { ok: false; error: string; fieldErrors?: FieldErrors }> {
   try {
     const json = await postJson("/api/admin/walkin", input);

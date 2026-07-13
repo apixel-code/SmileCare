@@ -55,6 +55,33 @@ export function serviceNameFromSlug(slug: string): string {
   );
 }
 
+// ── Clinic-time (Asia/Dhaka, fixed +06:00) date helpers ───────────────
+// Appointment `date`s are stored as Dhaka day-strings, so every "today" /
+// "this month" boundary in stats & reports MUST be computed in clinic time,
+// never UTC — otherwise revenue lands in the wrong day/month near midnight.
+
+/** Date key (YYYY-MM-DD) of an instant, in clinic time. */
+export function clinicDateKey(at: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: CLINIC_TZ }).format(at);
+}
+
+/** Month key (YYYY-MM) of an instant, in clinic time. */
+export function clinicMonthKey(at: Date = new Date()): string {
+  return clinicDateKey(at).slice(0, 7);
+}
+
+/**
+ * The exact instant a clinic-time month begins, `monthsBack` months before
+ * the current one — for comparing absolute transaction timestamps.
+ */
+export function clinicMonthStart(monthsBack = 0, at: Date = new Date()): Date {
+  const [y, m] = clinicMonthKey(at).split("-").map(Number);
+  const total = y * 12 + (m - 1) - monthsBack;
+  const yy = Math.floor(total / 12);
+  const mm = String((total % 12) + 1).padStart(2, "0");
+  return new Date(`${yy}-${mm}-01T00:00:00+06:00`);
+}
+
 export interface BookingDate {
   key: string; // YYYY-MM-DD
   dayLabel: string; // Today / Tmrw / Mon...

@@ -1,5 +1,6 @@
 import { walkinSchema } from "@/lib/validators/admin";
 import { addWalkin } from "@/server/services/admin.service";
+import { getSession } from "@/server/auth/guard";
 import { apiResponse, apiError } from "@/lib/api-response";
 
 export async function POST(request: Request) {
@@ -19,7 +20,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await addWalkin(parsed.data);
+    const session = await getSession();
+    const result = await addWalkin(parsed.data, session?.sub ?? "reception");
     if (!result.ok) return apiError(result.error, { status: 409 });
     return apiResponse({ serialNo: result.serialNo }, { status: 201 });
   } catch {

@@ -14,7 +14,11 @@ import {
   deletePatientCascade,
   type PatientListItem,
 } from "@/server/repositories/patient.repository";
-import { findPaymentsByPatient } from "@/server/repositories/payment.repository";
+import {
+  findPaymentsByPatient,
+  createBill,
+} from "@/server/repositories/payment.repository";
+import type { PaymentMethod } from "@/lib/constants";
 import { getChart } from "@/server/repositories/dentalchart.repository";
 import {
   findPrescriptionsByPatient,
@@ -98,11 +102,14 @@ export interface WalkinInput {
   serviceSlug: string;
   timeSlot: string;
   doctorKey?: string;
-  paymentTaken?: boolean; // TODO: record against a Payment with amount
+  paymentTaken?: boolean;
+  paymentAmount?: number;
+  paymentMethod?: PaymentMethod;
 }
 
 export async function addWalkin(
   input: WalkinInput,
+  byKey: string,
 ): Promise<{ ok: true; serialNo: number } | { ok: false; error: string }> {
   const date = todayKey();
   if (!SLOT_TIMES.includes(input.timeSlot as (typeof SLOT_TIMES)[number])) {
@@ -135,6 +142,19 @@ export async function addWalkin(
     source: "walk_in",
     bookedByPhone: phone,
   });
+
+  // Record the payment if the receptionist collected one at the desk.
+  if (input.paymentTaken && input.paymentAmount && input.paymentAmount > 0) {
+    await createBill({
+      patientId: patient.id,
+      label: serviceNameFromSlug(input.serviceSlug),
+      totalAmount: input.paymentAmount,
+      paidAmount: input.paymentAmount,
+      method: input.paymentMethod ?? "cash",
+      byKey,
+    });
+  }
+
   return { ok: true, serialNo };
 }
 
