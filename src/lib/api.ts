@@ -158,10 +158,10 @@ export async function submitWalkin(input: {
   paymentTaken?: boolean;
   paymentAmount?: string | number;
   paymentMethod?: string;
-}): Promise<{ ok: true; serialNo: number } | { ok: false; error: string; fieldErrors?: FieldErrors }> {
+}): Promise<{ ok: true; serialNo: number; paymentFailed?: boolean } | { ok: false; error: string; fieldErrors?: FieldErrors }> {
   try {
     const json = await postJson("/api/admin/walkin", input);
-    if (json?.ok) return { ok: true, serialNo: json.data.serialNo };
+    if (json?.ok) return { ok: true, serialNo: json.data.serialNo, paymentFailed: json.data.paymentFailed };
     return {
       ok: false,
       error: json?.error?.message ?? "Could not add the walk-in.",

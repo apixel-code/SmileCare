@@ -110,7 +110,10 @@ export interface WalkinInput {
 export async function addWalkin(
   input: WalkinInput,
   byKey: string,
-): Promise<{ ok: true; serialNo: number } | { ok: false; error: string }> {
+): Promise<
+  | { ok: true; serialNo: number; paymentFailed?: boolean }
+  | { ok: false; error: string }
+> {
   const date = todayKey();
   if (!SLOT_TIMES.includes(input.timeSlot as (typeof SLOT_TIMES)[number])) {
     return { ok: false, error: "Pick a valid time slot." };
@@ -143,19 +146,27 @@ export async function addWalkin(
     bookedByPhone: phone,
   });
 
-  // Record the payment if the receptionist collected one at the desk.
+  // Record the payment if the receptionist collected one at the desk. The
+  // appointment is already committed, so a payment failure must NOT throw
+  // (that would 500 the request and cause a duplicate walk-in on retry) —
+  // report it back so the UI can prompt for a manual bill instead.
+  let paymentFailed = false;
   if (input.paymentTaken && input.paymentAmount && input.paymentAmount > 0) {
-    await createBill({
-      patientId: patient.id,
-      label: serviceNameFromSlug(input.serviceSlug),
-      totalAmount: input.paymentAmount,
-      paidAmount: input.paymentAmount,
-      method: input.paymentMethod ?? "cash",
-      byKey,
-    });
+    try {
+      await createBill({
+        patientId: patient.id,
+        label: serviceNameFromSlug(input.serviceSlug),
+        totalAmount: input.paymentAmount,
+        paidAmount: input.paymentAmount,
+        method: input.paymentMethod ?? "cash",
+        byKey,
+      });
+    } catch {
+      paymentFailed = true;
+    }
   }
 
-  return { ok: true, serialNo };
+  return { ok: true, serialNo, ...(paymentFailed ? { paymentFailed } : {}) };
 }
 
 // ── Patients ────────────────────────────────────────────────────────

@@ -10,7 +10,7 @@ import {
   findPrescriptionsByPatient,
   findPrescriptionById,
 } from "@/server/repositories/prescription.repository";
-import { ticketDateLabel, DEFAULT_DOCTOR, CLINIC_TZ } from "@/lib/booking";
+import { ticketDateLabel, DEFAULT_DOCTOR, clinicDateKey } from "@/lib/booking";
 import type {
   FamilyMember,
   MemberDashboard,
@@ -19,9 +19,7 @@ import type {
 
 /** Today's date key in clinic time. */
 export function todayKey(): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: CLINIC_TZ }).format(
-    new Date(),
-  );
+  return clinicDateKey();
 }
 
 function toPortalAppointment(doc: AppointmentDoc): PortalAppointment {

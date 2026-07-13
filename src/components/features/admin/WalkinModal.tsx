@@ -65,7 +65,13 @@ export function WalkinModal({ onClose }: { onClose: () => void }) {
     });
     if (!parsed.success) {
       const fe = parsed.error.flatten().fieldErrors;
-      setError(fe.name?.[0] ?? fe.phone?.[0] ?? fe.age?.[0] ?? "Check the form");
+      setError(
+        fe.name?.[0] ??
+          fe.phone?.[0] ??
+          fe.age?.[0] ??
+          fe.paymentAmount?.[0] ??
+          "Check the form",
+      );
       return;
     }
     setBusy(true);
@@ -75,7 +81,11 @@ export function WalkinModal({ onClose }: { onClose: () => void }) {
       setError(res.error);
       return;
     }
-    toast(`Added to today's queue — Serial #${res.serialNo}`);
+    toast(
+      res.paymentFailed
+        ? `Added to queue — Serial #${res.serialNo}. Payment wasn't saved; add it from the patient's profile.`
+        : `Added to today's queue — Serial #${res.serialNo}`,
+    );
     onClose();
     router.refresh();
   }
