@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/Button";
-import { WhatsAppIcon, MenuIcon, CloseIcon } from "@/components/ui/icons";
+import { WhatsAppIcon, MenuIcon, CloseIcon, UserIcon } from "@/components/ui/icons";
 import { PRIMARY_NAV, BOOK_HREF } from "@/lib/navigation";
 import { WHATSAPP_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -54,6 +54,13 @@ export function Navbar({ clinicName }: { clinicName?: string }) {
           </nav>
 
           <div className="flex items-center gap-3">
+            <Link
+              href="/portal"
+              className="hidden items-center gap-1.5 text-[14.5px] font-semibold text-ink transition-colors hover:text-primary md:inline-flex"
+            >
+              <UserIcon size={18} />
+              My Account
+            </Link>
             <a
               href={WHATSAPP_URL}
               aria-label="Chat on WhatsApp"
@@ -137,6 +144,9 @@ export function Navbar({ clinicName }: { clinicName?: string }) {
           </nav>
           {/* Booking CTA always visible */}
           <div className="mt-auto flex flex-col gap-3 pt-6">
+            <Button href="/portal" variant="outline" size="lg" className="w-full">
+              <UserIcon size={20} /> My Account
+            </Button>
             <Button href={BOOK_HREF} variant="cta" size="lg" className="w-full">
               Book Appointment
             </Button>
