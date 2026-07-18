@@ -24,7 +24,7 @@ export function PaymentsList({ items }: { items: PortalPayment[] }) {
         <div
           key={p.id}
           className={cn(
-            "flex items-center gap-3.5 border-b border-[#EDF4F7] px-[18px] py-[15px] last:border-b-0",
+            "flex flex-wrap items-center gap-x-3.5 gap-y-2.5 border-b border-[#EDF4F7] px-[18px] py-[15px] last:border-b-0",
             p.isDue && "bg-[#FFF6F2]",
           )}
         >
@@ -36,7 +36,7 @@ export function PaymentsList({ items }: { items: PortalPayment[] }) {
           >
             {p.isDue ? "DUE" : p.method}
           </span>
-          <span className="flex-1">
+          <span className="min-w-0 flex-1">
             <span className="block text-[14px] font-semibold text-ink">
               {p.label}
             </span>
@@ -45,13 +45,15 @@ export function PaymentsList({ items }: { items: PortalPayment[] }) {
             </span>
           </span>
           {p.isDue ? (
-            <span className="flex items-center gap-2.5">
-              <span className="font-heading text-[15px] font-extrabold text-cta">
+            // Amount + Pay Now take their own full-width row on mobile so the
+            // label above never gets squeezed; inline again from sm up.
+            <span className="flex w-full items-center justify-between gap-2.5 sm:w-auto">
+              <span className="font-heading text-[16px] font-extrabold text-cta">
                 {formatTaka(p.amount)}
               </span>
               <a
                 href={TEL_URL}
-                className="flex min-h-[40px] items-center rounded-[10px] bg-cta px-4 font-heading text-[12.5px] font-bold text-white shadow-[0_4px_12px_rgba(255,122,89,0.35)] transition-colors hover:bg-cta-dark"
+                className="flex min-h-[44px] items-center rounded-[10px] bg-cta px-5 font-heading text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,122,89,0.35)] transition-colors hover:bg-cta-dark"
               >
                 Pay Now
               </a>

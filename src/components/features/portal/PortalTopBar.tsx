@@ -35,24 +35,25 @@ export function PortalTopBar({
     <div className="relative overflow-hidden bg-ink px-5 pb-20 pt-5 md:px-8">
       <div className="absolute inset-0 surface-pattern opacity-20" aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-r from-primary/95 to-primary-dark/80" aria-hidden />
-      <div className="relative mx-auto flex max-w-2xl items-center justify-between gap-3">
-        <div>
+      <div className="relative mx-auto flex max-w-2xl items-start justify-between gap-3">
+        <div className="min-w-0">
           <div className="text-[13px] text-white/75">{greeting}</div>
-          <div className="font-heading text-[24px] font-extrabold text-white">
+          <div className="font-heading text-[22px] font-extrabold leading-tight text-white sm:text-[24px]">
             Hello, {selected?.name}
           </div>
         </div>
 
-        <div className="relative flex items-center gap-2" ref={ref}>
+        <div className="relative flex flex-none items-center gap-2" ref={ref}>
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            className="flex min-h-[48px] items-center gap-2.5 rounded-2xl border-[1.5px] border-white/40 bg-white/14 px-3.5 font-heading text-[14px] font-bold text-white shadow-[0_12px_34px_rgba(0,0,0,0.12)] backdrop-blur-md transition-colors hover:bg-white/20"
+            aria-label="Switch patient or log out"
+            className="flex min-h-[48px] items-center gap-2.5 rounded-2xl border-[1.5px] border-white/40 bg-white/14 px-2.5 font-heading text-[14px] font-bold text-white shadow-[0_12px_34px_rgba(0,0,0,0.12)] backdrop-blur-md transition-colors hover:bg-white/20 sm:px-3.5"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[13px] font-extrabold text-primary">
+            <span className="flex h-7 w-7 flex-none items-center justify-center rounded-full bg-white text-[13px] font-extrabold text-primary">
               {selected?.name?.charAt(0) ?? "?"}
             </span>
-            <span className="max-w-[90px] truncate">{selected?.name}</span>
+            <span className="hidden max-w-[90px] truncate sm:inline">{selected?.name}</span>
             <span className="text-[11px]">▼</span>
           </button>
 
