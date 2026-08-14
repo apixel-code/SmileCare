@@ -20,6 +20,7 @@ export default function ServicesPage() {
         eyebrow="Transparent Pricing"
         title="Our Dental Services"
         subtitle="Modern, painless treatment for every dental problem — with transparent pricing."
+        backgroundImage="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=1920&q=85"
       />
 
       <Container className="px-5 pb-24 pt-6 md:px-8">

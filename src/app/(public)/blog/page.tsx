@@ -17,6 +17,7 @@ export default function BlogPage() {
         eyebrow="Coming Soon"
         title="Dental Health Blog"
         subtitle="Simple, honest advice to keep your family's smiles healthy — articles are on the way."
+        backgroundImage="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1920&q=85"
       />
       <EmptyState
         icon={<span className="font-heading text-[26px] font-extrabold">✎</span>}

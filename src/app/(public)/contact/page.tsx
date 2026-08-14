@@ -20,6 +20,7 @@ export default function ContactPage() {
         eyebrow="Get in Touch"
         title="We’re Here to Help"
         subtitle="Have a question or want to book a visit? Send us a message, call, or drop by — whatever is easiest for you."
+        backgroundImage="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1920&q=85"
       />
 
       <Container className="py-16 md:py-20">
