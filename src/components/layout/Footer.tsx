@@ -92,7 +92,17 @@ export function Footer({
           <span>
             © {year} {CLINIC.name}
           </span>
-          <span>Designed with care</span>
+          <span>
+            Powered by{" "}
+            <a
+              href="https://www.apixel.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-white/80 transition-colors hover:text-cta hover:underline"
+            >
+              Apixel
+            </a>
+          </span>
         </div>
       </div>
     </footer>
