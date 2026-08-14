@@ -6,7 +6,6 @@ import { bookingSchema } from "@/lib/validators/booking";
 import { fetchAvailability, submitBooking } from "@/lib/api";
 import { TEL_URL, WHATSAPP_URL } from "@/lib/constants";
 import { Container } from "@/components/ui/Container";
-import { PageHero } from "@/components/ui/PageHero";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Stepper } from "@/components/ui/Stepper";
