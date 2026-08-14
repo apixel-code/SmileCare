@@ -109,10 +109,10 @@ export function Hero() {
             State-of-the-Art Dental Hospital & Clinic • Dhaka
           </div>
 
-          {/* Main Headline with Typewriter Animation */}
-          <div className="mx-auto mb-4 flex min-h-[90px] max-w-[840px] items-center justify-center sm:min-h-[120px] md:min-h-[140px] lg:min-h-[155px]">
+          {/* Main Headline with Typewriter Animation (Crisp 2-line structure) */}
+          <div className="mx-auto mb-4 flex min-h-[85px] max-w-[960px] items-center justify-center sm:min-h-[105px] md:min-h-[120px] lg:min-h-[135px]">
             <h1
-              className="text-balance font-heading text-[38px] font-extrabold leading-[1.12] text-white md:text-[56px] lg:text-[64px]"
+              className="font-heading text-[32px] font-extrabold leading-[1.18] text-white sm:text-[42px] md:text-[48px] lg:text-[54px]"
               style={{ animationDelay: "0.15s" }}
             >
               {displayText}
