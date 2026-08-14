@@ -28,16 +28,46 @@ const CLINIC_SLIDES = [
   },
 ];
 
+const PHRASE = "Painless, Advanced Dental Care for Your Whole Family.";
+
 /** Full-width centered modern dental hospital/clinic showcase banner with multi-image crossfade slider and dual CTAs. */
 export function Hero() {
   const [current, setCurrent] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  // Background slider timer
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % CLINIC_SLIDES.length);
     }, 5000);
     return () => clearInterval(timer);
   }, []);
+
+  // Continuous Typewriter effect loop
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
+    if (!isDeleting && displayText.length < PHRASE.length) {
+      timeout = setTimeout(() => {
+        setDisplayText(PHRASE.slice(0, displayText.length + 1));
+      }, 55);
+    } else if (!isDeleting && displayText.length === PHRASE.length) {
+      timeout = setTimeout(() => {
+        setIsDeleting(true);
+      }, 3000);
+    } else if (isDeleting && displayText.length > 0) {
+      timeout = setTimeout(() => {
+        setDisplayText(PHRASE.slice(0, displayText.length - 1));
+      }, 25);
+    } else if (isDeleting && displayText.length === 0) {
+      timeout = setTimeout(() => {
+        setIsDeleting(false);
+      }, 500);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting]);
 
   return (
     <section className="relative isolate min-h-[640px] overflow-hidden bg-ink lg:min-h-[85vh]">
@@ -79,13 +109,18 @@ export function Hero() {
             State-of-the-Art Dental Hospital & Clinic • Dhaka
           </div>
 
-          {/* Main Headline */}
-          <h1
-            className="mx-auto mb-4 max-w-[820px] text-balance font-heading text-[40px] font-extrabold leading-[1.08] text-white md:text-[58px] lg:text-[66px]"
-            style={{ animationDelay: "0.15s" }}
-          >
-            Painless, Advanced Dental Care for Your Whole Family.
-          </h1>
+          {/* Main Headline with Typewriter Animation */}
+          <div className="mx-auto mb-4 flex min-h-[90px] max-w-[840px] items-center justify-center sm:min-h-[120px] md:min-h-[140px] lg:min-h-[155px]">
+            <h1
+              className="text-balance font-heading text-[38px] font-extrabold leading-[1.12] text-white md:text-[56px] lg:text-[64px]"
+              style={{ animationDelay: "0.15s" }}
+            >
+              {displayText}
+              <span className="ml-1 inline-block animate-pulse font-light text-[#86E4E2]">
+                |
+              </span>
+            </h1>
+          </div>
 
           {/* Clinic Subtitle */}
           <p
