@@ -142,14 +142,32 @@ export function BookingWizard({ doctors = [] }: { doctors?: DoctorOption[] }) {
 
   return (
     <>
-      <PageHero
-        eyebrow="Online Booking"
-        title="Book Your Appointment"
-        subtitle="It takes 2 minutes — no advance payment. Pick a service and time, and get your serial number instantly."
-      />
+      <section className="relative overflow-hidden py-8 md:py-12">
+        <Container className="relative text-center [&>*]:animate-fade-up motion-reduce:[&>*]:animate-none">
+          <div
+            className="mb-3 inline-flex items-center gap-2.5 rounded-full bg-white/90 px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-primary shadow-soft backdrop-blur-md"
+            style={{ animationDelay: "0.05s" }}
+          >
+            <span className="inline-block h-2 w-2 rounded-full bg-cta" />
+            Online Booking
+          </div>
+          <h1
+            className="mx-auto mb-3 max-w-[840px] text-balance font-heading text-[32px] font-extrabold leading-tight text-ink md:text-[46px]"
+            style={{ animationDelay: "0.15s" }}
+          >
+            Book Your Appointment
+          </h1>
+          <p
+            className="mx-auto max-w-[620px] text-[16px] leading-relaxed text-ink-muted md:text-[17px]"
+            style={{ animationDelay: "0.25s" }}
+          >
+            It takes 2 minutes — no advance payment. Pick a service and time, and get your serial number instantly.
+          </p>
+        </Container>
+      </section>
 
       <Container className="pb-20">
-        <Card className="mx-auto -mt-6 max-w-3xl overflow-hidden md:-mt-8">
+        <Card className="mx-auto max-w-3xl overflow-hidden shadow-lift">
           {/* Stepper header */}
           <div className="border-b border-primary-light px-6 py-6 md:px-10">
             <Stepper steps={STEP_LABELS} current={step} />

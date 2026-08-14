@@ -31,46 +31,46 @@ export function Navbar({ clinicName }: { clinicName?: string }) {
     // children and would trap the drawer inside the 76px-tall header.
     // z-[80]: the header is a stacking context, so the drawer inside it can
     // only beat the FloatingWhatsApp bubble (z-[70]) if the header itself does.
-    <header className="sticky top-0 z-[80] border-b border-primary-light/80 bg-white/95 backdrop-blur-xl">
-      <div className="mx-auto flex h-[72px] max-w-container items-center justify-between gap-4 px-4 md:px-6">
-        <Logo name={clinicName} />
+    <header className="sticky top-0 z-[80] px-3 pt-3">
+      <div className="mx-auto max-w-container rounded-[22px] border border-white/70 bg-white/86 shadow-[0_12px_34px_rgba(26,43,60,0.09)] backdrop-blur-xl">
+        <div className="flex h-[68px] items-center justify-between gap-4 px-4 md:px-5">
+          <Logo name={clinicName} />
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-1.5 rounded-full bg-primary-light/80 p-1.5 lg:flex">
-          {PRIMARY_NAV.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "rounded-full px-3.5 py-1.5 text-[14px] font-semibold transition-all hover:bg-white hover:text-primary xl:px-4",
-                isActive(link.href)
-                  ? "bg-white text-primary shadow-soft"
-                  : "text-ink hover:text-primary",
-              )}
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-1.5 rounded-full bg-primary-light/70 p-1.5 lg:flex">
+            {PRIMARY_NAV.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "rounded-full px-3.5 py-2 text-[14px] font-semibold transition-colors hover:bg-white hover:text-primary xl:px-4",
+                  isActive(link.href) ? "bg-white text-primary shadow-soft" : "text-ink",
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <Button href="/portal" variant="outline" className="hidden sm:inline-flex">
+              <UserIcon size={18} /> Login
+            </Button>
+            <Button href={BOOK_HREF} variant="cta" className="hidden sm:inline-flex">
+              Book Appointment
+            </Button>
+
+            {/* Mobile hamburger */}
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={open}
+              onClick={() => setOpen(true)}
+              className="flex h-12 w-12 items-center justify-center rounded-xl text-ink lg:hidden"
             >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <Button href="/portal" variant="outline" className="hidden sm:inline-flex">
-            <UserIcon size={18} /> Login
-          </Button>
-          <Button href={BOOK_HREF} variant="cta" className="hidden sm:inline-flex">
-            Book Appointment
-          </Button>
-
-          {/* Mobile hamburger */}
-          <button
-            type="button"
-            aria-label="Open menu"
-            aria-expanded={open}
-            onClick={() => setOpen(true)}
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-ink hover:bg-primary-light/60 lg:hidden"
-          >
-            <MenuIcon size={26} />
-          </button>
+              <MenuIcon size={26} />
+            </button>
+          </div>
         </div>
       </div>
 
