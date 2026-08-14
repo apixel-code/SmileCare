@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { WhatsAppIcon, CheckIcon } from "@/components/ui/icons";
+import { WhatsAppIcon } from "@/components/ui/icons";
 import { CLINIC, WHATSAPP_URL } from "@/lib/constants";
 import { BOOK_HREF } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -151,31 +151,8 @@ export function Hero() {
             </a>
           </div>
 
-          {/* Centered Feature Badges */}
-          <div
-            className="mx-auto mt-10 grid max-w-[760px] grid-cols-1 gap-3 sm:grid-cols-3"
-            style={{ animationDelay: "0.45s" }}
-          >
-            {[
-              { title: "100% Painless Care", desc: "Gentle Anesthesia Tech" },
-              { title: "Digital 3D X-Ray", desc: "Instant Accurate Scans" },
-              { title: "Zero Hidden Fees", desc: "Transparent Upfront Pricing" },
-            ].map((feat) => (
-              <div
-                key={feat.title}
-                className="group rounded-2xl border border-white/10 bg-white/10 p-4 text-center backdrop-blur-md transition-all hover:border-white/25 hover:bg-white/15 hover:-translate-y-0.5"
-              >
-                <div className="flex items-center justify-center gap-1.5 font-heading text-[14px] font-bold text-white">
-                  <CheckIcon size={15} className="text-[#86E4E2]" />
-                  {feat.title}
-                </div>
-                <div className="mt-0.5 text-[12px] text-white/75">{feat.desc}</div>
-              </div>
-            ))}
-          </div>
-
           {/* Slide Indicator Dots */}
-          <div className="mt-8 flex items-center justify-center gap-2">
+          <div className="mt-12 flex items-center justify-center gap-2">
             {CLINIC_SLIDES.map((_, idx) => (
               <button
                 key={idx}
