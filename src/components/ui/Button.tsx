@@ -10,10 +10,10 @@ const VARIANTS: Record<ButtonVariant, string> = {
   cta: "bg-cta text-white shadow-[0_8px_24px_rgba(255,122,89,0.35)] hover:bg-cta-dark",
   primary: "bg-primary text-white hover:bg-primary-dark",
   outline:
-    "border-[1.5px] border-primary text-primary bg-white hover:bg-primary-light",
+    "border border-primary-light/90 text-primary bg-white hover:bg-primary-light/50 hover:border-primary/40 shadow-soft",
   ghost: "text-ink hover:text-primary bg-transparent",
   whatsapp:
-    "border-[1.5px] border-whatsapp text-whatsapp bg-white hover:bg-[#F0FBF4]",
+    "border border-whatsapp/30 text-whatsapp bg-white hover:bg-[#F0FBF4] hover:border-whatsapp/50 shadow-soft",
 };
 
 const SIZES: Record<ButtonSize, string> = {

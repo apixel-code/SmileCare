@@ -11,9 +11,9 @@ export function ServiceGridCard({ service }: { service: ServicePreview }) {
     <Link
       href={`/services/${service.slug}`}
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-[24px] border border-primary-light bg-white text-ink shadow-soft",
+        "group flex h-full flex-col overflow-hidden rounded-[24px] border border-primary-light/60 bg-white text-ink shadow-soft",
         CARD_HOVER,
-        "hover:border-primary",
+        "hover:border-primary/40",
       )}
     >
       <div className="relative h-[190px] w-full overflow-hidden bg-primary-light">

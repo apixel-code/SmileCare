@@ -48,7 +48,7 @@ export function PortalTopBar({
             type="button"
             onClick={() => setOpen((o) => !o)}
             aria-label="Switch patient or log out"
-            className="flex min-h-[48px] items-center gap-2.5 rounded-2xl border-[1.5px] border-white/40 bg-white/14 px-2.5 font-heading text-[14px] font-bold text-white shadow-[0_12px_34px_rgba(0,0,0,0.12)] backdrop-blur-md transition-colors hover:bg-white/20 sm:px-3.5"
+            className="flex min-h-[48px] items-center gap-2.5 rounded-2xl border border-white/20 bg-white/14 px-2.5 font-heading text-[14px] font-bold text-white shadow-[0_12px_34px_rgba(0,0,0,0.12)] backdrop-blur-md transition-colors hover:bg-white/20 sm:px-3.5"
           >
             <span className="flex h-7 w-7 flex-none items-center justify-center rounded-full bg-white text-[13px] font-extrabold text-primary">
               {selected?.name?.charAt(0) ?? "?"}

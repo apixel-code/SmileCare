@@ -14,7 +14,7 @@ export function WhatsAppButton({
     <a
       href={WHATSAPP_URL}
       className={cn(
-        "inline-flex h-14 items-center gap-2.5 rounded-xl border-[1.5px] border-whatsapp bg-white px-7 font-heading text-[16px] font-semibold text-ink transition-colors hover:bg-[#F0FBF4]",
+        "inline-flex h-14 items-center gap-2.5 rounded-xl border border-whatsapp/30 bg-white px-7 font-heading text-[16px] font-semibold text-ink shadow-soft transition-colors hover:bg-[#F0FBF4] hover:border-whatsapp/50",
         className,
       )}
     >
