@@ -69,7 +69,7 @@ export function Hero() {
         <div className="mx-auto max-w-[880px] [&>*]:animate-fade-up motion-reduce:[&>*]:animate-none">
           {/* Live Status Badge */}
           <div
-            className="mb-5 inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/12 px-5 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-[#86E4E2] shadow-soft backdrop-blur-md"
+            className="mb-5 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-[#86E4E2] shadow-soft backdrop-blur-md"
             style={{ animationDelay: "0.05s" }}
           >
             <span className="relative flex h-2.5 w-2.5">
@@ -110,7 +110,7 @@ export function Hero() {
             </Button>
             <a
               href={WHATSAPP_URL}
-              className="inline-flex h-14 items-center justify-center gap-2.5 rounded-xl border border-white/60 bg-white/10 px-8 font-heading text-[16px] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-[1.02]"
+              className="inline-flex h-14 items-center justify-center gap-2.5 rounded-xl border border-white/20 bg-white/10 px-8 font-heading text-[16px] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-[1.02]"
             >
               <WhatsAppIcon color="#25D366" size={21} /> Chat on WhatsApp
             </a>
@@ -128,7 +128,7 @@ export function Hero() {
             ].map((feat) => (
               <div
                 key={feat.title}
-                className="group rounded-2xl border border-white/16 bg-white/10 p-4 text-center backdrop-blur-md transition-all hover:border-white/40 hover:bg-white/18 hover:-translate-y-0.5"
+                className="group rounded-2xl border border-white/10 bg-white/10 p-4 text-center backdrop-blur-md transition-all hover:border-white/25 hover:bg-white/15 hover:-translate-y-0.5"
               >
                 <div className="flex items-center justify-center gap-1.5 font-heading text-[14px] font-bold text-white">
                   <CheckIcon size={15} className="text-[#86E4E2]" />

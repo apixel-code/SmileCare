@@ -15,8 +15,8 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-primary-light bg-white shadow-soft",
-        hoverable && cn(CARD_HOVER, "hover:border-primary"),
+        "rounded-2xl border border-primary-light/60 bg-white shadow-soft",
+        hoverable && cn(CARD_HOVER, "hover:border-primary/60"),
         className,
       )}
     >

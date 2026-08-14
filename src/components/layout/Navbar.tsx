@@ -32,7 +32,7 @@ export function Navbar({ clinicName }: { clinicName?: string }) {
     // z-[80]: the header is a stacking context, so the drawer inside it can
     // only beat the FloatingWhatsApp bubble (z-[70]) if the header itself does.
     <header className="sticky top-0 z-[80] px-3 pt-3">
-      <div className="mx-auto max-w-container rounded-[22px] border border-white/70 bg-white/86 shadow-[0_12px_34px_rgba(26,43,60,0.09)] backdrop-blur-xl">
+      <div className="mx-auto max-w-container rounded-[22px] border border-primary-light/50 bg-white/95 shadow-[0_12px_34px_rgba(26,43,60,0.08)] backdrop-blur-xl">
         <div className="flex h-[68px] items-center justify-between gap-4 px-4 md:px-5">
           <Logo name={clinicName} />
 
