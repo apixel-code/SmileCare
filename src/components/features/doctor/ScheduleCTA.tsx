@@ -52,12 +52,10 @@ export function ScheduleCTA() {
 
         <Reveal variant="up" delay={STAGGER_MS}>
           <h2 className="mb-3.5 text-[28px] font-extrabold text-ink md:text-[32px]">
-            Book an Appointment with the Doctor
+            Book an Appointment at SmileCare Clinic
           </h2>
           <p className="mb-7 max-w-[460px] text-[16px] leading-[1.7] text-ink-muted">
-            Serial numbers fill up fast in the evening. Book online now, or
-            message us on WhatsApp and we&rsquo;ll confirm your time within
-            minutes.
+            Evening chamber serials fill up fast. Book online now in 2 minutes, or message our team on WhatsApp for instant confirmation.
           </p>
           <div className="flex flex-wrap gap-3.5">
             <Button href={BOOK_HREF} variant="cta" size="lg">

@@ -4,12 +4,11 @@ import { DoctorStats } from "@/components/features/doctor/DoctorStats";
 import { EducationTimeline } from "@/components/features/doctor/EducationTimeline";
 import { TeamGrid } from "@/components/features/doctor/TeamGrid";
 import { ScheduleCTA } from "@/components/features/doctor/ScheduleCTA";
-import { DOCTOR } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: `About ${DOCTOR.name}`,
+  title: "Our Dental Specialists & Team",
   description:
-    "Meet Dr. Mahmudul Hasan — BMDC-registered, BDS & FCPS qualified, 10+ years and 5,000+ patients. Gentle, honest dental care in Dhaka.",
+    "Meet our certified dental surgeons and specialists at SmileCare Dental Clinic Dhaka. Multidisciplinary painless dental care for the entire family.",
 };
 
 export default function DoctorPage() {

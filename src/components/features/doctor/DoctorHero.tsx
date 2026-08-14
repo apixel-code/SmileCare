@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CheckIcon } from "@/components/ui/icons";
-import { DOCTOR } from "@/lib/constants";
+import { CLINIC, DOCTOR } from "@/lib/constants";
 import { BOOK_HREF } from "@/lib/navigation";
 import { DOCTOR_PORTRAIT } from "@/lib/demo-data";
 import { STAGGER_MS } from "@/lib/motion";
@@ -46,25 +46,21 @@ export function DoctorHero() {
         <Reveal variant="right" delay={STAGGER_MS}>
           <div className="mb-4 inline-flex items-center gap-2.5 rounded-full bg-white px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-primary shadow-soft">
             <span className="h-2 w-2 rounded-full bg-cta" />
-            {DOCTOR.title}
+            Medical Specialists &amp; Team
           </div>
-          <h1 className="mb-3.5 text-balance text-[38px] font-extrabold leading-tight text-ink md:text-[58px]">
-            {DOCTOR.name}
+          <h1 className="mb-3.5 text-balance text-[38px] font-extrabold leading-tight text-ink md:text-[54px]">
+            Our Dental Specialists &amp; Clinical Team
           </h1>
-          <div className="mb-6 flex flex-col gap-2">
-            <div className="font-heading text-[18px] font-bold text-[#B98A34]">
-              BDS (Dhaka Dental College)
+          <div className="mb-6 flex flex-col gap-1.5">
+            <div className="font-heading text-[17px] font-bold text-[#B98A34]">
+              Lead Surgeon: {DOCTOR.name} · {DOCTOR.degrees}
             </div>
-            <div className="font-heading text-[18px] font-bold text-[#B98A34]">
-              FCPS (Conservative Dentistry &amp; Endodontics)
+            <div className="text-[14.5px] font-medium text-ink-muted">
+              Supported by certified Associate Dentists, Orthodontists &amp; Chair-side Staff
             </div>
           </div>
           <p className="mb-7 max-w-[560px] text-[16.5px] leading-[1.75] text-ink-muted">
-            For more than a decade, Dr. Hasan has been the dentist families trust
-            — especially patients who are afraid of the dentist&rsquo;s chair. He
-            believes good dentistry starts with listening, explains every step
-            before he begins, and never recommends treatment you don&rsquo;t
-            need.
+            At {CLINIC.name}, we believe world-class dentistry starts with listening. Our dedicated team of specialists explains every step before treatment, uses gentle painless techniques, and ensures every visit is comfortable and stress-free.
           </p>
           <div className="flex flex-wrap gap-3.5">
             <Button href={BOOK_HREF} variant="cta" size="lg">

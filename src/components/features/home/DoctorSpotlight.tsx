@@ -37,31 +37,28 @@ export function DoctorSpotlight() {
         </Reveal>
         <Reveal variant="right" delay={STAGGER_MS}>
           <div className="mb-3.5 w-fit rounded-full bg-primary-light px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-primary">
-            Meet Your Doctor
+            Certified Dental Specialists
           </div>
           <h2 className="mb-2 text-balance text-[32px] font-extrabold leading-tight text-ink md:text-[44px]">
-            {DOCTOR.name}
+            Expert Care Backed by Qualified Specialists
           </h2>
           <div className="mb-5 font-heading text-[15px] font-semibold text-[#B98A34]">
-            {DOCTOR.degrees}
+            BDS &amp; FCPS Surgeons, Orthodontists &amp; Child Specialists
           </div>
           <p className="mb-6 max-w-[540px] text-[16px] leading-[1.75] text-ink-muted">
-            Dr. Hasan has treated over {DOCTOR.patientsServed} patients in his{" "}
-            {DOCTOR.yearsExperience} year career. He is known for one thing above
-            all: patients feel no pain and no fear in his chair. He explains
-            every step before he starts, and never rushes a treatment.
+            At {CLINIC.name}, our multidisciplinary medical team has treated over {DOCTOR.patientsServed} patients. We are dedicated to painless procedures, transparent advice, and gentle care that puts fearful patients completely at ease.
           </p>
-          <div className="mb-7 flex max-w-[540px] items-center gap-3.5 rounded-[22px] border border-primary-light bg-white px-6 py-[18px] shadow-soft">
-            <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-white text-primary">
+          <div className="mb-7 flex max-w-[540px] items-center gap-3.5 rounded-[22px] border border-primary-light/60 bg-white px-6 py-[18px] shadow-soft">
+            <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-primary-light text-primary">
               <ClockIcon size={20} />
             </span>
             <div className="text-[15.5px] text-ink">
-              <strong className="font-heading">Chamber:</strong> {chamber.label},{" "}
+              <strong className="font-heading">Chamber Hours:</strong> {chamber.label},{" "}
               {chamber.value}
             </div>
           </div>
           <Button href="/doctor" variant="primary">
-            View Full Profile
+            Meet Our Specialists
           </Button>
         </Reveal>
       </div>

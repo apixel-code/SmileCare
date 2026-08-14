@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { WhatsAppIcon } from "@/components/ui/icons";
-import { DOCTOR, WHATSAPP_URL } from "@/lib/constants";
+import { CLINIC, WHATSAPP_URL } from "@/lib/constants";
 import { DOCTOR_IMAGE } from "@/lib/demo-data";
 import { STAGGER_MS } from "@/lib/motion";
 
@@ -12,26 +12,25 @@ export function ServiceFinalCTA() {
   return (
     <section id="final-cta" className="bg-primary">
       <Container className="grid items-center gap-12 py-16 lg:grid-cols-2">
-        <Reveal variant="up" className="flex items-center gap-6">
-          <div className="relative h-[110px] w-[110px] flex-none overflow-hidden rounded-full border-[3px] border-white/50">
+        <Reveal variant="up" className="flex items-center gap-5">
+          <div className="relative h-[96px] w-[96px] flex-none overflow-hidden rounded-2xl border-2 border-white/20 shadow-soft">
             <Image
               src={DOCTOR_IMAGE}
-              alt={DOCTOR.name}
+              alt={`${CLINIC.name} Dental Care Specialists`}
               fill
-              sizes="110px"
+              sizes="96px"
               className="object-cover"
             />
           </div>
           <div>
-            <div className="mb-1 font-heading text-[22px] font-extrabold text-white">
-              {DOCTOR.name}
+            <div className="mb-1 font-heading text-[20px] font-extrabold text-white">
+              {CLINIC.name}
             </div>
-            <div className="mb-2 text-[14.5px] font-semibold text-[#E4B96A]">
-              {DOCTOR.degrees}
+            <div className="mb-1.5 text-[14px] font-semibold text-[#E4B96A]">
+              Certified BDS &amp; FCPS Dental Specialists
             </div>
-            <div className="text-[14px] leading-[1.6] text-white/80">
-              Your treatment will be done personally by Dr. Hasan —{" "}
-              {DOCTOR.yearsExperience} years, {DOCTOR.patientsServed} patients.
+            <div className="text-[13.5px] leading-[1.55] text-white/80">
+              Painless procedures, 100% sterilized equipment, and honest treatment plans for your whole family.
             </div>
           </div>
         </Reveal>
