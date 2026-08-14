@@ -12,10 +12,12 @@ import { STAGGER_MS } from "@/lib/motion";
 /** Doctor profile hero — portrait + BMDC badge (left), bio + CTAs (right). */
 export function DoctorHero() {
   return (
-    <section className="bg-gradient-to-b from-primary-light to-white">
-      <Container className="grid items-center gap-14 py-16 lg:grid-cols-[0.85fr_1.15fr]">
+    <section className="relative overflow-hidden bg-primary-light">
+      <div className="absolute inset-0 surface-pattern opacity-70" aria-hidden />
+      <Container className="relative grid items-center gap-14 py-16 md:py-20 lg:grid-cols-[0.85fr_1.15fr]">
         <Reveal variant="scale" className="relative">
-          <div className="relative h-[400px] w-full overflow-hidden rounded-2xl shadow-[0_24px_60px_rgba(14,124,123,0.2)] md:h-[480px]">
+          <div className="absolute -left-4 -top-4 hidden h-full w-full rounded-[30px] border-2 border-white md:block" aria-hidden />
+          <div className="relative h-[400px] w-full overflow-hidden rounded-[30px] shadow-[0_24px_70px_rgba(14,124,123,0.24)] md:h-[500px]">
             <Image
               src={DOCTOR_PORTRAIT}
               alt={`Portrait of ${DOCTOR.name}`}
@@ -24,8 +26,9 @@ export function DoctorHero() {
               sizes="(max-width: 1024px) 100vw, 40vw"
               className="object-cover object-top"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/42 via-transparent to-transparent" />
           </div>
-          <div className="absolute inset-x-5 bottom-5 flex items-center gap-3 rounded-xl bg-white/95 px-[18px] py-3.5 shadow-[0_8px_24px_rgba(26,43,60,0.15)] backdrop-blur">
+          <div className="absolute inset-x-5 bottom-5 flex items-center gap-3 rounded-2xl bg-white/95 px-[18px] py-3.5 shadow-[0_8px_24px_rgba(26,43,60,0.15)] backdrop-blur">
             <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-full bg-primary text-white">
               <CheckIcon size={18} />
             </span>
@@ -41,11 +44,11 @@ export function DoctorHero() {
         </Reveal>
 
         <Reveal variant="right" delay={STAGGER_MS}>
-          <div className="mb-4 inline-flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-primary">
-            <span className="inline-block h-[2px] w-7 bg-primary" />
+          <div className="mb-4 inline-flex items-center gap-2.5 rounded-full bg-white px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-primary shadow-soft">
+            <span className="h-2 w-2 rounded-full bg-cta" />
             {DOCTOR.title}
           </div>
-          <h1 className="mb-3.5 text-[36px] font-extrabold leading-[1.1] text-ink md:text-[48px]">
+          <h1 className="mb-3.5 text-balance text-[38px] font-extrabold leading-tight text-ink md:text-[58px]">
             {DOCTOR.name}
           </h1>
           <div className="mb-6 flex flex-col gap-2">

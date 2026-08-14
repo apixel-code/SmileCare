@@ -10,8 +10,11 @@ export function LocationSection() {
   return (
     <Container className="py-20 md:py-24">
       <Reveal variant="up">
-        <h2 className="mb-11 text-[30px] font-extrabold text-ink md:text-[34px]">
-          Find Us Easily
+        <div className="mb-3 w-fit rounded-full bg-primary-light px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-primary">
+          Visit the clinic
+        </div>
+        <h2 className="mb-11 max-w-[680px] text-balance text-[32px] font-extrabold leading-tight text-ink md:text-[44px]">
+          Easy to find, simple to contact, ready when pain cannot wait
         </h2>
       </Reveal>
       <Reveal

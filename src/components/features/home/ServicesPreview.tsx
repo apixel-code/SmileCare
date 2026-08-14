@@ -8,20 +8,25 @@ import { stagger } from "@/lib/motion";
 /** Services preview band (sky background) — 6 cards + "View all" link. */
 export function ServicesPreview() {
   return (
-    <section id="services" className="mt-12 bg-primary-light">
-      <Container className="py-20">
+    <section id="services" className="relative overflow-hidden bg-primary-light">
+      <div className="absolute inset-0 surface-pattern opacity-60" aria-hidden />
+      <Container className="relative py-20 md:py-24">
         <Reveal variant="up" className="mb-11 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <h2 className="mb-2.5 text-[30px] font-extrabold text-ink md:text-[34px]">
-              Our Services
+            <div className="mb-3 w-fit rounded-full bg-white px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-primary shadow-soft">
+              Treatment menu
+            </div>
+            <h2 className="mb-2.5 text-balance text-[32px] font-extrabold leading-tight text-ink md:text-[44px]">
+              Modern dental care, priced before you sit in the chair
             </h2>
-            <p className="text-[17px] leading-[1.7] text-ink-muted">
-              Clear prices. No hidden costs. Ever.
+            <p className="max-w-[620px] text-[17px] leading-[1.75] text-ink-muted">
+              Each service is explained in plain language with visible starting
+              fees, so patients can decide confidently.
             </p>
           </div>
           <Link
             href="/services"
-            className="font-heading text-[15px] font-bold text-primary transition-colors hover:text-primary-dark"
+            className="rounded-full bg-white px-5 py-3 font-heading text-[15px] font-bold text-primary shadow-soft transition-colors hover:text-primary-dark"
           >
             View All Services →
           </Link>
