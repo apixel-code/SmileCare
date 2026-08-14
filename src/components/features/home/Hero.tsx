@@ -1,26 +1,64 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { WhatsAppIcon, CheckIcon } from "@/components/ui/icons";
 import { CLINIC, WHATSAPP_URL } from "@/lib/constants";
 import { BOOK_HREF } from "@/lib/navigation";
+import { cn } from "@/lib/utils";
 
-const CLINIC_HERO_BG =
-  "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=2000&q=85";
+const CLINIC_SLIDES = [
+  {
+    url: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=2000&q=85",
+    alt: "Modern dental clinic operatory suite with advanced digital equipment",
+  },
+  {
+    url: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=2000&q=85",
+    alt: "State-of-the-art dental hospital care facility",
+  },
+  {
+    url: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=2000&q=85",
+    alt: "High-tech dental surgery room and sterilization unit",
+  },
+  {
+    url: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=2000&q=85",
+    alt: "Hospital grade painless dental treatment center",
+  },
+];
 
-/** Full-width centered modern dental hospital/clinic showcase banner with prominent background and dual CTAs. */
+/** Full-width centered modern dental hospital/clinic showcase banner with multi-image crossfade slider and dual CTAs. */
 export function Hero() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % CLINIC_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="relative isolate min-h-[640px] overflow-hidden bg-ink lg:min-h-[85vh]">
-      {/* Prominent High-Tech Dental Clinic Background */}
-      <Image
-        src={CLINIC_HERO_BG}
-        alt={`${CLINIC.name} grand dental clinic & hospital facility`}
-        fill
-        priority
-        sizes="100vw"
-        className="animate-hero-zoom object-cover opacity-85 motion-reduce:animate-none"
-      />
+      {/* Background Multi-Image Sliding Carousel */}
+      {CLINIC_SLIDES.map((slide, index) => (
+        <Image
+          key={slide.url}
+          src={slide.url}
+          alt={slide.alt}
+          fill
+          priority={index === 0}
+          sizes="100vw"
+          className={cn(
+            "object-cover transition-all duration-1000 ease-smooth",
+            index === current
+              ? "scale-100 opacity-85"
+              : "pointer-events-none scale-105 opacity-0",
+          )}
+        />
+      ))}
+
       {/* Soft vignette overlay so the clinic interior is vivid & clear while text is 100% readable */}
       <div
         className="absolute inset-0 bg-gradient-to-b from-[rgba(8,28,39,0.65)] via-[rgba(8,38,48,0.50)] to-[rgba(8,28,39,0.80)]"
@@ -98,6 +136,24 @@ export function Hero() {
                 </div>
                 <div className="mt-0.5 text-[12px] text-white/75">{feat.desc}</div>
               </div>
+            ))}
+          </div>
+
+          {/* Slide Indicator Dots */}
+          <div className="mt-8 flex items-center justify-center gap-2">
+            {CLINIC_SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                aria-label={`Go to slide ${idx + 1}`}
+                onClick={() => setCurrent(idx)}
+                className={cn(
+                  "h-2 rounded-full transition-all duration-300",
+                  idx === current
+                    ? "w-8 bg-[#86E4E2]"
+                    : "w-2 bg-white/40 hover:bg-white/70",
+                )}
+              />
             ))}
           </div>
         </div>
