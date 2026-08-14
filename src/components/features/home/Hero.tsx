@@ -44,26 +44,26 @@ export function Hero() {
     return () => clearInterval(timer);
   }, []);
 
-  // Continuous Typewriter effect loop
+  // Continuous Typewriter effect loop (calm & deliberate pace)
   useEffect(() => {
     let timeout: NodeJS.Timeout;
 
     if (!isDeleting && displayText.length < PHRASE.length) {
       timeout = setTimeout(() => {
         setDisplayText(PHRASE.slice(0, displayText.length + 1));
-      }, 55);
+      }, 115);
     } else if (!isDeleting && displayText.length === PHRASE.length) {
       timeout = setTimeout(() => {
         setIsDeleting(true);
-      }, 3000);
+      }, 4000);
     } else if (isDeleting && displayText.length > 0) {
       timeout = setTimeout(() => {
         setDisplayText(PHRASE.slice(0, displayText.length - 1));
-      }, 25);
+      }, 50);
     } else if (isDeleting && displayText.length === 0) {
       timeout = setTimeout(() => {
         setIsDeleting(false);
-      }, 500);
+      }, 900);
     }
 
     return () => clearTimeout(timeout);
