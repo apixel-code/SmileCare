@@ -19,14 +19,11 @@ export function Hero() {
         fill
         priority
         sizes="100vw"
-        className="animate-hero-zoom object-cover opacity-50 motion-reduce:animate-none"
+        className="animate-hero-zoom object-cover opacity-85 motion-reduce:animate-none"
       />
+      {/* Soft vignette overlay so the clinic interior is vivid & clear while text is 100% readable */}
       <div
-        className="absolute inset-0 bg-gradient-to-b from-[rgba(8,28,39,0.88)] via-[rgba(10,50,62,0.76)] to-[rgba(8,28,39,0.92)]"
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 opacity-[0.10] surface-pattern"
+        className="absolute inset-0 bg-gradient-to-b from-[rgba(8,28,39,0.65)] via-[rgba(8,38,48,0.50)] to-[rgba(8,28,39,0.80)]"
         aria-hidden
       />
 
