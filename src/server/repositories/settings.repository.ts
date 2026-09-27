@@ -42,8 +42,16 @@ const DEFAULTS = {
  * index and we simply re-read).
  */
 export async function getSettings(): Promise<SettingsDoc> {
-  await connectDB();
+  if (!process.env.MONGODB_URI) {
+    return {
+      ...DEFAULTS,
+      _id: "default",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as unknown as SettingsDoc;
+  }
   try {
+    await connectDB();
     const doc = await ClinicSettings.findOneAndUpdate(
       { singleton: SETTINGS_SINGLETON },
       { $setOnInsert: DEFAULTS },
@@ -51,12 +59,21 @@ export async function getSettings(): Promise<SettingsDoc> {
     ).lean();
     return doc as SettingsDoc;
   } catch {
-    // Lost the insert race on the unique index — the winner's doc now exists.
-    const existing = await ClinicSettings.findOne({
-      singleton: SETTINGS_SINGLETON,
-    }).lean();
-    if (existing) return existing as SettingsDoc;
-    throw new Error("Clinic settings unavailable");
+    try {
+      // Lost the insert race on the unique index — the winner's doc now exists.
+      const existing = await ClinicSettings.findOne({
+        singleton: SETTINGS_SINGLETON,
+      }).lean();
+      if (existing) return existing as SettingsDoc;
+    } catch {
+      // DB connection or query error fallback
+    }
+    return {
+      ...DEFAULTS,
+      _id: "default",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as unknown as SettingsDoc;
   }
 }
 
@@ -86,13 +103,22 @@ export interface PublicClinicInfo {
  */
 export const getPublicClinicInfo = unstable_cache(
   async (): Promise<PublicClinicInfo> => {
-    const s = await getSettings();
-    return {
-      name: s.clinicName,
-      address: s.address,
-      phoneDisplay: s.phones[0] ?? CLINIC.phoneDisplay,
-      email: s.email ?? CLINIC.email,
-    };
+    try {
+      const s = await getSettings();
+      return {
+        name: s.clinicName,
+        address: s.address,
+        phoneDisplay: s.phones[0] ?? CLINIC.phoneDisplay,
+        email: s.email ?? CLINIC.email,
+      };
+    } catch {
+      return {
+        name: CLINIC.name,
+        address: CLINIC.address,
+        phoneDisplay: CLINIC.phoneDisplay,
+        email: CLINIC.email,
+      };
+    }
   },
   ["public-clinic-info"],
   { tags: [SETTINGS_TAG] },

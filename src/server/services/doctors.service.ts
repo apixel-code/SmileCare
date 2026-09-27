@@ -14,10 +14,14 @@ export const DOCTORS_TAG = "doctors";
  */
 export const getDoctors = unstable_cache(
   async (): Promise<DoctorOption[]> => {
-    const doctors = await findActiveDoctors();
-    return doctors.length > 0
-      ? doctors
-      : [{ key: DEFAULT_DOCTOR.key, name: DEFAULT_DOCTOR.name }];
+    try {
+      const doctors = await findActiveDoctors();
+      return doctors.length > 0
+        ? doctors
+        : [{ key: DEFAULT_DOCTOR.key, name: DEFAULT_DOCTOR.name }];
+    } catch {
+      return [{ key: DEFAULT_DOCTOR.key, name: DEFAULT_DOCTOR.name }];
+    }
   },
   ["active-doctors"],
   { tags: [DOCTORS_TAG] },
